@@ -114,6 +114,10 @@ HEADERS  += mainwindow.h \
     CTK-LIBS/LIBS/Widgets/ctkTransferFunctionRepresentation.h \
     CTK-LIBS/LIBS/Widgets/ctkTransferFunctionScene.h \
     CTK-LIBS/LIBS/Widgets/ctkTransferFunctionView.h \
-    CTK-LIBS/LIBS/Widgets/ctkWidgetsExport.h
+    CTK-LIBS/LIBS/Widgets/ctkWidgetsExport.h \
+    Utils/itkvtkpipe.h \
+    Utils/fastdef.h \
+    Utils/initials.h \
+    UnitTest/testunit.h
 
 FORMS    += mainwindow.ui
