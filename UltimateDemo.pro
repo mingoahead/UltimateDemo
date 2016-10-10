@@ -118,6 +118,14 @@ HEADERS  += mainwindow.h \
     Utils/itkvtkpipe.h \
     Utils/fastdef.h \
     Utils/initials.h \
-    UnitTest/testunit.h
+    UnitTest/testunit.h \
+    UnitTest/testdistancewidget.h \
+    UnitTest/testcutter.h \
+    UnitTest/testimageslice.h
 
 FORMS    += mainwindow.ui
+
+INCLUDEPATH += CTK-LIBS/LIBS/Widgets/ \
+               CTK-LIBS/LIBS/Core/ \
+               CTK-LIBS/LIBS/Visualization/VTK/Widgets/ \
+               CTK-LIBS/LIBS/Visualization/VTK/Core/ \
