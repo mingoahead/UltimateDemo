@@ -4,7 +4,11 @@
 #include "UnitTest/testunit.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-
+#include <QProcess>
+#include <QProcessEnvironment>
+#include <QException>
+#include <QDir>
+#include <QMessageBox>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -37,6 +41,9 @@ void MainWindow::createActions()
     m_viewDockPanelAct -> setCheckable(true);
     m_viewDockPanelAct -> setChecked(true);
     connect(m_viewDockPanelAct, SIGNAL(toggled(bool)), this, SLOT(viewDockPanel(bool)));
+
+    m_segAct = new QAction(tr("&Segment"), this);
+    connect(m_segAct, SIGNAL(triggered()), this, SLOT(runSegment()));
     m_testAct = new QAction(tr("Test Module"), this);
     connect(m_testAct, SIGNAL(triggered()), this, SLOT(unittest()));
 }
@@ -48,6 +55,8 @@ void MainWindow::createMenus()
     m_fileMenu -> addAction(m_exitAct);
     m_viewMenu = menuBar() -> addMenu(tr("&View"));
     m_viewMenu -> addAction(m_viewDockPanelAct);
+    m_segMenu = menuBar() -> addMenu(tr("&System"));
+    m_segMenu -> addAction(m_segAct);
     m_testMenu = menuBar() -> addMenu(tr("&Test"));
     m_testMenu -> addAction(m_testAct);
 }
@@ -81,6 +90,26 @@ void MainWindow::exit()
 void MainWindow::viewDockPanel(bool checked)
 {
     checked ? ui->panelDock->show() : ui->panelDock->hide();
+}
+
+void MainWindow::runSegment()
+{
+//   QProcessEnvironment env;
+//   QProcess process;
+//   env.insert("MYPATH", QString("D:/3dresearch/QtItkVtk/test/UltimateDemo/SubSys"));
+
+   //QString prog = "./WTK.exe";
+//   process.setProcessEnvironment(env);
+//   process.start("./WTK.exe");
+//   QString path;
+//   QDir dir;
+//   path = dir.currentPath();
+//   QMessageBox::warning(0, "PATH", path, QMessageBox::Yes);
+
+   QString program = "../UltimateDemo/SubSys/WTK.exe";
+   QProcess::startDetached(program, QStringList());
+
+
 }
 
 void MainWindow::unittest()

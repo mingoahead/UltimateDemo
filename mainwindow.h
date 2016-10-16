@@ -27,6 +27,9 @@ private:
     QMenu *m_viewMenu;
     QAction *m_viewDockPanelAct;
 
+    QMenu *m_segMenu;
+    QAction *m_segAct;
+
     QMenu *m_testMenu;
     QAction *m_testAct;
 
@@ -40,6 +43,7 @@ private slots:
     void openStl();
     void exit();
     void viewDockPanel(bool);
+    void runSegment();
     void unittest();
 };
 

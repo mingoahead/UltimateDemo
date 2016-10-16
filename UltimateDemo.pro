@@ -129,3 +129,8 @@ INCLUDEPATH += CTK-LIBS/LIBS/Widgets/ \
                CTK-LIBS/LIBS/Core/ \
                CTK-LIBS/LIBS/Visualization/VTK/Widgets/ \
                CTK-LIBS/LIBS/Visualization/VTK/Core/ \
+
+DISTFILES += \
+    SubSys/WTK.exp \
+    SubSys/WTK.lib \
+    SubSys/WTK.exe
