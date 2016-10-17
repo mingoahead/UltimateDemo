@@ -109,7 +109,6 @@ void MainWindow::runSegment()
    QString program = "../UltimateDemo/SubSys/WTK.exe";
    QProcess::startDetached(program, QStringList());
 
-
 }
 
 void MainWindow::unittest()

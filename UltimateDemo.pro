@@ -63,7 +63,8 @@ SOURCES += main.cpp\
     CTK-LIBS/LIBS/Widgets/ctkTransferFunctionItem.cpp \
     CTK-LIBS/LIBS/Widgets/ctkTransferFunctionRepresentation.cpp \
     CTK-LIBS/LIBS/Widgets/ctkTransferFunctionScene.cpp \
-    CTK-LIBS/LIBS/Widgets/ctkTransferFunctionView.cpp
+    CTK-LIBS/LIBS/Widgets/ctkTransferFunctionView.cpp \
+    Modules/dataadaptor.cpp
 
 HEADERS  += mainwindow.h \
     Utils/itklibs.h \
@@ -121,7 +122,11 @@ HEADERS  += mainwindow.h \
     UnitTest/testunit.h \
     UnitTest/testdistancewidget.h \
     UnitTest/testcutter.h \
-    UnitTest/testimageslice.h
+    UnitTest/testimageslice.h \
+    UnitTest/testextractpolylines.h \
+    UnitTest/testimageplanewidget.h \
+    Modules/dataadaptor.h \
+    UnitTest/test_3views.h
 
 FORMS    += mainwindow.ui
 
