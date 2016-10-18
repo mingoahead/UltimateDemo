@@ -139,3 +139,8 @@ DISTFILES += \
     SubSys/WTK.exp \
     SubSys/WTK.lib \
     SubSys/WTK.exe
+
+RESOURCES += \
+    resources.qrc
+
+RC_ICONS = res/icon/demo1.ico+
