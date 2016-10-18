@@ -6,11 +6,10 @@
 
 int main(int argc, char *argv[])
 {
-//    PreInitials::Initialize();
 
+    PreInitials::Initilize();
     QApplication a(argc, argv);
-    a.setApplicationName("Aneursym-Demo");
-
+    a.setApplicationDisplayName("Aneursym-Demo");
 
     MainWindow w;
     w.show();

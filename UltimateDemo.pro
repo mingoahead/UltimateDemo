@@ -143,4 +143,4 @@ DISTFILES += \
 RESOURCES += \
     resources.qrc
 
-RC_ICONS = res/icon/demo1.ico+
+RC_ICONS = res/icon/demo1.ico
