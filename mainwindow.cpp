@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->panelDock->setFeatures(QDockWidget::DockWidgetMovable
                                 | QDockWidget::DockWidgetFloatable);
     ui->panelDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
     createActions();
     createMenus();
     createLayout();
