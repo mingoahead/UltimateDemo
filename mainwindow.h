@@ -5,6 +5,10 @@
 
 #include "QVTKWidget.h"
 #include "UnitTest/testunit.h"
+#include "Modules/AneurysmUnit.h"
+#include <vtkSTLReader.h>
+#include <vtkRenderer.h>
+#include <vtkCamera.h>
 
 namespace Ui {
 class MainWindow;
@@ -34,11 +38,15 @@ private:
     QAction *m_testAct;
 
     QVTKWidget *m_vtkWidget;
+    AneurysmUnit *m_appUnit;
 
 private:
     void createActions();
     void createMenus();
     void createLayout();
+    void initModules();
+    void initRenderWindow();
+    void updateRenderWindow();
 private slots:
     void openStl();
     void exit();

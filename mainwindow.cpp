@@ -9,6 +9,7 @@
 #include <QException>
 #include <QDir>
 #include <QMessageBox>
+#include <QFileDialog>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -21,13 +22,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->panelDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     createActions();
     createMenus();
-
     createLayout();
+
+    initModules();
+    initRenderWindow();
 
 }
 
 MainWindow::~MainWindow()
 {
+
     delete ui;
 }
 
@@ -77,9 +81,33 @@ void MainWindow::createLayout()
     centralWidget()->setLayout(mainLayout);
 }
 
+void MainWindow::initModules()
+{
+     m_appUnit = new AneurysmUnit(m_vtkWidget -> GetRenderWindow());
+}
+
+void MainWindow::initRenderWindow()
+{
+    m_vtkWidget -> GetRenderWindow() -> AddRenderer(m_appUnit -> GetRenderer());
+    updateRenderWindow();
+}
+
+void MainWindow::updateRenderWindow()
+{
+    m_vtkWidget->GetRenderWindow()->Render();
+}
+
 void MainWindow::openStl()
 {
     // to open stl file
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Segment Model")
+                                                    , tr("/home"), tr("stl file (*.stl)"));
+    if(!fileName.isNull()) {
+        m_appUnit->ReadInputSegmentationModel(fileName.toStdString());
+        m_appUnit->ShowSegmentationModel();
+
+        updateRenderWindow();
+    }
 }
 
 void MainWindow::exit()

@@ -1,4 +1,4 @@
-#include "dataadaptor.h"
+#include "DataAdaptor.h"
 #include <itkImageToVTKImageFilter.h>
 
 template <class ImagePixelType, size_t Dimension>
