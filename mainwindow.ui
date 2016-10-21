@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1022</width>
-    <height>704</height>
+    <height>787</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -101,6 +101,42 @@
        </item>
       </layout>
      </widget>
+    </widget>
+    <widget class="QPushButton" name="pb_test3view">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>180</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Test View3</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pb_test1view">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>220</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Test View1</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="NavgunitWidget" native="true">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>450</y>
+       <width>271</width>
+       <height>281</height>
+      </rect>
+     </property>
     </widget>
    </widget>
   </widget>

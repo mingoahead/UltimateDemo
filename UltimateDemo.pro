@@ -65,7 +65,8 @@ SOURCES += main.cpp\
     CTK-LIBS/LIBS/Widgets/ctkTransferFunctionScene.cpp \
     CTK-LIBS/LIBS/Widgets/ctkTransferFunctionView.cpp \
     Modules/AneurysmUnit.cpp \
-    Modules/DataAdaptor.cpp
+    Modules/DataAdaptor.cpp \
+    Modules/NavigationUnit.cpp
 
 HEADERS  += mainwindow.h \
     Utils/itklibs.h \
@@ -128,7 +129,9 @@ HEADERS  += mainwindow.h \
     UnitTest/testimageplanewidget.h \
     UnitTest/test_3views.h \
     Modules/AneurysmUnit.h \
-    Modules/DataAdaptor.h
+    Modules/DataAdaptor.h \
+    UnitTest/test_scalarbaractor.h \
+    Modules/NavigationUnit.h
 
 FORMS    += mainwindow.ui
 

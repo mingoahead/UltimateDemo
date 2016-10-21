@@ -6,6 +6,7 @@
 #include "QVTKWidget.h"
 #include "UnitTest/testunit.h"
 #include "Modules/AneurysmUnit.h"
+#include "Modules/NavigationUnit.h"
 #include <vtkSTLReader.h>
 #include <vtkRenderer.h>
 #include <vtkCamera.h>
@@ -39,11 +40,14 @@ private:
 
     QVTKWidget *m_vtkWidget;
     AneurysmUnit *m_appUnit;
+    QVTKWidget *m_smallvtkWidget;
+    NavigationUnit*m_navgUnit;
 
 private:
     void createActions();
     void createMenus();
     void createLayout();
+    void createTinyLayout();
     void initModules();
     void initRenderWindow();
     void updateRenderWindow();
@@ -53,6 +57,9 @@ private slots:
     void viewDockPanel(bool);
     void runSegment();
     void unittest();
+
+    void on_pb_test3view_clicked();
+    void on_pb_test1view_clicked();
 };
 
 #endif // MAINWINDOW_H

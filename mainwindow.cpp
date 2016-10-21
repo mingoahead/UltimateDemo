@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
     createMenus();
     createLayout();
+    createTinyLayout();
 
     initModules();
     initRenderWindow();
@@ -82,9 +83,25 @@ void MainWindow::createLayout()
     centralWidget()->setLayout(mainLayout);
 }
 
+void MainWindow::createTinyLayout()
+{
+    QHBoxLayout * mainLayout = new QHBoxLayout;
+    QVBoxLayout * leftLayout = new QVBoxLayout;
+    QVBoxLayout * rightLayout = new QVBoxLayout;
+    mainLayout->addLayout(leftLayout);
+    mainLayout->addLayout(rightLayout);
+    m_smallvtkWidget = new QVTKWidget;
+    m_smallvtkWidget->autoFillBackground();
+    leftLayout->addWidget(m_smallvtkWidget);
+    mainLayout->update();
+    ui->NavgunitWidget->setLayout(mainLayout);
+
+}
+
 void MainWindow::initModules()
 {
      m_appUnit = new AneurysmUnit(m_vtkWidget -> GetRenderWindow());
+     m_navgUnit = new NavigationUnit(m_smallvtkWidget -> GetRenderWindow());
 }
 
 void MainWindow::initRenderWindow()
@@ -145,4 +162,16 @@ void MainWindow::unittest()
     TestUnit *test = new TestUnit();
     test -> RunTest();
     delete test;
+}
+
+void MainWindow::on_pb_test3view_clicked()
+{
+    m_appUnit -> SetDisplay(3);
+    updateRenderWindow();
+}
+
+void MainWindow::on_pb_test1view_clicked()
+{
+    m_appUnit -> SetDisplay(1);
+    updateRenderWindow();
 }
