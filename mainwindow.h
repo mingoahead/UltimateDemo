@@ -52,11 +52,14 @@ private:
     void initRenderWindow();
     void updateRenderWindow();
 private slots:
-    void openStl();
+    void openStl(int option);
     void exit();
     void viewDockPanel(bool);
     void runSegment();
     void unittest();
+    void on_cb_open3dreg_clicked();
+    void on_cb_openlevelset_clicked();
+    void on_cb_openregdetect_clicked();
 
     void on_pb_test3view_clicked();
     void on_pb_test1view_clicked();

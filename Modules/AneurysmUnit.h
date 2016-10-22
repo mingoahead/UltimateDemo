@@ -34,9 +34,9 @@ public:
     vtkRenderer * GetcorViewerRenderer();
     vtkRenderer * GetsagViewerRenderer();
 
-    void ReadInputSegmentationModel(std::string fileName);
-    void ShowSegmentationModel();
-    void HideSegmentationModel();
+    void ReadInputSegmentationModel(std::string fileName, int option);
+    void ShowSegmentationModel(int option);
+    void HideSegmentationModel(int option);
     void SetDisplay(int mod)
     {
         switch(mod) {
@@ -44,7 +44,8 @@ public:
 //            m_renderWindow -> RemoveAllObservers();
             RemoveAllRenderers();
             m_renderer -> SetViewport(0, 0, 1, 1);
-            m_renderer -> SetBackground(.1, .2, .3);
+//            m_renderer -> SetBackground(.1, .2, .3);
+            m_renderer -> SetBackground(.0,.0,.0);
             m_renderWindow -> AddRenderer(m_renderer);
             break;
         case COMP2_MOD:
@@ -53,7 +54,8 @@ public:
 //            m_renderWindow -> RemoveAllObservers();
             RemoveAllRenderers();
             m_renderer -> SetViewport(0, 0, 0.75, 1);
-            m_renderer -> SetBackground(.1, .2, .3);
+//            m_renderer -> SetBackground(.1, .2, .3);
+            m_renderer -> SetBackground(.0, .0, .0);
             m_renderWindow -> AddRenderer(m_renderer);
             //3 plain views setting part
             m_tranViewerRenderer = m_tranViewer -> GetRenderer();
@@ -94,7 +96,9 @@ public:
 private:
     vtkRenderWindow * m_renderWindow;
     vtkSmartPointer<vtkRenderer> m_renderer;
-    vtkSmartPointer<vtkActor> m_segmentationModel;
+    vtkSmartPointer<vtkActor> m_3DReg_segmentationModel;
+    vtkSmartPointer<vtkActor> m_LevelSet_segmentationModel;
+    vtkSmartPointer<vtkActor> m_RegDetect_segmentationModel;
     vtkSmartPointer<vtkSTLReader> m_segmentationModelReader;
 
     vtkSmartPointer<vtkImageViewer> m_tranViewer;

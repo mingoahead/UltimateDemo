@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1022</width>
-    <height>787</height>
+    <width>1019</width>
+    <height>747</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1022</width>
+     <width>1019</width>
      <height>23</height>
     </rect>
    </property>
@@ -34,6 +34,12 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="panelDock">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
      <width>272</width>
@@ -61,8 +67,8 @@
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>211</width>
-       <height>121</height>
+       <width>221</width>
+       <height>171</height>
       </rect>
      </property>
      <property name="title">
@@ -73,70 +79,76 @@
        <rect>
         <x>10</x>
         <y>20</y>
-        <width>161</width>
-        <height>91</height>
+        <width>200</width>
+        <height>137</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QRadioButton" name="radioButton">
+        <widget class="QCommandLinkButton" name="cb_open3dreg">
          <property name="text">
-          <string>3D Region Growing</string>
+          <string>Open 3D Reginrowing</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="radioButton_3">
+        <widget class="QCommandLinkButton" name="cb_openlevelset">
          <property name="text">
-          <string>Level Set</string>
+          <string>Open Level Set</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="radioButton_2">
+        <widget class="QCommandLinkButton" name="cb_openregdetect">
          <property name="text">
-          <string>Shape Detection</string>
+          <string>Open Region Detection</string>
          </property>
         </widget>
        </item>
       </layout>
      </widget>
     </widget>
-    <widget class="QPushButton" name="pb_test3view">
-     <property name="geometry">
-      <rect>
-       <x>50</x>
-       <y>180</y>
-       <width>75</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Test View3</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pb_test1view">
-     <property name="geometry">
-      <rect>
-       <x>50</x>
-       <y>220</y>
-       <width>75</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Test View1</string>
-     </property>
-    </widget>
     <widget class="QWidget" name="NavgunitWidget" native="true">
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>450</y>
-       <width>271</width>
-       <height>281</height>
+       <y>470</y>
+       <width>281</width>
+       <height>291</height>
       </rect>
      </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>190</y>
+       <width>201</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QPushButton" name="pb_test1view">
+        <property name="text">
+         <string>Test View1</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pb_test3view">
+        <property name="text">
+         <string>Test View3</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </widget>
   </widget>

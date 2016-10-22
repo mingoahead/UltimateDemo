@@ -18,6 +18,10 @@ class NavigationUnit
 {
 public:
     NavigationUnit(vtkRenderWindow *renWin);
+    void UpdatePosInfo();
+    void InitMainModel();
+    void UpdateView();
+
 
 private:
     vtkRenderWindow * m_renWindow;

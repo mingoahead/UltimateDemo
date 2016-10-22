@@ -15,3 +15,18 @@ NavigationUnit::NavigationUnit(vtkRenderWindow *renWin)
     m_renWindow->AddRenderer(m_renderer);
     m_renWindow->Render();
 }
+
+void NavigationUnit::UpdatePosInfo()
+{
+
+}
+
+void NavigationUnit::InitMainModel()
+{
+
+}
+
+void NavigationUnit::UpdateView()
+{
+
+}

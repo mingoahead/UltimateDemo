@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
     a.setApplicationDisplayName("Aneursym-Demo");
 
     MainWindow w;
+    w.showMaximized();
     w.show();
 
     return a.exec();

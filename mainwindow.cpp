@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->panelDock->setFeatures(QDockWidget::DockWidgetMovable
                                 | QDockWidget::DockWidgetFloatable);
     ui->panelDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    ui->dockWidgetContents->adjustSize();
 
     createActions();
     createMenus();
@@ -39,8 +40,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::createActions()
 {
-    m_openStlAct = new QAction(tr("&Open STL"), this);
-    connect(m_openStlAct, SIGNAL(triggered()), this, SLOT(openStl()));
+    m_openStlAct = new QAction(tr("&Open"), this);
+//    connect(m_openStlAct, SIGNAL(triggered()), this, SLOT(openStl()));
     m_exitAct = new QAction(tr("&Exit"), this);
     connect(m_exitAct, SIGNAL(triggered()), this, SLOT(exit()));
     m_viewDockPanelAct = new QAction(tr("View Panel"), this);
@@ -115,15 +116,14 @@ void MainWindow::updateRenderWindow()
     m_vtkWidget->GetRenderWindow()->Render();
 }
 
-void MainWindow::openStl()
+void MainWindow::openStl(int option)
 {
     // to open stl file
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open Segment Model")
                                                     , tr("/home"), tr("stl file (*.stl)"));
     if(!fileName.isNull()) {
-        m_appUnit->ReadInputSegmentationModel(fileName.toStdString());
-        m_appUnit->ShowSegmentationModel();
-
+        m_appUnit->ReadInputSegmentationModel(fileName.toStdString(), option);
+        m_appUnit->ShowSegmentationModel(option);
         updateRenderWindow();
     }
 }
@@ -162,6 +162,21 @@ void MainWindow::unittest()
     TestUnit *test = new TestUnit();
     test -> RunTest();
     delete test;
+}
+
+void MainWindow::on_cb_open3dreg_clicked()
+{
+    openStl(1);
+}
+
+void MainWindow::on_cb_openlevelset_clicked()
+{
+    openStl(2);
+}
+
+void MainWindow::on_cb_openregdetect_clicked()
+{
+    openStl(3);
 }
 
 void MainWindow::on_pb_test3view_clicked()
