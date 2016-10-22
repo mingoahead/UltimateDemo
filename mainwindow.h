@@ -61,8 +61,11 @@ private slots:
     void on_cb_openlevelset_clicked();
     void on_cb_openregdetect_clicked();
 
-    void on_pb_test3view_clicked();
+
     void on_pb_test1view_clicked();
+    void on_pb_test2view_clicked();
+    void on_pb_test3view_clicked();
+    void on_pb_test4view_clicked();
 };
 
 #endif // MAINWINDOW_H

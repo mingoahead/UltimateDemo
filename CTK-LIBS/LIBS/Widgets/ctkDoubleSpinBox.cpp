@@ -620,7 +620,7 @@ double ctkDoubleSpinBox::displayedValue() const
 }
 
 //----------------------------------------------------------------------------
-void ctkDoubleSpinBox::setDisplayedValue(double value)
+void ctkDoubleSpinBox::SetDisplayedValue(double value)
 {
   Q_D(ctkDoubleSpinBox);
   d->SpinBox->setValue(value);

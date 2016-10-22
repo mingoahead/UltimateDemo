@@ -178,7 +178,7 @@ public:
   /// If there is no value proxy installed, then it's just a setter to the
   /// value property.
   /// \sa displayedValue(), setValue(), value(), setValueProxy()
-  void setDisplayedValue(double displayValue);
+  void SetDisplayedValue(double displayValue);
 
   /// Get the spinbox current text. This includes any prefix or suffix.
   /// \sa prefix(), suffix()

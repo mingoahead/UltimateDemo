@@ -101,7 +101,7 @@
        <item>
         <widget class="QCommandLinkButton" name="cb_openregdetect">
          <property name="text">
-          <string>Open Region Detection</string>
+          <string>Open Shape Detection</string>
          </property>
         </widget>
        </item>
@@ -124,29 +124,51 @@
       </sizepolicy>
      </property>
     </widget>
-    <widget class="QWidget" name="layoutWidget">
+    <widget class="QWidget" name="">
      <property name="geometry">
       <rect>
        <x>20</x>
        <y>190</y>
        <width>201</width>
-       <height>25</height>
+       <height>81</height>
       </rect>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QPushButton" name="pb_test1view">
-        <property name="text">
-         <string>Test View1</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QPushButton" name="pb_test1view">
+          <property name="text">
+           <string>Test View1</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pb_test3view">
+          <property name="text">
+           <string>Test View3</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QPushButton" name="pb_test3view">
-        <property name="text">
-         <string>Test View3</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QPushButton" name="pb_test2view">
+          <property name="text">
+           <string>Test View2</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pb_test4view">
+          <property name="text">
+           <string>Test View4</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>

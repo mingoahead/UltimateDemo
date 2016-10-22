@@ -10,6 +10,7 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QSizePolicy>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -20,7 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->panelDock->setFeatures(QDockWidget::DockWidgetMovable
                                 | QDockWidget::DockWidgetFloatable);
     ui->panelDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-    ui->dockWidgetContents->adjustSize();
+    QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    ui->NavgunitWidget->setSizePolicy(sizePolicy);
 
     createActions();
     createMenus();
@@ -181,12 +183,24 @@ void MainWindow::on_cb_openregdetect_clicked()
 
 void MainWindow::on_pb_test3view_clicked()
 {
-    m_appUnit -> SetDisplay(3);
+    m_appUnit -> RegisterDisplay(3);
+    updateRenderWindow();
+}
+
+void MainWindow::on_pb_test4view_clicked()
+{
+    m_appUnit -> RegisterDisplay(4);
     updateRenderWindow();
 }
 
 void MainWindow::on_pb_test1view_clicked()
 {
-    m_appUnit -> SetDisplay(1);
+    m_appUnit -> RegisterDisplay(1);
+    updateRenderWindow();
+}
+
+void MainWindow::on_pb_test2view_clicked()
+{
+    m_appUnit -> RegisterDisplay(2);
     updateRenderWindow();
 }

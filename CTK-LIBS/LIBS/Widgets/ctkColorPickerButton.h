@@ -52,7 +52,7 @@ class CTK_WIDGETS_EXPORT ctkColorPickerButton : public QPushButton
   /// This properties controls whether the name of the color is shown on the
   /// button if true or the button text instead. True by default.
   /// \sa colorName, QPushButton::text
-  Q_PROPERTY(bool displayColorName READ displayColorName WRITE setDisplayColorName DESIGNABLE true)
+  Q_PROPERTY(bool displayColorName READ displayColorName WRITE SetDisplayColorName DESIGNABLE true)
 
   /// This property controls the properties of the dialog used in \a changeColor
   Q_PROPERTY(ColorDialogOptions dialogOptions READ dialogOptions WRITE setDialogOptions)
@@ -123,7 +123,7 @@ public Q_SLOTS:
   ///
   /// Toggle the display of the color name after color selection.
   /// By default, this is activated.
-  void setDisplayColorName(bool displayColorName);
+  void SetDisplayColorName(bool displayColorName);
 
 Q_SIGNALS:
   /// colorChanged is fired anytime a new color is set. Programatically or

@@ -182,7 +182,7 @@ void ctkColorPickerButton::onToggled(bool change)
 }
 
 //-----------------------------------------------------------------------------
-void ctkColorPickerButton::setDisplayColorName(bool displayColorName)
+void ctkColorPickerButton::SetDisplayColorName(bool displayColorName)
 {
   Q_D(ctkColorPickerButton);
   d->DisplayColorName = displayColorName;

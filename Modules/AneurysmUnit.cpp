@@ -9,6 +9,10 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
 //    m_segmentationModelReader = vtkSmartPointer<vtkSTLReader>::New();
 
     vsp(m_renderer);
+    vsp(m_ul_renderer);
+    vsp(m_ur_renderer);
+    vsp(m_bl_renderer);
+    vsp(m_br_renderer);
     vsp(m_3DReg_segmentationModel);
     vsp(m_LevelSet_segmentationModel);
     vsp(m_RegDetect_segmentationModel);
@@ -21,7 +25,7 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     vsp(m_corViewer);
     vsp(m_sagViewer);
 
-    SetDisplay(1);
+    RegisterDisplay(1);
 
 }
 
@@ -30,25 +34,21 @@ AneurysmUnit::~AneurysmUnit()
 
 }
 
-vtkRenderer *AneurysmUnit::GetRenderer()
-{
-    return m_renderer;
-}
+vtkRenderer *AneurysmUnit::GetRenderer() {return m_renderer;}
 
-vtkRenderer *AneurysmUnit::GettranViewerRenderer()
-{
-    return m_tranViewerRenderer;
-}
+vtkRenderer *AneurysmUnit::GetBLRenderer() {return m_bl_renderer; }
 
-vtkRenderer *AneurysmUnit::GetcorViewerRenderer()
-{
-    return m_corViewerRenderer;
-}
+vtkRenderer *AneurysmUnit::GetBRRenderer() {return m_br_renderer;}
 
-vtkRenderer *AneurysmUnit::GetsagViewerRenderer()
-{
-    return m_sagViewerRenderer;
-}
+vtkRenderer *AneurysmUnit::GetULRenderer() {return m_ul_renderer;}
+
+vtkRenderer *AneurysmUnit::GetURRenderer() {return m_br_renderer;}
+
+vtkRenderer *AneurysmUnit::GettranViewerRenderer() {return m_tranViewerRenderer;}
+
+vtkRenderer *AneurysmUnit::GetcorViewerRenderer() {return m_corViewerRenderer;}
+
+vtkRenderer *AneurysmUnit::GetsagViewerRenderer() {return m_sagViewerRenderer;}
 
 void AneurysmUnit::ReadInputSegmentationModel(std::string fileName, int option)
 {
