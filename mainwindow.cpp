@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QSizePolicy>
+#include <QMap>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -121,7 +122,11 @@ void MainWindow::updateRenderWindow()
 void MainWindow::openStl(int option)
 {
     // to open stl file
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Segment Model")
+    QMap<int, QString> segMap;
+    segMap.insert(1, "3D Region Growing");
+    segMap.insert(2, "Level Set");
+    segMap.insert(3, "Shape Detection");
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Segment Model for ") + segMap[option]
                                                     , tr("/home"), tr("stl file (*.stl)"));
     if(!fileName.isNull()) {
         m_appUnit->ReadInputSegmentationModel(fileName.toStdString(), option);

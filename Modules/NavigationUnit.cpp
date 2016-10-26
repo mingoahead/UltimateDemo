@@ -8,7 +8,7 @@ NavigationUnit::NavigationUnit(vtkRenderWindow *renWin)
     m_annotation->SetLinearFontScaleFactor( 2 );
     m_annotation->SetNonlinearFontScaleFactor( 1 );
     m_annotation->SetMaximumFontSize( 15 );
-    m_annotation->SetText(1 ,"current position:\n(.0, .0, .0)");
+    m_annotation->SetText(1 ,"position:\n(.0, .0, .0)");
     m_annotation->GetTextProperty()->SetColor( 1, 0, 0 );
     m_renderer->AddViewProp(m_annotation);
     m_renderer->SetBackground(0.1, 0.2, 0.4);

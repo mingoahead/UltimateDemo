@@ -24,6 +24,14 @@
 
 #include "../Utils/fastdef.h"
 
+/**
+ * to do list
+ * legend  ref : http://www.vtk.org/Wiki/VTK/Examples/Cxx/Visualization/Legend
+ * colormap ref: chrome-extension://oemmndcbldboiebfnladdacbdfmadadm/http://www.inf.ed.ac.uk/teaching/courses/vis/lecture_notes/lecture5-2x2.pdf
+ *          ref: http://www.vtk.org/Wiki/VTK/Examples/Cxx/Meshes/ColoredElevationMap
+ *          ref: chrome-extension://oemmndcbldboiebfnladdacbdfmadadm/http://cs.iupui.edu/~sfang/cs552/cs552-surface.pdf
+ *
+ */
 class AneurysmUnit
 {
 public:
