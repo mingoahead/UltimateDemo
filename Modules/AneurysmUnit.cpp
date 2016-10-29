@@ -25,6 +25,24 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     vsp(m_corViewer);
     vsp(m_sagViewer);
 
+    vsp(m_tranAnnotation);
+    m_tranAnnotation->SetLinearFontScaleFactor(2);
+    m_tranAnnotation->SetNonlinearFontScaleFactor(1);
+    m_tranAnnotation->SetMaximumFontSize(18);
+    m_tranAnnotation->SetText(3, "Tran View");
+    m_tranAnnotation->GetTextProperty()->SetColor(0, 0, 1);
+    vsp(m_corAnnotation);
+    m_corAnnotation->SetLinearFontScaleFactor(2);
+    m_corAnnotation->SetNonlinearFontScaleFactor(1);
+    m_corAnnotation->SetMaximumFontSize(18);
+    m_corAnnotation->SetText(3, "Cor View");
+    m_corAnnotation->GetTextProperty()->SetColor(0, 1, 0);
+    vsp(m_sagAnnotation);
+    m_sagAnnotation->SetLinearFontScaleFactor(2);
+    m_sagAnnotation->SetNonlinearFontScaleFactor(1);
+    m_sagAnnotation->SetMaximumFontSize(18);
+    m_sagAnnotation->SetText(3, "Sag View");
+    m_sagAnnotation->GetTextProperty()->SetColor(1, 0, 0);
     RegisterDisplay(1);
 
 }

@@ -1,6 +1,7 @@
 #ifndef ANEURYSMUNIT_H
 #define ANEURYSMUNIT_H
 #include <string>
+#include <vector>
 #include <vtkActor.h>
 #include <vtkActorCollection.h>
 #include <vtkActor2D.h>
@@ -21,17 +22,21 @@
 #include <vtkRenderer.h>
 #include <vtkCollection.h>
 #include <vtkRendererCollection.h>
-
+#include <vtkLegendBoxActor.h>
+#include <vtkCornerAnnotation.h>
+#include <vtkTextProperty.h>
 #include "../Utils/fastdef.h"
 
 /**
  * to do list
  * legend  ref : http://www.vtk.org/Wiki/VTK/Examples/Cxx/Visualization/Legend
  * colormap ref: chrome-extension://oemmndcbldboiebfnladdacbdfmadadm/http://www.inf.ed.ac.uk/teaching/courses/vis/lecture_notes/lecture5-2x2.pdf
+ *               vtkLookupTable
  *          ref: http://www.vtk.org/Wiki/VTK/Examples/Cxx/Meshes/ColoredElevationMap
  *          ref: chrome-extension://oemmndcbldboiebfnladdacbdfmadadm/http://cs.iupui.edu/~sfang/cs552/cs552-surface.pdf
- *
+ *               vtkContourFilter  (extract contour with same attribute value)
  */
+
 class AneurysmUnit
 {
 public:
@@ -96,14 +101,17 @@ public:
             m_tranViewerRenderer -> SetViewport(0.75, 0, 1, 0.33);
             m_tranViewerRenderer -> GradientBackgroundOn();
             m_tranViewerRenderer -> SetBackground(0.3, 0.5, 0.5);
+            m_tranViewerRenderer -> AddViewProp(m_tranAnnotation);
             m_corViewerRenderer = m_corViewer -> GetRenderer();
             m_corViewerRenderer -> SetViewport(0.75, 0.33, 1, 0.67);
             m_corViewerRenderer -> GradientBackgroundOn();
             m_corViewerRenderer -> SetBackground(0.4, 0.4, 0.6);
+            m_corViewerRenderer -> AddViewProp(m_corAnnotation);
             m_sagViewerRenderer = m_sagViewer -> GetRenderer();
             m_sagViewerRenderer -> SetViewport(0.75, 0.67, 1, 1);
             m_sagViewerRenderer -> GradientBackgroundOn();
             m_sagViewerRenderer -> SetBackground(0.7, 0.6, 0.7);
+            m_sagViewerRenderer -> AddViewProp(m_sagAnnotation);
             m_renderWindow -> AddRenderer(m_tranViewerRenderer);
             m_renderWindow -> AddRenderer(m_corViewerRenderer);
             m_renderWindow -> AddRenderer(m_sagViewerRenderer);
@@ -146,6 +154,10 @@ private:
     vtkSmartPointer<vtkImageViewer> m_tranViewer;
     vtkSmartPointer<vtkImageViewer> m_sagViewer;
     vtkSmartPointer<vtkImageViewer> m_corViewer;
+
+    vtkSmartPointer<vtkCornerAnnotation> m_tranAnnotation;
+    vtkSmartPointer<vtkCornerAnnotation> m_sagAnnotation;
+    vtkSmartPointer<vtkCornerAnnotation> m_corAnnotation;
     vtkRenderer *m_tranViewerRenderer;
     vtkRenderer *m_sagViewerRenderer;
     vtkRenderer *m_corViewerRenderer;

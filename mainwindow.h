@@ -10,7 +10,6 @@
 #include <vtkSTLReader.h>
 #include <vtkRenderer.h>
 #include <vtkCamera.h>
-
 namespace Ui {
 class MainWindow;
 }
