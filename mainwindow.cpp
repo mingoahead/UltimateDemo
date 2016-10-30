@@ -173,17 +173,72 @@ void MainWindow::unittest()
 
 void MainWindow::on_cb_open3dreg_clicked()
 {
+    m_appUnit->RegisterDisplay(1);
+    updateRenderWindow();
     openStl(1);
+
+}
+
+void MainWindow::on_cbb_show_3dreg_currentIndexChanged(int index)
+{
+    m_appUnit->RegisterDisplay(1);
+    updateRenderWindow();
+    if(index == 0) {
+        m_appUnit->ShowFrameMode(1);
+    }else if(index == 1) {
+        m_appUnit->ShowLineMode(1);
+    }else if(index == 2) {
+        m_appUnit->ShowPointMode(1);
+    }else if(index == 3) {
+        m_appUnit->HideSegmentationModel(1);
+    }
+    updateRenderWindow();
 }
 
 void MainWindow::on_cb_openlevelset_clicked()
 {
+    m_appUnit->RegisterDisplay(1);
+    updateRenderWindow();
     openStl(2);
+}
+
+void MainWindow::on_cbb_show_ls_currentIndexChanged(int index)
+{
+    m_appUnit->RegisterDisplay(1);
+    updateRenderWindow();
+    if(index == 0) {
+        m_appUnit->ShowFrameMode(2);
+    }else if(index == 1) {
+        m_appUnit->ShowLineMode(2);
+    }else if(index == 2) {
+        m_appUnit->ShowPointMode(2);
+    }else if(index == 3) {
+        m_appUnit->HideSegmentationModel(2);
+    }
+    updateRenderWindow();
 }
 
 void MainWindow::on_cb_openregdetect_clicked()
 {
+    m_appUnit->RegisterDisplay(1);
+    updateRenderWindow();
     openStl(3);
+}
+
+void MainWindow::on_cbb_show_sd_currentIndexChanged(int index)
+{
+    m_appUnit->RegisterDisplay(1);
+    updateRenderWindow();
+    if(index == 0) {
+        m_appUnit->ShowFrameMode(3);
+    }else if(index == 1) {
+        m_appUnit->ShowLineMode(3);
+    }else if(index == 2) {
+        m_appUnit->ShowPointMode(3);
+    }else if(index == 3) {
+        m_appUnit->HideSegmentationModel(3);
+    }
+    updateRenderWindow();
 }
 
 void MainWindow::on_pb_test3view_clicked()
@@ -196,6 +251,46 @@ void MainWindow::on_pb_test4view_clicked()
 {
     m_appUnit -> RegisterDisplay(4);
     updateRenderWindow();
+}
+
+void MainWindow::on_cb_ctrline_method1_toggled(bool checked)
+{
+
+}
+
+void MainWindow::on_cb_ctrline_method2_toggled(bool checked)
+{
+
+}
+
+void MainWindow::on_cb_ctrline_method3_toggled(bool checked)
+{
+
+}
+
+void MainWindow::on_tb_play_clicked()
+{
+
+}
+
+void MainWindow::on_tb_stop_clicked()
+{
+
+}
+
+void MainWindow::on_tb_backward_clicked()
+{
+
+}
+
+void MainWindow::on_tb_forward_clicked()
+{
+
+}
+
+void MainWindow::on_cbb_curPath_currentIndexChanged(int index)
+{
+
 }
 
 void MainWindow::on_pb_test1view_clicked()

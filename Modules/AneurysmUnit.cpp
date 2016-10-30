@@ -29,19 +29,19 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     m_tranAnnotation->SetLinearFontScaleFactor(2);
     m_tranAnnotation->SetNonlinearFontScaleFactor(1);
     m_tranAnnotation->SetMaximumFontSize(18);
-    m_tranAnnotation->SetText(3, "Tran View");
+    m_tranAnnotation->SetText(3, "Transverse");
     m_tranAnnotation->GetTextProperty()->SetColor(0, 0, 1);
     vsp(m_corAnnotation);
     m_corAnnotation->SetLinearFontScaleFactor(2);
     m_corAnnotation->SetNonlinearFontScaleFactor(1);
     m_corAnnotation->SetMaximumFontSize(18);
-    m_corAnnotation->SetText(3, "Cor View");
+    m_corAnnotation->SetText(3, "Coronal");
     m_corAnnotation->GetTextProperty()->SetColor(0, 1, 0);
     vsp(m_sagAnnotation);
     m_sagAnnotation->SetLinearFontScaleFactor(2);
     m_sagAnnotation->SetNonlinearFontScaleFactor(1);
     m_sagAnnotation->SetMaximumFontSize(18);
-    m_sagAnnotation->SetText(3, "Sag View");
+    m_sagAnnotation->SetText(3, "Sagittal");
     m_sagAnnotation->GetTextProperty()->SetColor(1, 0, 0);
     RegisterDisplay(1);
 
@@ -96,15 +96,79 @@ void AneurysmUnit::ReadInputSegmentationModel(std::string fileName, int option)
 
 void AneurysmUnit::ShowSegmentationModel(int option)
 {
+//    switch (option) {
+//    case 1:
+//        m_renderer -> AddActor(m_3DReg_segmentationModel);
+//        break;
+//    case 2:
+//        m_renderer -> AddActor(m_LevelSet_segmentationModel);
+//        break;
+//    case 3:
+//        m_renderer -> AddActor(m_RegDetect_segmentationModel);
+//        break;
+//    default:
+//        break;
+//    }
+//    m_renderer -> ResetCamera();
+    ShowFrameMode(option);
+}
+
+void AneurysmUnit::ShowFrameMode(int option)
+{
     switch (option) {
     case 1:
         m_renderer -> AddActor(m_3DReg_segmentationModel);
+        m_3DReg_segmentationModel -> GetProperty()->SetRepresentationToSurface();
         break;
     case 2:
         m_renderer -> AddActor(m_LevelSet_segmentationModel);
+        m_LevelSet_segmentationModel -> GetProperty() -> SetRepresentationToSurface();
         break;
     case 3:
         m_renderer -> AddActor(m_RegDetect_segmentationModel);
+        m_RegDetect_segmentationModel -> GetProperty() -> SetRepresentationToSurface();
+        break;
+    default:
+        break;
+    }
+    m_renderer -> ResetCamera();
+}
+
+void AneurysmUnit::ShowLineMode(int option)
+{
+    switch (option) {
+    case 1:
+        m_renderer -> AddActor(m_3DReg_segmentationModel);
+        m_3DReg_segmentationModel -> GetProperty()->SetRepresentationToWireframe();
+        break;
+    case 2:
+        m_renderer -> AddActor(m_LevelSet_segmentationModel);
+        m_LevelSet_segmentationModel -> GetProperty() -> SetRepresentationToWireframe();
+        break;
+    case 3:
+        m_renderer -> AddActor(m_RegDetect_segmentationModel);
+        m_RegDetect_segmentationModel -> GetProperty() -> SetRepresentationToWireframe();
+        break;
+    default:
+        break;
+    }
+    m_renderer -> ResetCamera();
+}
+
+void AneurysmUnit::ShowPointMode(int option)
+{
+    switch (option) {
+    case 1:
+        m_renderer -> AddActor(m_3DReg_segmentationModel);
+        m_3DReg_segmentationModel -> GetProperty()->SetRepresentationToPoints();
+        break;
+    case 2:
+        m_renderer -> AddActor(m_LevelSet_segmentationModel);
+        m_LevelSet_segmentationModel -> GetProperty() -> SetRepresentationToPoints();
+        break;
+    case 3:
+        m_renderer -> AddActor(m_RegDetect_segmentationModel);
+        m_RegDetect_segmentationModel -> GetProperty() -> SetRepresentationToPoints();
         break;
     default:
         break;

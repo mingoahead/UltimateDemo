@@ -53,6 +53,9 @@ public:
 
     void ReadInputSegmentationModel(std::string fileName, int option);
     void ShowSegmentationModel(int option);
+    void ShowFrameMode(int option);
+    void ShowLineMode(int option);
+    void ShowPointMode(int option);
     void HideSegmentationModel(int option);
     void RegisterDisplay(int mod)
     {

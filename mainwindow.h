@@ -57,14 +57,29 @@ private slots:
     void runSegment();
     void unittest();
     void on_cb_open3dreg_clicked();
+    void on_cbb_show_3dreg_currentIndexChanged(int index);
     void on_cb_openlevelset_clicked();
+    void on_cbb_show_ls_currentIndexChanged(int index);
     void on_cb_openregdetect_clicked();
+    void on_cbb_show_sd_currentIndexChanged(int index);
 
 
     void on_pb_test1view_clicked();
     void on_pb_test2view_clicked();
     void on_pb_test3view_clicked();
     void on_pb_test4view_clicked();
+
+    void on_cb_ctrline_method1_toggled(bool checked);
+    void on_cb_ctrline_method2_toggled(bool checked);
+    void on_cb_ctrline_method3_toggled(bool checked);
+
+    void on_tb_play_clicked();
+    void on_tb_stop_clicked();
+    void on_tb_backward_clicked();
+    void on_tb_forward_clicked();
+    void on_cbb_curPath_currentIndexChanged(int index);
+
+
 };
 
 #endif // MAINWINDOW_H
