@@ -25,6 +25,13 @@
 #include <vtkLegendBoxActor.h>
 #include <vtkCornerAnnotation.h>
 #include <vtkTextProperty.h>
+#include <vtkSliderWidget.h>
+#include <vtkSliderRepresentation2D.h>
+#include <vtkWidgetEventTranslator.h>
+#include <vtkWidgetEvent.h>
+#include <vtkCallbackCommand.h>
+#include <vtkProperty2D.h>
+
 #include "../Utils/fastdef.h"
 
 /**
@@ -37,6 +44,31 @@
  *               vtkContourFilter  (extract contour with same attribute value)
  */
 
+class vtkSliderCallBack : public vtkCommand {
+public:
+    static vtkSliderCallBack *New() { return new vtkSliderCallBack; }
+    virtual void Execute(vtkObject *caller, unsigned long, void*)
+    {
+        vtkSliderWidget *sliderWidget = reinterpret_cast<vtkSliderWidget*>(caller);
+        if(this->actor) {
+            this->actor->GetProperty()->SetOpacity(
+                        static_cast<vtkSliderRepresentation*>(
+                            sliderWidget->GetRepresentation()) -> GetValue());
+
+        }
+    }
+    vtkSliderCallBack() : actor(0) {};
+    bool SetBoundActor(vtkActor *giveactor)
+    {
+        actor = giveactor;
+        if(!actor) {
+            return false;
+        }
+        return true;
+    }
+    vtkActor *actor;
+
+};
 class AneurysmUnit
 {
 public:
@@ -124,7 +156,6 @@ public:
         }
     }
     void RemoveAllRenderers()
-
     {
         m_renderWindow -> RemoveRenderer(m_renderer);
         m_renderWindow -> RemoveRenderer(m_bl_renderer);
@@ -140,8 +171,12 @@ public:
 //           vtkRenderer *tmp = curRenderers -> GetNextItem();
 //           m_renderWindow -> RemoveRenderer(tmp);
 //       }
-
     }
+
+    void InitSliders();
+    bool BindSlider(vtkSmartPointer<vtkActor> actor,
+                    vtkSmartPointer<vtkSliderCallBack> sliderCallBack,
+                    vtkSmartPointer<vtkSliderWidget> sliderWidget);
 private:
     vtkRenderWindow * m_renderWindow;
     vtkSmartPointer<vtkRenderer> m_renderer;
@@ -152,7 +187,9 @@ private:
     vtkSmartPointer<vtkActor> m_3DReg_segmentationModel;
     vtkSmartPointer<vtkActor> m_LevelSet_segmentationModel;
     vtkSmartPointer<vtkActor> m_RegDetect_segmentationModel;
-    vtkSmartPointer<vtkSTLReader> m_segmentationModelReader;
+    vtkSmartPointer<vtkSTLReader> m_3DReg_segmentationReader;
+    vtkSmartPointer<vtkSTLReader> m_LevelSet_segmentationReader;
+    vtkSmartPointer<vtkSTLReader> m_RegDetect_segmentationReader;
 
     vtkSmartPointer<vtkImageViewer> m_tranViewer;
     vtkSmartPointer<vtkImageViewer> m_sagViewer;
@@ -165,7 +202,22 @@ private:
     vtkRenderer *m_sagViewerRenderer;
     vtkRenderer *m_corViewerRenderer;
     enum DisMode { SINGLE_MOD = 1, COMP2_MOD,  PLANE_MOD, COMP4_MOD} ;
+
+    //slider related
+    vtkSmartPointer<vtkSliderRepresentation2D> m_slider1Rep;
+    vtkSmartPointer<vtkSliderWidget> m_slider1Widget;
+    vtkSmartPointer<vtkSliderCallBack> m_slider1CallBack;
+    vtkSmartPointer<vtkSliderRepresentation2D> m_slider2Rep;
+    vtkSmartPointer<vtkSliderWidget> m_slider2Widget;
+    vtkSmartPointer<vtkSliderCallBack> m_slider2CallBack;
+    vtkSmartPointer<vtkSliderRepresentation2D> m_slider3Rep;
+    vtkSmartPointer<vtkSliderWidget> m_slider3Widget;
+    vtkSmartPointer<vtkSliderCallBack> m_slider3CallBack;
+
+
 private:
+    void InitAnnotation();
+
 
 };
 

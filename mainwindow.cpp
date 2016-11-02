@@ -25,11 +25,14 @@ MainWindow::MainWindow(QWidget *parent) :
     QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     ui->NavgunitWidget->setSizePolicy(sizePolicy);
 
+
     createActions();
     createMenus();
     createLayout();
     createTinyLayout();
-
+    ui->cbb_show_3dreg->setEnabled(false);
+    ui->cbb_show_ls->setEnabled(false);
+    ui->cbb_show_sd->setEnabled(false);
     initModules();
     initRenderWindow();
 
@@ -106,6 +109,7 @@ void MainWindow::initModules()
 {
      m_appUnit = new AneurysmUnit(m_vtkWidget -> GetRenderWindow());
      m_navgUnit = new NavigationUnit(m_smallvtkWidget -> GetRenderWindow());
+
 }
 
 void MainWindow::initRenderWindow()
@@ -176,7 +180,7 @@ void MainWindow::on_cb_open3dreg_clicked()
     m_appUnit->RegisterDisplay(1);
     updateRenderWindow();
     openStl(1);
-
+    ui->cbb_show_3dreg->setEnabled(true);
 }
 
 void MainWindow::on_cbb_show_3dreg_currentIndexChanged(int index)
@@ -200,6 +204,8 @@ void MainWindow::on_cb_openlevelset_clicked()
     m_appUnit->RegisterDisplay(1);
     updateRenderWindow();
     openStl(2);
+    ui->cbb_show_ls->setEnabled(true);
+
 }
 
 void MainWindow::on_cbb_show_ls_currentIndexChanged(int index)
@@ -223,6 +229,7 @@ void MainWindow::on_cb_openregdetect_clicked()
     m_appUnit->RegisterDisplay(1);
     updateRenderWindow();
     openStl(3);
+    ui->cbb_show_sd->setEnabled(true);
 }
 
 void MainWindow::on_cbb_show_sd_currentIndexChanged(int index)
