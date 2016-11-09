@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "UnitTest/testunit.h"
+#include "testunit.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QProcess>
@@ -274,6 +274,13 @@ void MainWindow::on_cb_ctrline_method3_toggled(bool checked)
 {
 
 }
+
+void MainWindow::on_rb_pointpicker_toggled(bool checked)
+{
+     std::cout << ui->rb_pointpicker->isChecked() << std::endl;
+     m_appUnit->SetPointPickerEnabled(checked);
+}
+
 
 void MainWindow::on_tb_play_clicked()
 {

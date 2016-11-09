@@ -214,7 +214,7 @@
       <rect>
        <x>20</x>
        <y>190</y>
-       <width>201</width>
+       <width>218</width>
        <height>81</height>
       </rect>
      </property>
@@ -224,14 +224,14 @@
         <item>
          <widget class="QPushButton" name="pb_test1view">
           <property name="text">
-           <string>Test View1</string>
+           <string>Main Show Mode</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="pb_test3view">
           <property name="text">
-           <string>Test View3</string>
+           <string>Roaming Mode</string>
           </property>
          </widget>
         </item>
@@ -242,14 +242,14 @@
         <item>
          <widget class="QPushButton" name="pb_test2view">
           <property name="text">
-           <string>Test View2</string>
+           <string>  Compare Mode  </string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="pb_test4view">
           <property name="text">
-           <string>Test View4</string>
+           <string>Measurement Mode</string>
           </property>
          </widget>
         </item>
@@ -301,6 +301,19 @@
         </widget>
        </item>
       </layout>
+     </widget>
+     <widget class="QRadioButton" name="rb_pointpicker">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>50</y>
+        <width>89</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Point Picker</string>
+      </property>
      </widget>
     </widget>
     <widget class="QGroupBox" name="groupBox_3">

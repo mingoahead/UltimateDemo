@@ -8,6 +8,9 @@
 #include "testimageplanewidget.h"
 #include "test_3views.h"
 #include "test_scalarbaractor.h"
+#include "test_cameraactor.h"
+#include "test_camerawidget.h"
+#include "test_ballonwidget.h"
 class TestUnit
 {
 public:
@@ -23,7 +26,10 @@ public:
 //        test3views -> SetInputDicomSeriesDirectory("D:\\3dresearch\\TestData\\dicom");
 //        test3views -> RunTest();
 //        delete test3views;
-        Test_ScalarBarActor::RunTest();
+//        Test_ScalarBarActor::RunTest();
+//        Test_CameraActor::RunTest();
+//        Test_CameraWidget::RunTest();
+        Test_BalloonWidget::RunTest();
     }
 };
 

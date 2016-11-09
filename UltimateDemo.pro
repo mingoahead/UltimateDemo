@@ -66,7 +66,14 @@ SOURCES += main.cpp\
     CTK-LIBS/LIBS/Widgets/ctkTransferFunctionView.cpp \
     Modules/AneurysmUnit.cpp \
     Modules/DataAdaptor.cpp \
-    Modules/NavigationUnit.cpp
+    Modules/NavigationUnit.cpp \
+    Modules/CenLine_1/itkArrivalFunctionToPathFilter.txx \
+    Modules/CenLine_1/itkImageToPathFilter.txx \
+    Modules/CenLine_1/itkIterateNeighborhoodOptimizer.txx \
+    Modules/CenLine_1/itkPhysicalCentralDifferenceImageFunction.txx \
+    Modules/CenLine_1/itkSingleImageCostFunction.txx \
+    Modules/CenLine_1/itkSpeedFunctionToPathFilter.txx \
+    Modules/CenLineUnit.cpp
 
 HEADERS  += mainwindow.h \
     Utils/itklibs.h \
@@ -131,7 +138,17 @@ HEADERS  += mainwindow.h \
     Modules/AneurysmUnit.h \
     Modules/DataAdaptor.h \
     UnitTest/test_scalarbaractor.h \
-    Modules/NavigationUnit.h
+    Modules/NavigationUnit.h \
+    UnitTest/test_cameraactor.h \
+    UnitTest/test_camerawidget.h \
+    UnitTest/test_ballonwidget.h \
+    Modules/CenLine_1/itkArrivalFunctionToPathFilter.h \
+    Modules/CenLine_1/itkImageToPathFilter.h \
+    Modules/CenLine_1/itkIterateNeighborhoodOptimizer.h \
+    Modules/CenLine_1/itkPhysicalCentralDifferenceImageFunction.h \
+    Modules/CenLine_1/itkSingleImageCostFunction.h \
+    Modules/CenLine_1/itkSpeedFunctionToPathFilter.h \
+    Modules/CenLineUnit.h
 
 FORMS    += mainwindow.ui
 
@@ -139,6 +156,10 @@ INCLUDEPATH += CTK-LIBS/LIBS/Widgets/ \
                CTK-LIBS/LIBS/Core/ \
                CTK-LIBS/LIBS/Visualization/VTK/Widgets/ \
                CTK-LIBS/LIBS/Visualization/VTK/Core/ \
+               Modules/ \
+               UnitTest/ \
+               Utils/ \
+
 
 DISTFILES += \
     SubSys/WTK.exp \

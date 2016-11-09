@@ -12,7 +12,7 @@
 #include <vtkLight.h>
 #include <vtkCornerAnnotation.h>
 #include <vtkTextProperty.h>
-#include "../Utils/fastdef.h"
+#include "fastdef.h"
 
 class NavigationUnit
 {

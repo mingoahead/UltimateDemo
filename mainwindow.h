@@ -4,12 +4,14 @@
 #include <QMainWindow>
 
 #include "QVTKWidget.h"
-#include "UnitTest/testunit.h"
-#include "Modules/AneurysmUnit.h"
-#include "Modules/NavigationUnit.h"
+
 #include <vtkSTLReader.h>
 #include <vtkRenderer.h>
 #include <vtkCamera.h>
+
+#include "testunit.h"
+#include "AneurysmUnit.h"
+#include "NavigationUnit.h"
 namespace Ui {
 class MainWindow;
 }
@@ -72,12 +74,14 @@ private slots:
     void on_cb_ctrline_method1_toggled(bool checked);
     void on_cb_ctrline_method2_toggled(bool checked);
     void on_cb_ctrline_method3_toggled(bool checked);
+    void on_rb_pointpicker_toggled(bool checked);
 
     void on_tb_play_clicked();
     void on_tb_stop_clicked();
     void on_tb_backward_clicked();
     void on_tb_forward_clicked();
     void on_cbb_curPath_currentIndexChanged(int index);
+
 
 
 };

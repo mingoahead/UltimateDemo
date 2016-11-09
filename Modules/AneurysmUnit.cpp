@@ -1,13 +1,8 @@
 #include "AneurysmUnit.h"
-
+vtkStandardNewMacro(CusInteractorStylePickPoint);
 
 AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
 {
-
-//    m_renderer = vtkSmartPointer<vtkRenderer>::New();
-//    m_segmentationModel = vtkSmartPointer<vtkActor>::New();
-//    m_3DReg_segmentationReader = vtkSmartPointer<vtkSTLReader>::New();
-
     vsp(m_renderer);
     vsp(m_ul_renderer);
     vsp(m_ur_renderer);
@@ -27,7 +22,14 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     vsp(m_corViewer);
     vsp(m_sagViewer);
     InitAnnotation();
+    vsp(m_lineInfoPointPicker);
+    vsp(m_pointPickerInteractor);
+    m_renderWindow->GetInteractor()->SetInteractorStyle(m_pointPickerInteractor);
+    m_pointPickerInteractor->PreparedRenderer(m_renderer);
+
     InitSliders();
+    InitCamerasWidgets();
+    m_renderer->ResetCamera();
 }
 
 AneurysmUnit::~AneurysmUnit()
@@ -283,6 +285,11 @@ bool AneurysmUnit::BindSlider(vtkSmartPointer<vtkActor> actor,
     }
 }
 
+void AneurysmUnit::SetPointPickerEnabled(bool enabled)
+{
+    m_pointPickerInteractor->SetPickerEnabled(enabled);
+}
+
 
 void AneurysmUnit::InitAnnotation()
 {
@@ -305,4 +312,14 @@ void AneurysmUnit::InitAnnotation()
     m_sagAnnotation->SetText(3, "Sagittal");
     m_sagAnnotation->GetTextProperty()->SetColor(1, 0, 0);
     RegisterDisplay(1);
+}
+
+void AneurysmUnit::InitCamerasWidgets()
+{
+    vsp(m_cameraRep);
+    m_cameraRep->SetNumberOfFrames(20);
+    vsp(m_cameraWidget);
+    m_cameraWidget->SetInteractor(m_renderWindow->GetInteractor());
+    m_cameraWidget->SetRepresentation(m_cameraRep);
+    m_cameraWidget->On();
 }
