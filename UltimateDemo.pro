@@ -148,7 +148,10 @@ HEADERS  += mainwindow.h \
     Modules/CenLine_1/itkPhysicalCentralDifferenceImageFunction.h \
     Modules/CenLine_1/itkSingleImageCostFunction.h \
     Modules/CenLine_1/itkSpeedFunctionToPathFilter.h \
-    Modules/CenLineUnit.h
+    Modules/CenLineUnit.h \
+    UnitTest/test_vtkimagedata.h \
+    UnitTest/test_elevationmap.h \
+    UnitTest/test_imageslicing.h
 
 FORMS    += mainwindow.ui
 

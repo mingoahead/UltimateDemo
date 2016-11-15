@@ -247,13 +247,13 @@ public:
         case COMP4_MOD:
             RemoveAllRenderers();
             m_ul_renderer -> SetViewport(0, 0, 0.5, 0.5);
-            m_ul_renderer -> SetBackground(0.3, 0.5, 0.5);
+            m_ul_renderer -> SetBackground(0.1, 0.1, 0.2);
             m_ur_renderer -> SetViewport(.5, 0, 1, 0.5);
-            m_ur_renderer -> SetBackground(0.4, 0.4, 0.6);
+            m_ur_renderer -> SetBackground(0.1, 0.2, 0.1);
             m_bl_renderer -> SetViewport(0, 0.5, 0.5, 1);
-            m_bl_renderer -> SetBackground(0.7, 0.6, 0.7);
+            m_bl_renderer -> SetBackground(0.2, 0.1, 0.2);
             m_br_renderer -> SetViewport(0.5, 0.5, 1, 1);
-            m_br_renderer -> SetBackground(.5, .5, .5);
+            m_br_renderer -> SetBackground(.2, .2, .2);
             m_renderWindow -> AddRenderer(m_ul_renderer);
             m_renderWindow -> AddRenderer(m_ur_renderer);
             m_renderWindow -> AddRenderer(m_bl_renderer);
