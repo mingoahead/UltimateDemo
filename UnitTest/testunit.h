@@ -29,7 +29,8 @@ public:
 //        Test_ScalarBarActor::RunTest();
 //        Test_CameraActor::RunTest();
 //        Test_CameraWidget::RunTest();
-        Test_BalloonWidget::RunTest();
+//        Test_BalloonWidget::RunTest();
+
     }
 };
 

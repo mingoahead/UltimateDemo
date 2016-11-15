@@ -24,8 +24,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->panelDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     ui->NavgunitWidget->setSizePolicy(sizePolicy);
-
-
     createActions();
     createMenus();
     createLayout();
@@ -262,7 +260,12 @@ void MainWindow::on_pb_test4view_clicked()
 
 void MainWindow::on_cb_ctrline_method1_toggled(bool checked)
 {
-
+    if(checked){
+        m_appUnit->GetCenterLine(0);
+        m_appUnit->DrawCenterLine(0, true);
+    }else{
+        m_appUnit->HideCenterLine(0, true);
+    }
 }
 
 void MainWindow::on_cb_ctrline_method2_toggled(bool checked)

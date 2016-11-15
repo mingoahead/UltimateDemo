@@ -6,7 +6,8 @@
 # include "initials.h"
 
 #define Instantiate(obj,class) vtkSmartPointer<class> obj = vtkSmartPointer<class>::New();
-
+#define VTK_CREATE(type, name) \
+    vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 template <typename T>
 inline void vsp(vtkSmartPointer<T> &var)
 {

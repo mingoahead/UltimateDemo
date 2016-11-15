@@ -56,11 +56,20 @@ class CenLineUnit
 {
 public:
     CenLineUnit();
+    int GetCenterLinePointNums();
+    void GetCenterLinePoint(int index, double p[3]);
     // method 1
     // ***********************************************************************
     int Path_GradientDescent(std::string filename, double ps[3], double pe[3]);
     std::vector<Point3f> CenterPoints;
     // ***********************************************************************
+private:
+    std::vector<OutputImageType::IndexType> localMinVec;
+    std::vector<OutputImageType::PointType> MinPoints;
+    void clear()
+    {
+        localMinVec.clear();
+    }
 };
 
 #endif // CENLINEUNIT_H

@@ -2,6 +2,7 @@
 #define ANEURYSMUNIT_H
 #include <string>
 #include <vector>
+#include <map>
 #include <vtkActor.h>
 #include <vtkActorCollection.h>
 #include <vtkActor2D.h>
@@ -31,6 +32,11 @@
 #include <vtkWidgetEvent.h>
 #include <vtkCallbackCommand.h>
 #include <vtkProperty2D.h>
+#include <vtkCellArray.h>
+#include <vtkLine.h>
+#include <vtkPoints.h>
+#include <vtkColor.h>
+#include <vtkPointData.h>
 
 #include <vtkCameraRepresentation.h>
 #include <vtkCameraWidget.h>
@@ -213,6 +219,11 @@ public:
     void ShowLineMode(int option);
     void ShowPointMode(int option);
     void HideSegmentationModel(int option);
+    void ShowCenterPoints(vtkSmartPointer<vtkActor> LineModel, 
+                          std::vector<Point3f> &CenterPoints);
+    void GetCenterLine(int option);
+    void DrawCenterLine(int option, bool isLeft);
+    void HideCenterLine(int option, bool isLeft);
     void RegisterDisplay(int mod)
     {
         switch(mod) {
@@ -302,6 +313,7 @@ public:
                     vtkSmartPointer<vtkSliderCallBack> sliderCallBack,
                     vtkSmartPointer<vtkSliderWidget> sliderWidget);
     void SetPointPickerEnabled(bool enabled = true);
+    std::string GetRawFilename();
 private:
     vtkRenderWindow * m_renderWindow;
     vtkSmartPointer<vtkRenderer> m_renderer;
@@ -315,6 +327,11 @@ private:
     vtkSmartPointer<vtkSTLReader> m_3DReg_segmentationReader;
     vtkSmartPointer<vtkSTLReader> m_LevelSet_segmentationReader;
     vtkSmartPointer<vtkSTLReader> m_RegDetect_segmentationReader;
+
+    vtkSmartPointer<vtkActor> m_leftLineModel;
+    vtkSmartPointer<vtkActor> m_rightLineModel;
+    std::pair<std::string, std::string> m_filename;
+    CenLineUnit *m_centerLine;
 
     vtkSmartPointer<vtkImageViewer> m_tranViewer;
     vtkSmartPointer<vtkImageViewer> m_sagViewer;

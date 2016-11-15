@@ -18,6 +18,9 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     m_3DReg_segmentationModel -> GetProperty() -> SetColor(1.0, .0, .0);
     m_LevelSet_segmentationModel -> GetProperty() -> SetColor(.0, 1.0, .0);
     m_RegDetect_segmentationModel -> GetProperty() -> SetColor(.0, .0, 1.0);
+    m_centerLine = new CenLineUnit;
+    vsp(m_leftLineModel);
+    vsp(m_rightLineModel);
     vsp(m_tranViewer);
     vsp(m_corViewer);
     vsp(m_sagViewer);
@@ -34,7 +37,7 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
 
 AneurysmUnit::~AneurysmUnit()
 {
-
+    delete m_centerLine;
 }
 
 vtkRenderer *AneurysmUnit::GetRenderer() {return m_renderer;}
@@ -55,6 +58,11 @@ vtkRenderer *AneurysmUnit::GetsagViewerRenderer() {return m_sagViewerRenderer;}
 
 void AneurysmUnit::ReadInputSegmentationModel(std::string fileName, int option)
 {
+    int size = fileName.size();\
+    if(size < 3) return ;
+    m_filename.first = fileName;
+    m_filename.second = (m_filename.first).substr(0, size - 3) + "mhd";
+    std::cout << "the mhd filename is " << m_filename.second << std::endl;
 
     switch(option) {
     case 1:
@@ -204,6 +212,72 @@ void AneurysmUnit::HideSegmentationModel(int option)
     }
 }
 
+void AneurysmUnit::ShowCenterPoints(vtkSmartPointer<vtkActor> LineModel,
+                                    std::vector<Point3f> &CenterPoints)
+{
+    int num = CenterPoints.size();
+    Instantiate(points, vtkPoints);
+    Instantiate(vectices, vtkCellArray);
+    Instantiate(lines, vtkCellArray);
+    Instantiate(line, vtkLine);
+    Instantiate(colors, vtkUnsignedCharArray);
+    colors->SetNumberOfComponents(3);
+    unsigned char pupple[3] = {255, 0, 255};
+    std::vector<Point3f>::const_iterator it = CenterPoints.begin();
+    for(unsigned int i = 0; i < num && it != CenterPoints.end(); i++, it++) {
+        vtkIdType pid[1];
+        pid[0] = points->InsertNextPoint((*it).x, (*it).y, (*it).z);
+        colors->InsertNextTupleValue(pupple);
+        vectices->InsertNextCell(1, pid);
+        if(i < num - 1) {
+            line->GetPointIds()->SetId(0, i);
+            line->GetPointIds()->SetId(1, i+1);
+            lines->InsertNextCell(line);
+        }
+    }
+    Instantiate(polydata, vtkPolyData);
+    polydata->SetPoints(points);
+    polydata->SetVerts(vectices);
+    polydata->SetLines(lines);
+    polydata->GetPointData()->SetScalars(colors);
+    Instantiate(cenmapper, vtkPolyDataMapper);
+    cenmapper->SetInputData(polydata);
+    LineModel->SetMapper(cenmapper);
+    m_renderer->AddActor(LineModel);
+    m_renderWindow->Render();
+    
+}
+
+void AneurysmUnit::GetCenterLine(int option)
+{
+    double s[3], e[3];
+    m_pointPickerInteractor->GetMarkedPoints(s, e);
+    int tmp = option % 3;
+    if(tmp == 0) {
+        m_centerLine->Path_GradientDescent(GetRawFilename(), s, e);
+    }
+}
+
+void AneurysmUnit::DrawCenterLine(int option, bool isLeft)
+{
+//    GetCenterLine(option);
+    if(isLeft){
+        ShowCenterPoints(m_leftLineModel, m_centerLine->CenterPoints);
+    }else{
+        ShowCenterPoints(m_rightLineModel, m_centerLine->CenterPoints);
+    }
+}
+
+void AneurysmUnit::HideCenterLine(int option, bool isLeft)
+{
+    if(isLeft) {
+        m_renderer->RemoveActor(m_leftLineModel);
+    }else {
+        m_renderer->RemoveActor(m_rightLineModel);
+    }
+    m_renderer->Render();
+}
+
 void AneurysmUnit::InitSliders()
 {
     vsp(m_slider1Rep);
@@ -290,6 +364,7 @@ void AneurysmUnit::SetPointPickerEnabled(bool enabled)
     m_pointPickerInteractor->SetPickerEnabled(enabled);
 }
 
+std::string AneurysmUnit::GetRawFilename() {      return m_filename.second;     }
 
 void AneurysmUnit::InitAnnotation()
 {

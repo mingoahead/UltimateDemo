@@ -2,7 +2,22 @@
 
 CenLineUnit::CenLineUnit()
 {
-    
+    clear();
+}
+
+int CenLineUnit::GetCenterLinePointNums()
+{
+    return MinPoints.size();
+}
+
+void CenLineUnit::GetCenterLinePoint(int index, double p[])
+{
+    memset(p, .0, 3 * sizeof(double));
+    if(0 <= index && index <MinPoints.size()) {
+        p[0] = MinPoints[index][0];
+        p[1] = MinPoints[index][1];
+        p[2] = MinPoints[index][2];
+    }
 }
 /**
  * @brief CenLineUnit::Path_GradientDescent
