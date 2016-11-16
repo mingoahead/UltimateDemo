@@ -24,15 +24,15 @@ public:
 //        Test_ExtractPolyLine::RunTest();
 //        Test_ImagePlaneWidget::RunTest();
 
-       Test_3Views *test3views = new Test_3Views();
+//       Test_3Views *test3views = new Test_3Views();
 //        test3views -> SetInputDicomSeriesDirectory("D:\\3dresearch\\TestData\\dicom");
-        test3views -> RunTest();
-        delete test3views;
+//        test3views -> RunTest();
+//        delete test3views;
 //        Test_ScalarBarActor::RunTest();
 //        Test_CameraActor::RunTest();
 //        Test_CameraWidget::RunTest();
 //        Test_BalloonWidget::RunTest();
-//        Test_vtkImageData::RunTest();
+        Test_vtkImageData::RunTest();
 
     }
 };

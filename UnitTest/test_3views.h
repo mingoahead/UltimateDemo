@@ -224,11 +224,11 @@ public:
         // iren->InvokeEvent(vtkCommand::CharEvent,NULL);
 
 
-//          ren->GetActiveCamera()->Elevation(110);
-//          ren->GetActiveCamera()->SetViewUp(0, 0, -1);
-//          ren->GetActiveCamera()->Azimuth(45);
-//          ren->GetActiveCamera()->Dolly(1.15);
-//          ren->ResetCameraClippingRange();
+          ren->GetActiveCamera()->Elevation(110);
+          ren->GetActiveCamera()->SetViewUp(0, 0, -1);
+          ren->GetActiveCamera()->Azimuth(45);
+          ren->GetActiveCamera()->Dolly(1.15);
+          ren->ResetCameraClippingRange();
 
           iren->Initialize();
           iren->Start();

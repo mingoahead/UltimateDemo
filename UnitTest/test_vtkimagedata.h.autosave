@@ -11,6 +11,7 @@
 #include <vtkMetaImageReader.h>
 #include <vtkImageActor.h>
 #include <vtkImageResliceMapper.h>
+#include <vtkImageReslice.h>
 #include <vtkImageProperty.h>
 class Test_vtkImageData {
 public:
