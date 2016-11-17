@@ -4,6 +4,8 @@ vtkStandardNewMacro(CusInteractorStylePickPoint);
 AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
 {
     vsp(m_renderer);
+    vsp(m_renInteractor);
+    m_renInteractor->SetRenderWindow(m_renderWindow);
     vsp(m_ul_renderer);
     vsp(m_ur_renderer);
     vsp(m_bl_renderer);
@@ -305,18 +307,18 @@ bool AneurysmUnit::LoadRawData(std::string fileName)
 
 bool AneurysmUnit::RawDataExist()
 {
-    if(m_rawData == NULL) return false;
-    int extent[6];
-    m_rawData->GetExtent(extent);
-    if(extent[1] != 0 && extent[3] != 0 && extent[5] != 0)
-        return true;
-    return false;
+//    int extent[6];
+//    m_rawData->GetExtent(extent);
+//    if(extent[1] != 0 && extent[3] != 0 && extent[5] != 0)
+//        return true;
+//    else
+//        return false;
+    return m_rawData->GetActualMemorySize() != 0 ? true : false;
 }
 
 void AneurysmUnit::DrawSliceFactory(vtkSmartPointer<vtkRenderer> renderer, vtkSmartPointer<vtkImageActor> imgActor, double transformMat[], double pos[])
 {
-
-    if(m_rawData == NULL || !RawDataExist())
+    if(!RawDataExist())
         return ;
     vtkSmartPointer<vtkMatrix4x4> resliceAxes =
             vtkSmartPointer<vtkMatrix4x4>::New();
@@ -349,10 +351,13 @@ void AneurysmUnit::DrawSliceFactory(vtkSmartPointer<vtkRenderer> renderer, vtkSm
     imgActor->SetInputData((vtkImageData*)colorMap->GetOutput());
     colorMap->Update();
     renderer->AddActor(imgActor);
+    vtkSmartPointer<vtkInteractorStyleImage> style =
+            vtkSmartPointer<vtkInteractorStyleImage>::New();
+    m_renInteractor->SetInteractorStyle(style);
+
 
 //    viewer->GetRenderer()->AddActor(imgActor);
-//    vtkSmartPointer<vtkInteractorStyleImage> style =
-//            vtkSmartPointer<vtkInteractorStyleImage>::New();
+
 //    viewer->GetRenderWindow()->GetInteractor()->SetInteractorStyle(style);
 //    viewer->Render();
 //    viewer->GetRenderWindow()->GetInteractor()->Start();

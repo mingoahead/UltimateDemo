@@ -273,6 +273,7 @@ void MainWindow::on_pb_test3view_clicked()
     if(!(m_appUnit->RawDataExist())) {
         QMessageBox::warning(NULL, "warning", "First, need to load raw data! ", QMessageBox::Yes);
         return ;
+//        std::cout << "First, need to load raw data! " << std::endl;
     }
     m_appUnit -> RegisterDisplay(3);
     double curpos[3] = {4.99979, -134.5, 1157.95};
