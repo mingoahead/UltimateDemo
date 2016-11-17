@@ -47,6 +47,15 @@
 #include <vtkPointPicker.h>
 #include <vtkSphereSource.h>
 
+#include <vtkImageActor.h>
+#include <vtkLookupTable.h>
+#include <vtkInteractorStyleImage.h>
+#include <vtkImageMapToColors.h>
+#include <vtkMatrix4x4.h>
+#include <vtkMetaImageReader.h>
+#include <vtkImageShiftScale.h>
+#include <vtkImageReslice.h>
+
 #include "fastdef.h"
 #include "CenLineUnit.h"
 /**
@@ -224,6 +233,13 @@ public:
     void GetCenterLine(int option);
     void DrawCenterLine(int option, bool isLeft);
     void HideCenterLine(int option, bool isLeft);
+
+    bool LoadRawData(std::string fileName);
+    bool RawDataExist();
+    void DrawSliceFactory(vtkSmartPointer<vtkRenderer> renderer
+                              , vtkSmartPointer<vtkImageActor>imgActor
+                              , double transformMat[16], double pos[3]);
+    void Draw3DSlice(double pos[3]);
     void RegisterDisplay(int mod)
     {
         switch(mod) {
@@ -316,6 +332,7 @@ public:
     std::string GetRawFilename();
 private:
     vtkRenderWindow * m_renderWindow;
+    vtkSmartPointer<vtkRenderWindowInteractor> m_renInteractor;
     vtkSmartPointer<vtkRenderer> m_renderer;
     vtkSmartPointer<vtkRenderer> m_ul_renderer;
     vtkSmartPointer<vtkRenderer> m_ur_renderer;
@@ -333,9 +350,13 @@ private:
     std::pair<std::string, std::string> m_filename;
     CenLineUnit *m_centerLine;
 
+    vtkSmartPointer<vtkImageData> m_rawData;
     vtkSmartPointer<vtkImageViewer> m_tranViewer;
     vtkSmartPointer<vtkImageViewer> m_sagViewer;
     vtkSmartPointer<vtkImageViewer> m_corViewer;
+    vtkSmartPointer<vtkImageActor> m_tranActor;
+    vtkSmartPointer<vtkImageActor> m_sagActor;
+    vtkSmartPointer<vtkImageActor> m_corActor;
 
     vtkSmartPointer<vtkCornerAnnotation> m_tranAnnotation;
     vtkSmartPointer<vtkCornerAnnotation> m_sagAnnotation;

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QMessageBox>
 
 #include "QVTKWidget.h"
 
@@ -53,6 +54,7 @@ private:
     void initRenderWindow();
     void updateRenderWindow();
 private slots:
+    void open();
     void openStl(int option);
     void exit();
     void viewDockPanel(bool);

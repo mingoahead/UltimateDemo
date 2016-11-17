@@ -18,5 +18,23 @@ inline void vsp(vtkSmartPointer<T> &var)
 struct Point3f {
     double x, y, z;
 };
+static double tranElements[16] = {
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+};
+static double coronalElements[16] = {
+    1, 0, 0, 0,
+    0, 0, 1, 0,
+    0, -1, 0, 0,
+    0, 0, 0,  1
+};
+static double sagittalElements[16] = {
+    0, 0, -1, 0,
+    1, 0, 0, 0,
+    0, -1, 0, 0,
+    0, 0 , 0, 1
+};
 #endif // FASTDEF
 

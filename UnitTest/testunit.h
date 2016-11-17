@@ -32,7 +32,9 @@ public:
 //        Test_CameraActor::RunTest();
 //        Test_CameraWidget::RunTest();
 //        Test_BalloonWidget::RunTest();
+        std::cout << "**************TEST PART BEGIN:*****************" << std::endl;
         Test_vtkImageData::RunTest();
+        std::cout << "**************TEST PART END:*****************" << std::endl;
 
     }
 };

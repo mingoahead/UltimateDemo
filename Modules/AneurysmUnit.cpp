@@ -21,9 +21,13 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     m_centerLine = new CenLineUnit;
     vsp(m_leftLineModel);
     vsp(m_rightLineModel);
+    vsp(m_rawData);
     vsp(m_tranViewer);
     vsp(m_corViewer);
     vsp(m_sagViewer);
+    vsp(m_tranActor);
+    vsp(m_corActor);
+    vsp(m_sagActor);
     InitAnnotation();
     vsp(m_lineInfoPointPicker);
     vsp(m_pointPickerInteractor);
@@ -276,6 +280,89 @@ void AneurysmUnit::HideCenterLine(int option, bool isLeft)
         m_renderer->RemoveActor(m_rightLineModel);
     }
     m_renderer->Render();
+}
+
+bool AneurysmUnit::LoadRawData(std::string fileName)
+{
+    if(fileName.empty()) return false;
+    vtkSmartPointer<vtkMetaImageReader> reader =
+                vtkSmartPointer<vtkMetaImageReader>::New();
+    reader->SetFileName(fileName.c_str());
+    reader->Update();
+    std::cout << m_rawData->GetActualMemorySize() << std::endl;
+    m_rawData = reader->GetOutput();
+    std::cout << m_rawData->GetActualMemorySize() << std::endl;
+    int extent[6];
+    m_rawData->GetExtent(extent);
+    std::cout << extent[0] << ", " << extent[1] << ", "
+                     << extent[2] << ", " << extent[3] << ", "
+                     << extent[4] << ", " << extent[5] << std::endl;
+    if(RawDataExist())
+        return true;
+    else
+        return false;
+}
+
+bool AneurysmUnit::RawDataExist()
+{
+    if(m_rawData == NULL) return false;
+    int extent[6];
+    m_rawData->GetExtent(extent);
+    if(extent[1] != 0 && extent[3] != 0 && extent[5] != 0)
+        return true;
+    return false;
+}
+
+void AneurysmUnit::DrawSliceFactory(vtkSmartPointer<vtkRenderer> renderer, vtkSmartPointer<vtkImageActor> imgActor, double transformMat[], double pos[])
+{
+
+    if(m_rawData == NULL || !RawDataExist())
+        return ;
+    vtkSmartPointer<vtkMatrix4x4> resliceAxes =
+            vtkSmartPointer<vtkMatrix4x4>::New();
+    resliceAxes->DeepCopy(transformMat);
+    resliceAxes->SetElement(0, 3, pos[0]);
+    resliceAxes->SetElement(1, 3, pos[1]);
+    resliceAxes->SetElement(2, 3, pos[2]);
+    vtkSmartPointer<vtkImageShiftScale> shifter =
+            vtkSmartPointer<vtkImageShiftScale>::New();
+    shifter->SetInputData(m_rawData);
+    shifter->SetOutputScalarTypeToUnsignedChar();
+    shifter->Update();
+    vtkSmartPointer<vtkImageReslice> reslice =
+            vtkSmartPointer<vtkImageReslice>::New();
+    reslice->SetInputConnection(shifter->GetOutputPort());
+    reslice->SetOutputDimensionality(2);
+    reslice->SetResliceAxes(resliceAxes);
+    reslice->SetInterpolationModeToLinear();
+    vtkSmartPointer<vtkLookupTable> colorTable =
+            vtkSmartPointer<vtkLookupTable>::New();
+    colorTable->SetRange(0, 255);
+    colorTable->SetValueRange(0.0, 1.0);
+    colorTable->SetSaturationRange(0.0, 0.0);
+    colorTable->SetRampToLinear();
+    colorTable->Build();
+    vtkSmartPointer<vtkImageMapToColors> colorMap =
+            vtkSmartPointer<vtkImageMapToColors>::New();
+    colorMap->SetLookupTable(colorTable);
+    colorMap->SetInputConnection(reslice->GetOutputPort());
+    imgActor->SetInputData((vtkImageData*)colorMap->GetOutput());
+    colorMap->Update();
+    renderer->AddActor(imgActor);
+
+//    viewer->GetRenderer()->AddActor(imgActor);
+//    vtkSmartPointer<vtkInteractorStyleImage> style =
+//            vtkSmartPointer<vtkInteractorStyleImage>::New();
+//    viewer->GetRenderWindow()->GetInteractor()->SetInteractorStyle(style);
+//    viewer->Render();
+//    viewer->GetRenderWindow()->GetInteractor()->Start();
+}
+
+void AneurysmUnit::Draw3DSlice(double pos[])
+{
+    DrawSliceFactory(m_tranViewerRenderer, m_tranActor, tranElements, pos);
+    DrawSliceFactory(m_corViewerRenderer, m_corActor, coronalElements, pos);
+    DrawSliceFactory(m_sagViewerRenderer, m_sagActor, sagittalElements, pos);
 }
 
 void AneurysmUnit::InitSliders()

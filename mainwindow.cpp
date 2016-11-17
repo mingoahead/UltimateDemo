@@ -45,7 +45,7 @@ MainWindow::~MainWindow()
 void MainWindow::createActions()
 {
     m_openStlAct = new QAction(tr("&Open"), this);
-//    connect(m_openStlAct, SIGNAL(triggered()), this, SLOT(openStl()));
+    connect(m_openStlAct, SIGNAL(triggered()), this, SLOT(open()));
     m_exitAct = new QAction(tr("&Exit"), this);
     connect(m_exitAct, SIGNAL(triggered()), this, SLOT(exit()));
     m_viewDockPanelAct = new QAction(tr("View Panel"), this);
@@ -119,6 +119,16 @@ void MainWindow::initRenderWindow()
 void MainWindow::updateRenderWindow()
 {
     m_vtkWidget->GetRenderWindow()->Render();
+}
+
+void MainWindow::open()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Segment Model for ")
+                                                    , tr("/home"), tr("mhd or mha file (*.mhd)"));
+    if(!fileName.isNull()) {
+        m_appUnit->LoadRawData(fileName.toStdString());
+        updateRenderWindow();
+    }
 }
 
 void MainWindow::openStl(int option)
@@ -245,11 +255,31 @@ void MainWindow::on_cbb_show_sd_currentIndexChanged(int index)
     }
     updateRenderWindow();
 }
+void MainWindow::on_pb_test1view_clicked()
+{
+    m_appUnit -> RegisterDisplay(1);
+    updateRenderWindow();
+}
 
+void MainWindow::on_pb_test2view_clicked()
+{
+    m_appUnit -> RegisterDisplay(2);
+    updateRenderWindow();
+}
 void MainWindow::on_pb_test3view_clicked()
 {
+
+//    updateRenderWindow();
+    if(!(m_appUnit->RawDataExist())) {
+        QMessageBox::warning(NULL, "warning", "First, need to load raw data! ", QMessageBox::Yes);
+        return ;
+    }
     m_appUnit -> RegisterDisplay(3);
+    double curpos[3] = {4.99979, -134.5, 1157.95};
+    m_appUnit->Draw3DSlice(curpos);
     updateRenderWindow();
+
+
 }
 
 void MainWindow::on_pb_test4view_clicked()
@@ -310,14 +340,4 @@ void MainWindow::on_cbb_curPath_currentIndexChanged(int index)
 
 }
 
-void MainWindow::on_pb_test1view_clicked()
-{
-    m_appUnit -> RegisterDisplay(1);
-    updateRenderWindow();
-}
 
-void MainWindow::on_pb_test2view_clicked()
-{
-    m_appUnit -> RegisterDisplay(2);
-    updateRenderWindow();
-}
