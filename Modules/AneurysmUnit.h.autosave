@@ -336,8 +336,8 @@ public:
             m_renderWindow -> AddRenderer(m_tranViewerRenderer);
             m_renderWindow -> AddRenderer(m_corViewerRenderer);
             m_renderWindow -> AddRenderer(m_sagViewerRenderer);
-            std::cout << "Current Style : "
-                      << m_renInteractor->GetInteractorStyle()->GetClassName() << std::endl;
+//            std::cout << "Current Style : "
+//                      << m_renInteractor->GetInteractorStyle()->GetClassName() << std::endl;
             int m = m_renInteractor->GetInteractorStyle()->IsTypeOf("vtkInteractorStyleImage");
             if(0 == m) {
                 m_renInteractor->RemoveObserver((vtkCommand*)m_renInteractor->GetInteractorStyle());

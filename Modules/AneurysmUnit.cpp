@@ -6,6 +6,7 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     vsp(m_renderer);
     vsp(m_renInteractor);
     m_renInteractor->SetRenderWindow(m_renderWindow);
+    vsp(m_light);
     vsp(m_ul_renderer);
     vsp(m_ur_renderer);
     vsp(m_bl_renderer);
@@ -21,6 +22,17 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     m_LevelSet_segmentationModel -> GetProperty() -> SetColor(.0, 1.0, .0);
     m_RegDetect_segmentationModel -> GetProperty() -> SetColor(.0, .0, 1.0);
     m_centerLine = new CenLineUnit;
+    m_currentRoamingRouteId = 1;
+    m_currentRoamingStep = 15;
+    Instantiate(tmp_camera, vtkCamera);
+    tmp_camera->SetPosition(0, 0, 20);
+    tmp_camera->SetFocalPoint(0, 0, 0);
+    m_light->SetColor(1.0, 1.0, 1.0);
+    m_light->SetPosition(tmp_camera->GetPosition());
+    m_light->SetFocalPoint(tmp_camera->GetFocalPoint());
+    m_light->SetIntensity(.5);
+    m_renderer->SetActiveCamera(tmp_camera);
+
     vsp(m_leftLineModel);
     vsp(m_rightLineModel);
     vsp(m_rawData);
@@ -32,9 +44,15 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     vsp(m_sagActor);
     InitAnnotation();
     vsp(m_lineInfoPointPicker);
-    vsp(m_pointPickerInteractor);
-    m_renderWindow->GetInteractor()->SetInteractorStyle(m_pointPickerInteractor);
-    m_pointPickerInteractor->PreparedRenderer(m_renderer);
+    Instantiate(t_pointPickerStyle, CusInteractorStylePickPoint);
+    m_renInteractor->SetInteractorStyle(t_pointPickerStyle);
+    t_pointPickerStyle->PreparedRenderer(m_renderer);
+
+//    vsp(m_pointPickerInteractorStyle);
+//    m_renInteractor->SetInteractorStyle(m_pointPickerInteractorStyle);
+//    m_pointPickerInteractorStyle->PreparedRenderer(m_renderer);
+
+//    vsp(m_sliceViewStyle);
 
     InitSliders();
     InitCamerasWidgets();
@@ -257,7 +275,21 @@ void AneurysmUnit::ShowCenterPoints(vtkSmartPointer<vtkActor> LineModel,
 void AneurysmUnit::GetCenterLine(int option)
 {
     double s[3], e[3];
-    m_pointPickerInteractor->GetMarkedPoints(s, e);
+    int m = m_renInteractor->GetInteractorStyle()->IsTypeOf("CusInteractorStylePickPoint");
+    if(0 == m) {
+        Instantiate(t_pickPointStyle, CusInteractorStylePickPoint);
+        m_renInteractor->SetInteractorStyle(t_pickPointStyle);
+        t_pickPointStyle->PreparedRenderer(m_renderer);
+//        m_renInteractor->SetInteractorStyle(m_pointPickerInteractorStyle);
+//        m_pointPickerInteractorStyle->PreparedRenderer(m_renderer);
+    }
+    CusInteractorStylePickPoint* cur_pointPickerStyle
+            = (CusInteractorStylePickPoint*)m_renInteractor->GetInteractorStyle();
+    if(!(cur_pointPickerStyle->GetEnabled())) {
+        return ;
+    }
+    cur_pointPickerStyle->GetMarkedPoints(s, e);
+//    m_pointPickerInteractorStyle->GetMarkedPoints(s, e);
     int tmp = option % 3;
     if(tmp == 0) {
         m_centerLine->Path_GradientDescent(GetRawFilename(), s, e);
@@ -268,9 +300,9 @@ void AneurysmUnit::DrawCenterLine(int option, bool isLeft)
 {
 //    GetCenterLine(option);
     if(isLeft){
-        ShowCenterPoints(m_leftLineModel, m_centerLine->CenterPoints);
+        ShowCenterPoints(m_leftLineModel, m_centerLine->CenterPoints1);
     }else{
-        ShowCenterPoints(m_rightLineModel, m_centerLine->CenterPoints);
+        ShowCenterPoints(m_rightLineModel, m_centerLine->CenterPoints2);
     }
 }
 
@@ -282,6 +314,43 @@ void AneurysmUnit::HideCenterLine(int option, bool isLeft)
         m_renderer->RemoveActor(m_rightLineModel);
     }
     m_renderer->Render();
+}
+
+void AneurysmUnit::SetRoamingRoute(int id)
+{
+    if((id == 1 || id == 2) && (m_currentRoamingRouteId != id)) {
+        m_currentRoamingRouteId = id;
+    }
+}
+
+void AneurysmUnit::SetRoamingStep(int step)
+{
+    m_currentRoamingStep = step;
+}
+
+void AneurysmUnit::OnRoam()
+{
+    m_currentRoamingIndex = 0;
+    UpdateRoamingCamera();
+}
+
+void AneurysmUnit::RoamNext()
+{
+    m_currentRoamingIndex += m_currentRoamingStep;
+    int limit = m_centerLine->GetCenterLinePointNums(m_currentRoamingRouteId);
+    if(m_currentRoamingIndex >= limit) {
+        m_currentRoamingIndex = std::max(0, limit - 1);
+    }
+    UpdateRoamingCamera();
+}
+
+void AneurysmUnit::RoamPrevious()
+{
+    m_currentRoamingIndex -= m_currentRoamingStep;
+    if(m_currentRoamingIndex < 0) {
+        m_currentRoamingIndex = 0;
+    }
+    UpdateRoamingCamera();
 }
 
 bool AneurysmUnit::LoadRawData(std::string fileName)
@@ -351,9 +420,9 @@ void AneurysmUnit::DrawSliceFactory(vtkSmartPointer<vtkRenderer> renderer, vtkSm
     imgActor->SetInputData((vtkImageData*)colorMap->GetOutput());
     colorMap->Update();
     renderer->AddActor(imgActor);
-    vtkSmartPointer<vtkInteractorStyleImage> style =
-            vtkSmartPointer<vtkInteractorStyleImage>::New();
-    m_renInteractor->SetInteractorStyle(style);
+//    vtkSmartPointer<vtkInteractorStyleImage> style =
+//            vtkSmartPointer<vtkInteractorStyleImage>::New();
+//    m_renInteractor->SetInteractorStyle(style);
 
 
 //    viewer->GetRenderer()->AddActor(imgActor);
@@ -453,10 +522,47 @@ bool AneurysmUnit::BindSlider(vtkSmartPointer<vtkActor> actor,
 
 void AneurysmUnit::SetPointPickerEnabled(bool enabled)
 {
-    m_pointPickerInteractor->SetPickerEnabled(enabled);
+    CusInteractorStylePickPoint* cur_pointPickerStyle
+            = (CusInteractorStylePickPoint*)m_renInteractor->GetInteractorStyle();
+    cur_pointPickerStyle->SetPickerEnabled(enabled);
+//    m_pointPickerInteractorStyle->SetPickerEnabled(enabled);
 }
 
 std::string AneurysmUnit::GetRawFilename() {      return m_filename.second;     }
+
+void AneurysmUnit::GetCurrentRoamingPoint(double p[3])
+{
+    m_centerLine->GetCenterLinePoint(m_currentRoamingRouteId, m_currentRoamingIndex, p);
+}
+
+void AneurysmUnit::UpdateRoamingCamera()
+{
+    double p[3];
+    GetCurrentRoamingPoint(p);
+    double fp[3];
+    m_centerLine->GetCenterLinePoint(m_currentRoamingRouteId,
+                                     m_currentRoamingIndex-m_currentRoamingStep / 2, fp);
+    if(m_currentRoamingIndex - m_currentRoamingStep / 2 < 0) {
+        fp[0] = p[0], fp[1] = p[1], fp[2] = p[2];
+    }
+    double h[3];
+    m_centerLine->GetCenterLinePoint(m_currentRoamingRouteId,
+                                     m_currentRoamingIndex + m_currentRoamingStep / 2, h);
+    int limit = m_centerLine->GetCenterLinePointNums(m_currentRoamingRouteId);
+    if(m_currentRoamingIndex + m_currentRoamingStep / 2 >= limit) {
+        h[0] = p[0], h[1] = p[1], h[2] = p[2];
+    }
+    fp[0] = p[0] + h[0] - fp[0];
+    fp[1] = p[1] + h[1] - fp[1];
+    fp[2] = p[2] + h[2] - fp[2];
+    m_renderer->GetActiveCamera()->SetPosition(p);
+    m_renderer->GetActiveCamera()->SetFocalPoint(fp);
+
+    m_light->SetPosition(m_renderer->GetActiveCamera()->GetPosition());
+    m_light->SetFocalPoint(m_renderer->GetActiveCamera()->GetFocalPoint());
+
+    m_renderer->Render();
+}
 
 void AneurysmUnit::InitAnnotation()
 {

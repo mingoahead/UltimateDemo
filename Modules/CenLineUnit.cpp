@@ -5,19 +5,26 @@ CenLineUnit::CenLineUnit()
     clear();
 }
 
-int CenLineUnit::GetCenterLinePointNums()
+int CenLineUnit::GetCenterLinePointNums(int id)
 {
-    return MinPoints.size();
+    return (id == 1) ? CenterPoints1.size() : CenterPoints2.size();
 }
 
-void CenLineUnit::GetCenterLinePoint(int index, double p[])
+void CenLineUnit::GetCenterLinePoint(int id, int index, double p[3])
 {
-    memset(p, .0, 3 * sizeof(double));
-    if(0 <= index && index <MinPoints.size()) {
-        p[0] = MinPoints[index][0];
-        p[1] = MinPoints[index][1];
-        p[2] = MinPoints[index][2];
+    Point3f tmp = {.0, .0, .0};
+    if(id == 1) {
+        if(0 <= index && index < CenterPoints1.size()) {
+            tmp = CenterPoints1[index];
+        }
+    }else {
+        if(0 <= index && index < CenterPoints2.size()) {
+            tmp = CenterPoints2[index];
+        }
     }
+    p[0] = tmp.x;
+    p[1] = tmp.y;
+    p[2] = tmp.z;
 }
 /**
  * @brief CenLineUnit::Path_GradientDescent
@@ -30,7 +37,8 @@ void CenLineUnit::GetCenterLinePoint(int index, double p[])
 int CenLineUnit::Path_GradientDescent(std::string filename, double ps[], double pe[])
 {
     if(filename.empty())    return EXIT_FAILURE;
-    CenterPoints.clear();//remove last centerline results;
+    CenterPoints1.clear();
+    CenterPoints2.clear();//remove last centerline results;
     const unsigned int Dimension = 3;
     typedef unsigned char InputPixelType;
     typedef float InterPixelType;
@@ -209,7 +217,7 @@ int CenLineUnit::Path_GradientDescent(std::string filename, double ps[], double 
             std::cout << point[0] << ", " << point[1] << ", " << point[2] << "\n";
             Cenpoint.x = point[0];Cenpoint.y = point[1];Cenpoint.z = point[2];
 //            CenterPoints.push_back(static_cast<Point3f>(point));
-            CenterPoints.push_back(Cenpoint);
+            CenterPoints1.push_back(Cenpoint);
             count++;
         }
         std::cout << "Successfully find path: " << (i+1)

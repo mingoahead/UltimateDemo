@@ -318,7 +318,8 @@ void MainWindow::on_rb_pointpicker_toggled(bool checked)
 
 void MainWindow::on_tb_play_clicked()
 {
-
+    m_appUnit->OnRoam();
+    updateRenderWindow();
 }
 
 void MainWindow::on_tb_stop_clicked()
@@ -328,12 +329,14 @@ void MainWindow::on_tb_stop_clicked()
 
 void MainWindow::on_tb_backward_clicked()
 {
-
+    m_appUnit->RoamPrevious();
+    updateRenderWindow();
 }
 
 void MainWindow::on_tb_forward_clicked()
 {
-
+    m_appUnit->RoamNext();
+    updateRenderWindow();
 }
 
 void MainWindow::on_cbb_curPath_currentIndexChanged(int index)
