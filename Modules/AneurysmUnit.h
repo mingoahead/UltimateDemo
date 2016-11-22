@@ -256,11 +256,11 @@ public:
             RemoveAllRenderers();
 //            m_renInteractor->RemoveAllObservers();
             m_renderer -> SetViewport(0, 0, 1, 1);
-//            m_renderer -> SetBackground(.1, .2, .3);
-            m_renderer -> SetBackground(.0,.0,.0);
+            m_renderer -> SetBackground(.1, .2, .3);
+//            m_renderer -> SetBackground(.0,.0,.0);
             m_renderWindow -> AddRenderer(m_renderer);
-            std::cout << "Current Style : "
-                      << m_renInteractor->GetInteractorStyle()->GetClassName() << std::endl;
+//            std::cout << "Current Style : "
+//                      << m_renInteractor->GetInteractorStyle()->GetClassName() << std::endl;
             int m = m_renInteractor->GetInteractorStyle()->IsTypeOf("CusInteractorStylePickPoint");
             if(0 == m) {
                 m_renInteractor->RemoveObserver((vtkCommand*)m_renInteractor->GetInteractorStyle());
@@ -269,14 +269,6 @@ public:
                 t_pointPickerStyle->PreparedRenderer(m_renderer);
                 t_pointPickerStyle->SetInteractor(m_renInteractor);
             }
-//            CusInteractorStylePickPoint *cur_pointPickerStyle
-//                    = m_renInteractor->GetInteractorStyle();
-
-//            m_renInteractor->SetInteractorStyle(t_pointpickerstyle);
-//            m_renInteractor->SetInteractorStyle(m_pointPickerInteractorStyle);
-//            m_pointPickerInteractorStyle->PreparedRenderer(m_renderer);
-//            m_renderWindow->GetInteractor()->SetInteractorStyle(m_pointPickerInteractorStyle);
-//            m_pointPickerInteractorStyle->PreparedRenderer(m_renderer);
             break;
         }
 //            m_renderWindow -> RemoveAllObservers();
@@ -336,8 +328,8 @@ public:
             m_renderWindow -> AddRenderer(m_tranViewerRenderer);
             m_renderWindow -> AddRenderer(m_corViewerRenderer);
             m_renderWindow -> AddRenderer(m_sagViewerRenderer);
-            std::cout << "Current Style : "
-                      << m_renInteractor->GetInteractorStyle()->GetClassName() << std::endl;
+//            std::cout << "Current Style : "
+//                      << m_renInteractor->GetInteractorStyle()->GetClassName() << std::endl;
             int m = m_renInteractor->GetInteractorStyle()->IsTypeOf("vtkInteractorStyleImage");
             if(0 == m) {
                 m_renInteractor->RemoveObserver((vtkCommand*)m_renInteractor->GetInteractorStyle());

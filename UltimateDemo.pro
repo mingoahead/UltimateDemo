@@ -73,7 +73,8 @@ SOURCES += main.cpp\
     Modules/CenLine_1/itkPhysicalCentralDifferenceImageFunction.txx \
     Modules/CenLine_1/itkSingleImageCostFunction.txx \
     Modules/CenLine_1/itkSpeedFunctionToPathFilter.txx \
-    Modules/CenLineUnit.cpp
+    Modules/CenLineUnit.cpp \
+    Modules/CenLine_2/itkBinaryThinningImageFilter3D.txx
 
 HEADERS  += mainwindow.h \
     Utils/itklibs.h \
@@ -151,7 +152,17 @@ HEADERS  += mainwindow.h \
     Modules/CenLineUnit.h \
     UnitTest/test_vtkimagedata.h \
     UnitTest/test_elevationmap.h \
-    UnitTest/test_imageslicing.h
+    UnitTest/test_imageslicing.h \
+    UnitTest/test_itk_labelstatistics.h \
+    Modules/CenLine_2/itkBinaryThinningImageFilter3D.h \
+    UnitTest/test_itk_thinning3d.h \
+    UnitTest/test_itk_levelset.h \
+    UnitTest/Auxiliary/itkVTKVisualize2DLevelSetAsElevationMap.h \
+    UnitTest/Auxiliary/itkVTKVisualizeImageLevelSet.h \
+    UnitTest/Auxiliary/itkVTKVisualizeImageLevelSet.hxx \
+    UnitTest/Auxiliary/itkVTKVisualize2DLevelSetAsElevationMap.hxx \
+    UnitTest/Auxiliary/itkLevelSetIterationUpdateCommand.h \
+    UnitTest/Auxiliary/itkLevelSetIterationUpdateCommand.hxx
 
 FORMS    += mainwindow.ui
 

@@ -280,14 +280,13 @@ void AneurysmUnit::GetCenterLine(int option)
         Instantiate(t_pickPointStyle, CusInteractorStylePickPoint);
         m_renInteractor->SetInteractorStyle(t_pickPointStyle);
         t_pickPointStyle->PreparedRenderer(m_renderer);
-//        m_renInteractor->SetInteractorStyle(m_pointPickerInteractorStyle);
-//        m_pointPickerInteractorStyle->PreparedRenderer(m_renderer);
     }
     CusInteractorStylePickPoint* cur_pointPickerStyle
             = (CusInteractorStylePickPoint*)m_renInteractor->GetInteractorStyle();
-    if(!(cur_pointPickerStyle->GetEnabled())) {
-        return ;
-    }
+
+//    if(!(cur_pointPickerStyle->GetEnabled())) {
+//        return ;
+//    }
     cur_pointPickerStyle->GetMarkedPoints(s, e);
 //    m_pointPickerInteractorStyle->GetMarkedPoints(s, e);
     int tmp = option % 3;
