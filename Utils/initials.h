@@ -5,6 +5,8 @@
 /// "Warning: Link to vtkInteractionStyle for default style selection."
 #include "vtkAutoInit.h"
 VTK_MODULE_INIT(vtkRenderingOpenGL);
+VTK_MODULE_INIT(vtkRenderingVolumeOpenGL);
+VTK_MODULE_INIT(vtkRenderingContextOpenGL);
 VTK_MODULE_INIT(vtkInteractionStyle);
 VTK_MODULE_INIT(vtkRenderingFreeType);
 // VTK_MODULE_INIT(vtkRenderingFreeTypeOpenGL);
@@ -18,6 +20,7 @@ VTK_MODULE_INIT(vtkRenderingFreeType);
 # include "vtklibs.h"
 # include "itklibs.h"
 # include "itkutils.h"
+
 
 class PreInitials {
 public:

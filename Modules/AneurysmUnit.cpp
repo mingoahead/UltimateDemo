@@ -1,5 +1,5 @@
 #include "AneurysmUnit.h"
-vtkStandardNewMacro(CusInteractorStylePickPoint);
+vtkStandardNewMacro(Util::CusInteractorStylePickPoint);
 
 AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
 {
@@ -11,16 +11,28 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     vsp(m_ur_renderer);
     vsp(m_bl_renderer);
     vsp(m_br_renderer);
+    vsp(m_left_renderer);
+    vsp(m_right_renderer);
+    vsp(m_Surface);
+    vsp(m_Volume);
     vsp(m_3DReg_segmentationModel);
     vsp(m_LevelSet_segmentationModel);
     vsp(m_RegDetect_segmentationModel);
     vsp(m_3DReg_segmentationReader);
     vsp(m_LevelSet_segmentationReader);
     vsp(m_RegDetect_segmentationReader);
+
 //    init three model color
     m_3DReg_segmentationModel -> GetProperty() -> SetColor(1.0, .0, .0);
     m_LevelSet_segmentationModel -> GetProperty() -> SetColor(.0, 1.0, .0);
     m_RegDetect_segmentationModel -> GetProperty() -> SetColor(.0, .0, 1.0);
+
+    vsp(m_cuttingPlane);
+    vsp(m_cuttingPlaneWidget);
+    vsp(m_cuttingPlane2);
+    vsp(m_cuttingVtkPlane);
+    vsp(m_implicitPlaneRepresentation);
+
     m_centerLine = new CenLineUnit;
     m_currentRoamingRouteId = 1;
     m_currentRoamingStep = 15;
@@ -44,7 +56,7 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     vsp(m_sagActor);
     InitAnnotation();
     vsp(m_lineInfoPointPicker);
-    Instantiate(t_pointPickerStyle, CusInteractorStylePickPoint);
+    Instantiate(t_pointPickerStyle, Util::CusInteractorStylePickPoint);
     m_renInteractor->SetInteractorStyle(t_pointPickerStyle);
     t_pointPickerStyle->PreparedRenderer(m_renderer);
 
@@ -54,6 +66,7 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
 
 //    vsp(m_sliceViewStyle);
 
+    m_VolumePropertyWidget = new ctkVTKVolumePropertyWidget;
     InitSliders();
     InitCamerasWidgets();
     m_renderer->ResetCamera();
@@ -62,9 +75,19 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
 AneurysmUnit::~AneurysmUnit()
 {
     delete m_centerLine;
+    delete m_VolumePropertyWidget;
 }
 
 vtkRenderer *AneurysmUnit::GetRenderer() {return m_renderer;}
+
+vtkRenderer *AneurysmUnit::GetLeftRenderer() {return m_left_renderer; }
+
+vtkRenderer *AneurysmUnit::GetRightRenderer()  {return m_right_renderer; }
+
+ctkVTKVolumePropertyWidget *AneurysmUnit::GetVolumePropertyWidget()
+{
+    return m_VolumePropertyWidget;
+}
 
 vtkRenderer *AneurysmUnit::GetBLRenderer() {return m_bl_renderer; }
 
@@ -82,12 +105,15 @@ vtkRenderer *AneurysmUnit::GetsagViewerRenderer() {return m_sagViewerRenderer;}
 
 void AneurysmUnit::ReadInputSegmentationModel(std::string fileName, int option)
 {
-    int size = fileName.size();\
+    int size = fileName.size();
     if(size < 3) return ;
     m_filename.first = fileName;
     m_filename.second = (m_filename.first).substr(0, size - 3) + "mhd";
-    std::cout << "the mhd filename is " << m_filename.second << std::endl;
+    std::cout << "the Segment Binary mhd filename is " << m_filename.second << std::endl;
 
+    Instantiate(plane, vtkPlane);
+    Instantiate(clipper, vtkClipPolyData);
+    clipper->SetClipFunction(plane);
     switch(option) {
     case 1:
         m_3DReg_segmentationReader -> SetFileName(fileName.c_str());
@@ -97,6 +123,7 @@ void AneurysmUnit::ReadInputSegmentationModel(std::string fileName, int option)
                 = vtkSmartPointer<vtkPolyDataMapper>::New();
         mapper1 -> SetInputConnection(m_3DReg_segmentationReader -> GetOutputPort());
         m_3DReg_segmentationModel -> SetMapper(mapper1);
+        clipper->SetInputConnection(m_3DReg_segmentationReader->GetOutputPort());
         }
 
         break;
@@ -107,6 +134,7 @@ void AneurysmUnit::ReadInputSegmentationModel(std::string fileName, int option)
                 = vtkSmartPointer<vtkPolyDataMapper>::New();
         mapper2 -> SetInputConnection(m_LevelSet_segmentationReader -> GetOutputPort());
         m_LevelSet_segmentationModel -> SetMapper(mapper2);
+        clipper->SetInputConnection(m_LevelSet_segmentationReader->GetOutputPort());
         }
         break;
     case 3:
@@ -116,12 +144,32 @@ void AneurysmUnit::ReadInputSegmentationModel(std::string fileName, int option)
                 = vtkSmartPointer<vtkPolyDataMapper>::New();
         mapper3 -> SetInputConnection(m_RegDetect_segmentationReader -> GetOutputPort());
         m_RegDetect_segmentationModel -> SetMapper(mapper3);
+        clipper->SetInputConnection(m_RegDetect_segmentationReader->GetOutputPort());
         }
         break;
     default:
         break;
 
     }
+    Instantiate(clipmapper, vtkPolyDataMapper);
+    clipmapper->SetInputConnection(clipper->GetOutputPort());
+    m_cuttingPlane->SetMapper(clipmapper);
+    Instantiate(backFaces, vtkProperty);
+    backFaces->SetDiffuseColor(.8, .8, .4);
+    m_cuttingPlane->SetBackfaceProperty(backFaces);
+    m_implicitPlaneRepresentation->SetPlaceFactor(1.0);
+    m_implicitPlaneRepresentation->PlaceWidget(m_cuttingPlane->GetBounds());
+    m_implicitPlaneRepresentation->SetNormal(plane->GetNormal());
+    m_implicitPlaneRepresentation->SetOrigin(30, -100, 1100);
+    m_implicitPlaneRepresentation->SetEdgeColor(.0, .7, .7);
+
+    Instantiate(callback, Util::vtkIPWCallback);
+    callback->Plane = plane;
+    callback->Actor = m_cuttingPlane;
+    m_cuttingPlaneWidget->SetInteractor(m_renderWindow->GetInteractor());
+    m_cuttingPlaneWidget->EnabledOff();
+    m_cuttingPlaneWidget->SetRepresentation(m_implicitPlaneRepresentation);
+    m_cuttingPlaneWidget->AddObserver(vtkCommand::InteractionEvent, callback);
     //m_renderer -> ResetCamera();
 }
 
@@ -275,14 +323,14 @@ void AneurysmUnit::ShowCenterPoints(vtkSmartPointer<vtkActor> LineModel,
 void AneurysmUnit::GetCenterLine(int option)
 {
     double s[3], e[3];
-    int m = m_renInteractor->GetInteractorStyle()->IsTypeOf("CusInteractorStylePickPoint");
+    int m = m_renInteractor->GetInteractorStyle()->IsTypeOf("Util::CusInteractorStylePickPoint");
     if(0 == m) {
-        Instantiate(t_pickPointStyle, CusInteractorStylePickPoint);
+        Instantiate(t_pickPointStyle, Util::CusInteractorStylePickPoint);
         m_renInteractor->SetInteractorStyle(t_pickPointStyle);
         t_pickPointStyle->PreparedRenderer(m_renderer);
     }
-    CusInteractorStylePickPoint* cur_pointPickerStyle
-            = (CusInteractorStylePickPoint*)m_renInteractor->GetInteractorStyle();
+    Util::CusInteractorStylePickPoint* cur_pointPickerStyle
+            = (Util::CusInteractorStylePickPoint*)m_renInteractor->GetInteractorStyle();
 
 //    if(!(cur_pointPickerStyle->GetEnabled())) {
 //        return ;
@@ -438,6 +486,59 @@ void AneurysmUnit::Draw3DSlice(double pos[])
     DrawSliceFactory(m_sagViewerRenderer, m_sagActor, sagittalElements, pos);
 }
 
+void AneurysmUnit::DrawVolume_Surface()
+{
+    std::string name1 =
+            "D://3dresearch//Wu-yj//Ultimate//Roam-part//data//testdata//09//untitled.mhd";
+    std::string name2 =
+            "D://3dresearch//Wu-yj//Ultimate//Roam-part//data//testdata//09//122802.mhd";
+    std::string name3 =
+            "D://3dresearch//Wu-yj//Ultimate//Roam-part//data//testdata//09//122802.stl";
+    int sign1 = VolSurRendering::PrepareSurface(name3, m_Surface);
+    int sign2 = VolSurRendering::PrepareVolume(name1, name2, m_Volume, m_VolumePropertyWidget);
+    if(sign1 == EXIT_FAILURE || sign2 == EXIT_FAILURE) {
+        return ;
+    }
+    m_right_renderer->AddActor(m_Surface);
+    m_left_renderer->AddVolume(m_Volume);
+    m_renderWindow->Render();
+}
+
+void AneurysmUnit::SetVisibilitySTLCuttingPlane(bool show)
+{
+    show ? m_renderer->AddActor(m_cuttingPlane2) : m_renderer->RemoveActor(m_cuttingPlane2);
+}
+
+void AneurysmUnit::SetVisibilityVirtualCuttingWidget(bool show)
+{
+    show ? m_cuttingPlaneWidget->SetEnabled(1) : m_cuttingPlaneWidget->SetEnabled(0);
+}
+
+void AneurysmUnit::DoStlCutting(vtkSmartPointer<vtkSTLReader> stlreader)
+{
+    m_cuttingVtkPlane->SetOrigin(m_implicitPlaneRepresentation->GetOrigin());
+    m_cuttingVtkPlane->SetNormal(m_implicitPlaneRepresentation->GetNormal());
+    Instantiate(cutter, vtkCutter);
+    cutter->SetCutFunction(m_cuttingVtkPlane);
+    cutter->SetInputConnection(stlreader->GetOutputPort());
+    cutter->Update();
+
+    Instantiate(cutterMapper, vtkPolyDataMapper);
+    cutterMapper->SetInputConnection(cutter->GetOutputPort());
+
+    m_cuttingPlane2->GetProperty()->SetColor(1.0, 1.0, 0);
+    m_cuttingPlane2->GetProperty()->SetLineWidth(2);
+    m_cuttingPlane2->SetMapper(cutterMapper);
+}
+
+void AneurysmUnit::DoSTLCut()
+{
+
+    DoStlCutting(m_3DReg_segmentationReader);
+//    DoStlCutting(m_LevelSet_segmentationReader);
+//    DoStlCutting(m_RegDetect_segmentationReader);
+}
+
 void AneurysmUnit::InitSliders()
 {
     vsp(m_slider1Rep);
@@ -503,7 +604,7 @@ void AneurysmUnit::InitSliders()
 }
 
 bool AneurysmUnit::BindSlider(vtkSmartPointer<vtkActor> actor,
-                              vtkSmartPointer<vtkSliderCallBack> sliderCallBack,
+                              vtkSmartPointer<Util::vtkSliderCallBack> sliderCallBack,
                               vtkSmartPointer<vtkSliderWidget> sliderWidget)
 {
     if(actor.GetPointer() == NULL || sliderCallBack.GetPointer() == NULL
@@ -521,8 +622,8 @@ bool AneurysmUnit::BindSlider(vtkSmartPointer<vtkActor> actor,
 
 void AneurysmUnit::SetPointPickerEnabled(bool enabled)
 {
-    CusInteractorStylePickPoint* cur_pointPickerStyle
-            = (CusInteractorStylePickPoint*)m_renInteractor->GetInteractorStyle();
+    Util::CusInteractorStylePickPoint* cur_pointPickerStyle
+            = (Util::CusInteractorStylePickPoint*)m_renInteractor->GetInteractorStyle();
     cur_pointPickerStyle->SetPickerEnabled(enabled);
 //    m_pointPickerInteractorStyle->SetPickerEnabled(enabled);
 }

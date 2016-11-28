@@ -74,7 +74,8 @@ SOURCES += main.cpp\
     Modules/CenLine_1/itkSingleImageCostFunction.txx \
     Modules/CenLine_1/itkSpeedFunctionToPathFilter.txx \
     Modules/CenLineUnit.cpp \
-    Modules/CenLine_2/itkBinaryThinningImageFilter3D.txx
+    Modules/CenLine_2/itkBinaryThinningImageFilter3D.txx \
+    Modules/VolSurRendering.cpp
 
 HEADERS  += mainwindow.h \
     Utils/itklibs.h \
@@ -162,7 +163,10 @@ HEADERS  += mainwindow.h \
     UnitTest/Auxiliary/itkVTKVisualizeImageLevelSet.hxx \
     UnitTest/Auxiliary/itkVTKVisualize2DLevelSetAsElevationMap.hxx \
     UnitTest/Auxiliary/itkLevelSetIterationUpdateCommand.h \
-    UnitTest/Auxiliary/itkLevelSetIterationUpdateCommand.hxx
+    UnitTest/Auxiliary/itkLevelSetIterationUpdateCommand.hxx \
+    UnitTest/test_itk_maskfilter.h \
+    Modules/VolSurRendering.h \
+    Utils/vtkhelper.h
 
 FORMS    += mainwindow.ui
 

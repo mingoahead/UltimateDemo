@@ -40,9 +40,14 @@
 #include <vtkPoints.h>
 #include <vtkColor.h>
 #include <vtkPointData.h>
-
+#include <vtkImplicitPlaneRepresentation.h>
+#include <vtkPlane.h>
+#include <vtkCutter.h>
+#include <vtkImplicitPlaneWidget2.h>
+#include <vtkClipPolyData.h>
 #include <vtkCameraRepresentation.h>
 #include <vtkCameraWidget.h>
+
 
 #include <vtkBalloonRepresentation.h>
 #include <vtkBalloonWidget.h>
@@ -61,6 +66,9 @@
 
 #include "fastdef.h"
 #include "CenLineUnit.h"
+#include "VolSurRendering.h"
+#include "Utils/vtkhelper.h"
+
 /**
  * to do list
  * legend  ref : http://www.vtk.org/Wiki/VTK/Examples/Cxx/Visualization/Legend
@@ -71,152 +79,15 @@
  *               vtkContourFilter  (extract contour with same attribute value)
  */
 
-class vtkSliderCallBack : public vtkCommand {
-public:
-    static vtkSliderCallBack *New() { return new vtkSliderCallBack; }
-    virtual void Execute(vtkObject *caller, unsigned long, void*)
-    {
-        vtkSliderWidget *sliderWidget = reinterpret_cast<vtkSliderWidget*>(caller);
-        if(this->actor) {
-            this->actor->GetProperty()->SetOpacity(
-                        static_cast<vtkSliderRepresentation*>(
-                            sliderWidget->GetRepresentation()) -> GetValue());
-
-        }
-    }
-    vtkSliderCallBack() : actor(0) {};
-    bool SetBoundActor(vtkActor *giveactor)
-    {
-        actor = giveactor;
-        if(!actor) {
-            return false;
-        }
-        return true;
-    }
-    vtkActor *actor;
-
-};
-
-class CusInteractorStylePickPoint : public vtkInteractorStyleTrackballCamera
-{
-public:
-    static CusInteractorStylePickPoint* New();
-    vtkTypeMacro(CusInteractorStylePickPoint,vtkInteractorStyleTrackballCamera);
-
-    void PreparedRenderer( vtkRenderer *renderer)
-    {
-        m_renderer = renderer;
-        m_beginPointActor = vtkSmartPointer<vtkActor>::New();
-        m_endPointActor = vtkSmartPointer<vtkActor>::New();
-
-        SetVisiblityOn();
-    }
-
-    void SetPickerEnabled(bool enabled = true)
-    {
-        m_enabled = enabled;
-        m_PickedPointsCnt = 0;
-    }
-
-    bool GetPickerEnabled()
-    {
-        return m_enabled;
-    }
-    void GetMarkedPoints(double p1[3],double p2[3])
-    {
-        p1[0] = m_pbeg.x;
-        p1[1] = m_pbeg.y;
-        p1[2] = m_pbeg.z;
-
-        p2[0] = m_pend.x;
-        p2[1] = m_pend.y;
-        p2[2] = m_pend.z;
-    }
-    virtual void OnMiddleButtonDown()
-    {
-        ProcessPick();
-        vtkInteractorStyleTrackballCamera::OnMiddleButtonDown();
-    }
-
-
-private:
-    bool m_enabled;
-    int m_PickedPointsCnt;
-    Point3f m_pbeg;
-    Point3f m_pend;
-
-    vtkRenderer * m_renderer;
-    vtkSmartPointer<vtkActor> m_beginPointActor;
-    vtkSmartPointer<vtkActor> m_endPointActor;
-    void SetVisiblityOff()
-    {
-        m_renderer->RemoveActor(m_beginPointActor);
-        m_renderer->RemoveActor(m_endPointActor);
-    }
-    void SetVisiblityOn()
-    {
-        m_renderer->AddActor(m_beginPointActor);
-        m_renderer->AddActor(m_endPointActor);
-    }
-    void ProcessPick()
-    {
-        int   state = m_enabled == true ? 1 : 0;
-        std::cout << "begin picking point and m_enabled is now " << state<< std::endl;
-        if(m_enabled){
-            m_PickedPointsCnt %= 2;
-            if(m_PickedPointsCnt == 0)
-                SetVisiblityOff();
-            this->Interactor->GetPicker()->Pick(this->Interactor->GetEventPosition()[0],
-                                                this->Interactor->GetEventPosition()[1],
-                                                0,
-                                                this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer());
-            double p[3];
-            this->Interactor->GetPicker()->GetPickPosition(p);
-            ++m_PickedPointsCnt;
-            switch(m_PickedPointsCnt) {
-            case 1: {
-                m_pbeg = {p[0], p[1], p[2]};
-                vtkSmartPointer<vtkSphereSource> spheresource =
-                        vtkSmartPointer<vtkSphereSource>::New();
-                spheresource->SetCenter(p);
-                spheresource->SetRadius(1.0);
-                spheresource->Update();
-                vtkSmartPointer<vtkPolyDataMapper> mapper =
-                        vtkSmartPointer<vtkPolyDataMapper>::New();
-                mapper->SetInputConnection(spheresource->GetOutputPort());
-                m_beginPointActor->SetMapper(mapper);
-                m_beginPointActor->GetProperty()->SetColor(.0, .5, .5);
-                m_renderer->AddActor(m_beginPointActor);
-                break;
-
-            }
-            case 2: {
-                m_pend = {p[0], p[1], p[2]};
-                vtkSmartPointer<vtkSphereSource> spheresource =
-                        vtkSmartPointer<vtkSphereSource>::New();
-                spheresource->SetCenter(p);
-                spheresource->SetRadius(1.0);
-                spheresource->Update();
-                vtkSmartPointer<vtkPolyDataMapper> mapper =
-                        vtkSmartPointer<vtkPolyDataMapper>::New();
-                mapper->SetInputConnection(spheresource->GetOutputPort());
-                m_endPointActor->SetMapper(mapper);
-                m_endPointActor->GetProperty()->SetColor(.0, .5, .5);
-                m_renderer->AddActor(m_endPointActor);
-
-            }
-            }
-        }
-    }
-
-
-};
 class AneurysmUnit
 {
 public:
     AneurysmUnit(vtkRenderWindow *renWin);
     ~AneurysmUnit();
     vtkRenderer * GetRenderer();
+    vtkRenderer * GetLeftRenderer();
+    vtkRenderer * GetRightRenderer();
+    ctkVTKVolumePropertyWidget * GetVolumePropertyWidget();
     vtkRenderer * GetBLRenderer();
     vtkRenderer * GetBRRenderer();
     vtkRenderer * GetULRenderer();
@@ -249,6 +120,14 @@ public:
                               , vtkSmartPointer<vtkImageActor>imgActor
                               , double transformMat[16], double pos[3]);
     void Draw3DSlice(double pos[3]);
+    /// comparing --surface and volume
+    void DrawVolume_Surface();
+
+    void SetVisibilitySTLCuttingPlane(bool show = true);
+    void SetVisibilityVirtualCuttingWidget(bool show = true);
+    void DoStlCutting(vtkSmartPointer<vtkSTLReader> stlreader);
+    void DoSTLCut();
+
     void RegisterDisplay(int mod)
     {
         switch(mod) {
@@ -261,10 +140,10 @@ public:
             m_renderWindow -> AddRenderer(m_renderer);
 //            std::cout << "Current Style : "
 //                      << m_renInteractor->GetInteractorStyle()->GetClassName() << std::endl;
-            int m = m_renInteractor->GetInteractorStyle()->IsTypeOf("CusInteractorStylePickPoint");
+            int m = m_renInteractor->GetInteractorStyle()->IsTypeOf("Util::CusInteractorStylePickPoint");
             if(0 == m) {
                 m_renInteractor->RemoveObserver((vtkCommand*)m_renInteractor->GetInteractorStyle());
-                Instantiate(t_pointPickerStyle, CusInteractorStylePickPoint);
+                Instantiate(t_pointPickerStyle, Util::CusInteractorStylePickPoint);
                 m_renInteractor->SetInteractorStyle(t_pointPickerStyle);
                 t_pointPickerStyle->PreparedRenderer(m_renderer);
                 t_pointPickerStyle->SetInteractor(m_renInteractor);
@@ -276,12 +155,12 @@ public:
         case COMP2_MOD: {
             RemoveAllRenderers();
 //            m_renInteractor->RemoveAllObservers();
-            m_ul_renderer -> SetViewport(0, 0, 0.5, 1);
-            m_ul_renderer -> SetBackground(.3, .4, .0);
-            m_ur_renderer -> SetViewport(.5, 0, 1, 1);
-            m_ur_renderer -> SetBackground(.0, .1, .3);
-            m_renderWindow -> AddRenderer(m_ul_renderer);
-            m_renderWindow -> AddRenderer(m_ur_renderer);
+            m_left_renderer -> SetViewport(0, 0, 0.5, 1);
+            m_left_renderer -> SetBackground(.3, .4, .0);
+            m_right_renderer -> SetViewport(.5, 0, 1, 1);
+            m_right_renderer -> SetBackground(.0, .1, .3);
+            m_renderWindow -> AddRenderer(m_left_renderer);
+            m_renderWindow -> AddRenderer(m_right_renderer);
             break;
         }
 
@@ -347,6 +226,8 @@ public:
     void RemoveAllRenderers()
     {
         m_renderWindow -> RemoveRenderer(m_renderer);
+        m_renderWindow -> RemoveRenderer(m_left_renderer);
+        m_renderWindow -> RemoveRenderer(m_right_renderer);
         m_renderWindow -> RemoveRenderer(m_bl_renderer);
         m_renderWindow -> RemoveRenderer(m_br_renderer);
         m_renderWindow -> RemoveRenderer(m_ul_renderer);
@@ -364,7 +245,7 @@ public:
 
     void InitSliders();
     bool BindSlider(vtkSmartPointer<vtkActor> actor,
-                    vtkSmartPointer<vtkSliderCallBack> sliderCallBack,
+                    vtkSmartPointer<Util::vtkSliderCallBack> sliderCallBack,
                     vtkSmartPointer<vtkSliderWidget> sliderWidget);
     void SetPointPickerEnabled(bool enabled = true);
     std::string GetRawFilename();
@@ -377,12 +258,25 @@ private:
     vtkSmartPointer<vtkRenderer> m_ur_renderer;
     vtkSmartPointer<vtkRenderer> m_bl_renderer;
     vtkSmartPointer<vtkRenderer> m_br_renderer;
+    vtkSmartPointer<vtkRenderer> m_left_renderer;
+    vtkSmartPointer<vtkRenderer> m_right_renderer;
+    vtkSmartPointer<vtkActor> m_Surface;
+    vtkSmartPointer<vtkVolume> m_Volume;
+    ctkVTKVolumePropertyWidget *m_VolumePropertyWidget;
+
     vtkSmartPointer<vtkActor> m_3DReg_segmentationModel;
     vtkSmartPointer<vtkActor> m_LevelSet_segmentationModel;
     vtkSmartPointer<vtkActor> m_RegDetect_segmentationModel;
     vtkSmartPointer<vtkSTLReader> m_3DReg_segmentationReader;
     vtkSmartPointer<vtkSTLReader> m_LevelSet_segmentationReader;
     vtkSmartPointer<vtkSTLReader> m_RegDetect_segmentationReader;
+
+    vtkSmartPointer<vtkActor> m_cuttingPlane;
+    vtkSmartPointer<vtkImplicitPlaneWidget2> m_cuttingPlaneWidget;
+    vtkSmartPointer<vtkImplicitPlaneRepresentation> m_implicitPlaneRepresentation;
+    vtkSmartPointer<vtkPlane> m_cuttingVtkPlane;
+    vtkSmartPointer<vtkActor> m_cuttingPlane2;
+
     // centerline related
     vtkSmartPointer<vtkPointPicker> m_lineInfoPointPicker;
 //    vtkSmartPointer<CusInteractorStylePickPoint> m_pointPickerInteractorStyle;
@@ -398,6 +292,7 @@ private:
     int m_currentRoamingStep;
     void GetCurrentRoamingPoint(double p[3]);
     void UpdateRoamingCamera();
+
 
     vtkSmartPointer<vtkImageData> m_rawData;
     vtkSmartPointer<vtkImageViewer> m_tranViewer;
@@ -418,13 +313,13 @@ private:
     //slider related
     vtkSmartPointer<vtkSliderRepresentation2D> m_slider1Rep;
     vtkSmartPointer<vtkSliderWidget> m_slider1Widget;
-    vtkSmartPointer<vtkSliderCallBack> m_slider1CallBack;
+    vtkSmartPointer<Util::vtkSliderCallBack> m_slider1CallBack;
     vtkSmartPointer<vtkSliderRepresentation2D> m_slider2Rep;
     vtkSmartPointer<vtkSliderWidget> m_slider2Widget;
-    vtkSmartPointer<vtkSliderCallBack> m_slider2CallBack;
+    vtkSmartPointer<Util::vtkSliderCallBack> m_slider2CallBack;
     vtkSmartPointer<vtkSliderRepresentation2D> m_slider3Rep;
     vtkSmartPointer<vtkSliderWidget> m_slider3Widget;
-    vtkSmartPointer<vtkSliderCallBack> m_slider3CallBack;
+    vtkSmartPointer<Util::vtkSliderCallBack> m_slider3CallBack;
     //camera widget related
     vtkSmartPointer<vtkCameraRepresentation> m_cameraRep;
     vtkSmartPointer<vtkCameraWidget>         m_cameraWidget;

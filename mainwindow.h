@@ -10,6 +10,7 @@
 #include <vtkRenderer.h>
 #include <vtkCamera.h>
 
+
 #include "testunit.h"
 #include "AneurysmUnit.h"
 #include "NavigationUnit.h"
@@ -83,6 +84,10 @@ private slots:
     void on_tb_backward_clicked();
     void on_tb_forward_clicked();
     void on_cbb_curPath_currentIndexChanged(int index);
+
+    void on_cb_cuttingwidget_toggled(bool checked);
+    void on_cb_cuttingContour_toggled(bool checked);
+    void on_pb_cut_clicked();
 
 
 

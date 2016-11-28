@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->panelDock->setFeatures(QDockWidget::DockWidgetMovable
                                 | QDockWidget::DockWidgetFloatable);
     ui->panelDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    ui->toolBox->setCurrentIndex(0);
     QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     ui->NavgunitWidget->setSizePolicy(sizePolicy);
     createActions();
@@ -106,6 +107,7 @@ void MainWindow::createTinyLayout()
 void MainWindow::initModules()
 {
      m_appUnit = new AneurysmUnit(m_vtkWidget -> GetRenderWindow());
+     ui->vlayout_rendering->addWidget(m_appUnit->GetVolumePropertyWidget());
      m_navgUnit = new NavigationUnit(m_smallvtkWidget -> GetRenderWindow());
 
 }
@@ -257,13 +259,16 @@ void MainWindow::on_cbb_show_sd_currentIndexChanged(int index)
 }
 void MainWindow::on_pb_test1view_clicked()
 {
+    ui->toolBox->setCurrentIndex(1);
     m_appUnit -> RegisterDisplay(1);
     updateRenderWindow();
 }
 
 void MainWindow::on_pb_test2view_clicked()
 {
+    ui->toolBox->setCurrentIndex(2);
     m_appUnit -> RegisterDisplay(2);
+    m_appUnit -> DrawVolume_Surface();
     updateRenderWindow();
 }
 void MainWindow::on_pb_test3view_clicked()
@@ -275,6 +280,7 @@ void MainWindow::on_pb_test3view_clicked()
         return ;
 //        std::cout << "First, need to load raw data! " << std::endl;
     }
+    ui->toolBox->setCurrentIndex(3);
     m_appUnit -> RegisterDisplay(3);
     double curpos[3] = {4.99979, -134.5, 1157.95};
     m_appUnit->Draw3DSlice(curpos);
@@ -285,6 +291,7 @@ void MainWindow::on_pb_test3view_clicked()
 
 void MainWindow::on_pb_test4view_clicked()
 {
+    ui->toolBox->setCurrentIndex(4);
     m_appUnit -> RegisterDisplay(4);
     updateRenderWindow();
 }
@@ -342,6 +349,21 @@ void MainWindow::on_tb_forward_clicked()
 void MainWindow::on_cbb_curPath_currentIndexChanged(int index)
 {
 
+}
+
+void MainWindow::on_cb_cuttingwidget_toggled(bool checked)
+{
+    m_appUnit->SetVisibilityVirtualCuttingWidget(checked);
+}
+
+void MainWindow::on_cb_cuttingContour_toggled(bool checked)
+{
+    m_appUnit->SetVisibilitySTLCuttingPlane(checked);
+}
+
+void MainWindow::on_pb_cut_clicked()
+{
+    m_appUnit->DoSTLCut();
 }
 
 

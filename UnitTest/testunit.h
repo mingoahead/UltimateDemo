@@ -16,6 +16,8 @@
 #include "test_itk_labelstatistics.h"
 #include "test_itk_thinning3d.h"
 #include "test_itk_levelset.h"
+#include "test_itk_maskfilter.h"
+
 class TestUnit
 {
 public:
@@ -42,13 +44,17 @@ public:
 //        test_itk_labelstat -> RunTest();
 //        delete test_itk_labelstat;
 
-       Test_Itk_3DThinning *test_itk_3dthinning = new Test_Itk_3DThinning();
-       test_itk_3dthinning -> RunTest();
-       delete test_itk_3dthinning;
+//       Test_Itk_3DThinning *test_itk_3dthinning = new Test_Itk_3DThinning();
+//       test_itk_3dthinning -> RunTest();
+//       delete test_itk_3dthinning;
 
 //        Test_Itk_LevelSet *test_itk_levelset = new Test_Itk_LevelSet();
 //        test_itk_levelset -> RunTest();
 //        delete test_itk_levelset;
+
+        Test_Itk_MaskFilter *test_itk_maskfilter = new Test_Itk_MaskFilter();
+        test_itk_maskfilter -> RunTest();
+        delete test_itk_maskfilter;
 
         std::cout << "**************TEST PART END:*****************" << std::endl;
 
