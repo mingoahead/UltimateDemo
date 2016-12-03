@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include <QApplication>
-
 #include "UnitTest/testunit.h"
 #include "Utils/initials.h"
 

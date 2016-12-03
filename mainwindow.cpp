@@ -32,14 +32,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->cbb_show_3dreg->setEnabled(false);
     ui->cbb_show_ls->setEnabled(false);
     ui->cbb_show_sd->setEnabled(false);
+    exportUntil = new ExportDataDlg;
     initModules();
+    initStatus();
     initRenderWindow();
 
 }
 
 MainWindow::~MainWindow()
 {
-
+    delete exportUntil;
     delete ui;
 }
 
@@ -53,7 +55,8 @@ void MainWindow::createActions()
     m_viewDockPanelAct -> setCheckable(true);
     m_viewDockPanelAct -> setChecked(true);
     connect(m_viewDockPanelAct, SIGNAL(toggled(bool)), this, SLOT(viewDockPanel(bool)));
-
+    m_convAct = new QAction(tr("Convert"), this);
+    connect(m_convAct, SIGNAL(triggered()), this, SLOT(runConvert()));
     m_segAct = new QAction(tr("&Segment"), this);
     connect(m_segAct, SIGNAL(triggered()), this, SLOT(runSegment()));
     m_testAct = new QAction(tr("Test Module"), this);
@@ -69,6 +72,8 @@ void MainWindow::createMenus()
     m_viewMenu -> addAction(m_viewDockPanelAct);
     m_segMenu = menuBar() -> addMenu(tr("&System"));
     m_segMenu -> addAction(m_segAct);
+    m_convMenu = menuBar()-> addMenu(tr("&Utility"));
+    m_convMenu -> addAction(m_convAct);
     m_testMenu = menuBar() -> addMenu(tr("&Test"));
     m_testMenu -> addAction(m_testAct);
 }
@@ -107,8 +112,13 @@ void MainWindow::createTinyLayout()
 void MainWindow::initModules()
 {
      m_appUnit = new AneurysmUnit(m_vtkWidget -> GetRenderWindow());
-     ui->vlayout_rendering->addWidget(m_appUnit->GetVolumePropertyWidget());
+     m_volRenderUnit = new VolumeRendering(m_vtkWidget -> GetRenderWindow());
+     m_surRenderUnit = new SurfaceRendering(m_vtkWidget -> GetRenderWindow());
+     ui->vlayout_rendering->addWidget(m_volRenderUnit->GetPropertyWidget());
+//     ui->vlayout_rendering->addWidget(m_volsurUnit->GetVolumeWidget());
+//     ui->vlayout_rendering->addWidget(m_appUnit->GetVolumePropertyWidget());
      m_navgUnit = new NavigationUnit(m_smallvtkWidget -> GetRenderWindow());
+
 
 }
 
@@ -118,9 +128,20 @@ void MainWindow::initRenderWindow()
     updateRenderWindow();
 }
 
+void MainWindow::initStatus()
+{
+    m_msgLabel = new QLabel;
+
+//    statusBar()->addWidget(m_msgLabel);
+    statusBar()->addPermanentWidget(m_msgLabel);
+    statusBar()->setStyleSheet(QString("QStatusBar::item{border: 0px}"));
+
+}
+
 void MainWindow::updateRenderWindow()
 {
     m_vtkWidget->GetRenderWindow()->Render();
+    m_msgLabel->setText(QString::fromStdString(m_appUnit->GetCurInteractorStyle()));
 }
 
 void MainWindow::open()
@@ -132,6 +153,7 @@ void MainWindow::open()
         updateRenderWindow();
     }
 }
+
 
 void MainWindow::openStl(int option)
 {
@@ -157,6 +179,11 @@ void MainWindow::exit()
 void MainWindow::viewDockPanel(bool checked)
 {
     checked ? ui->panelDock->show() : ui->panelDock->hide();
+}
+
+void MainWindow::runConvert()
+{
+    exportUntil->show();
 }
 
 void MainWindow::runSegment()
@@ -268,7 +295,10 @@ void MainWindow::on_pb_test2view_clicked()
 {
     ui->toolBox->setCurrentIndex(2);
     m_appUnit -> RegisterDisplay(2);
-    m_appUnit -> DrawVolume_Surface();
+//    m_appUnit -> DrawVolume_Surface();
+
+    m_vtkWidget->GetRenderWindow()->AddRenderer(m_volRenderUnit->GetRenderer());
+    m_vtkWidget->GetRenderWindow()->AddRenderer(m_surRenderUnit->GetRenderer());
     updateRenderWindow();
 }
 void MainWindow::on_pb_test3view_clicked()
@@ -365,5 +395,83 @@ void MainWindow::on_pb_cut_clicked()
 {
     m_appUnit->DoSTLCut();
 }
+
+void MainWindow::on_pb_openSurface_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Surface Model for ")
+                                                    , tr("/home"), tr("mhd or mha file (*.mhd *.mha *.stl)"));
+    if(!fileName.isNull()) {
+        m_surRenderUnit->LoadImageData(fileName.toStdString());
+        updateRenderWindow();
+    }
+
+}
+
+void MainWindow::on_pb_openVolume_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Raw image for ")
+                                                    , tr("/home"), tr("mhd or mha file (*.mhd *.mha)"));
+    if(!fileName.isNull()) {
+        m_volRenderUnit->LoadRawData(fileName.toStdString());
+//        updateRenderWindow();
+    }
+}
+
+void MainWindow::on_pb_openMask_clicked()
+{
+
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open mask image for ")
+                                                    , tr("/home"), tr("mhd or mha (*.mhd *.mha)"));
+    if(!fileName.isNull()) {
+        m_volRenderUnit->LoadMaskData(fileName.toStdString());
+//        updateRenderWindow();
+    }
+}
+
+void MainWindow::on_pb_buildVolume_clicked()
+{
+    m_volRenderUnit->LoadImageData();
+    updateRenderWindow();
+}
+
+void MainWindow::on_m_hsIterNums_sliderReleased()
+{
+    m_surRenderUnit->SetIterations(ui->m_hsIterNums->value());
+    m_surRenderUnit->Update();
+    updateRenderWindow();
+}
+
+void MainWindow::on_m_hsIterNums_valueChanged(int value)
+{
+    ui->m_labelIterNums->setText(QString::number(value));
+}
+
+void MainWindow::on_m_hsRelaxationFactor_sliderReleased()
+{
+    int value = ui->m_hsRelaxationFactor->value();
+    double factor = value * 1.0 / ui->m_hsRelaxationFactor->maximum();
+    m_surRenderUnit->SetRelaxationFactor(factor);
+    m_surRenderUnit->Update();
+    updateRenderWindow();
+}
+
+void MainWindow::on_m_hsRelaxationFactor_valueChanged(int value)
+{
+    double factor = value * 1.0 /ui->m_hsRelaxationFactor->maximum();
+    ui->m_labelRelaxationFactor->setText(QString::number(factor));
+}
+
+void MainWindow::on_cb_sur_freeroaming_toggled(bool checked)
+{
+    m_surRenderUnit->SetFreeRoamingMode(checked);
+    updateRenderWindow();
+}
+
+void MainWindow::on_m_hsspeed_sliderReleased()
+{
+    int value = ui->m_hsspeed->value();
+
+}
+
 
 

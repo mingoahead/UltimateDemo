@@ -3,17 +3,20 @@
 
 #include <QMainWindow>
 #include <QMessageBox>
-
+#include <QSlider>
+#include <QLabel>
 #include "QVTKWidget.h"
 
 #include <vtkSTLReader.h>
 #include <vtkRenderer.h>
 #include <vtkCamera.h>
 
-
+#include "exportdatadlg.h"
 #include "testunit.h"
 #include "AneurysmUnit.h"
 #include "NavigationUnit.h"
+#include "Modules/Rendering/SurfaceRendering.h"
+#include "Modules/Rendering/VolumeRendering.h"
 namespace Ui {
 class MainWindow;
 }
@@ -28,6 +31,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QLabel *m_msgLabel;
     QMenu *m_fileMenu;
     QAction *m_openStlAct;
     QAction *m_exitAct;
@@ -38,6 +42,8 @@ private:
     QMenu *m_segMenu;
     QAction *m_segAct;
 
+    QMenu *m_convMenu;
+    QAction *m_convAct;
     QMenu *m_testMenu;
     QAction *m_testAct;
 
@@ -46,6 +52,10 @@ private:
     QVTKWidget *m_smallvtkWidget;
     NavigationUnit*m_navgUnit;
 
+//    VolSurRendering *m_volsurUnit;
+    SurfaceRendering *m_surRenderUnit;
+    VolumeRendering *m_volRenderUnit;
+    ExportDataDlg *exportUntil;
 private:
     void createActions();
     void createMenus();
@@ -53,12 +63,14 @@ private:
     void createTinyLayout();
     void initModules();
     void initRenderWindow();
+    void initStatus();
     void updateRenderWindow();
 private slots:
     void open();
     void openStl(int option);
     void exit();
     void viewDockPanel(bool);
+    void runConvert();
     void runSegment();
     void unittest();
     void on_cb_open3dreg_clicked();
@@ -89,6 +101,16 @@ private slots:
     void on_cb_cuttingContour_toggled(bool checked);
     void on_pb_cut_clicked();
 
+    void on_pb_openSurface_clicked();
+    void on_pb_openVolume_clicked();
+    void on_pb_openMask_clicked();
+    void on_pb_buildVolume_clicked();
+    void on_m_hsIterNums_sliderReleased();
+    void on_m_hsIterNums_valueChanged(int value);
+    void on_m_hsRelaxationFactor_sliderReleased();
+    void on_m_hsRelaxationFactor_valueChanged(int value);
+    void on_cb_sur_freeroaming_toggled(bool checked);
+    void on_m_hsspeed_sliderReleased();
 
 
 };

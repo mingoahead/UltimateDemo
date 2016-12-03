@@ -11,13 +11,13 @@
 #include "test_cameraactor.h"
 #include "test_camerawidget.h"
 #include "test_ballonwidget.h"
+#include "test_bidimensional.h"
 #include "test_vtkimagedata.h"
 #include "test_imageslicing.h"
 #include "test_itk_labelstatistics.h"
 #include "test_itk_thinning3d.h"
 #include "test_itk_levelset.h"
 #include "test_itk_maskfilter.h"
-
 class TestUnit
 {
 public:
@@ -52,9 +52,13 @@ public:
 //        test_itk_levelset -> RunTest();
 //        delete test_itk_levelset;
 
-        Test_Itk_MaskFilter *test_itk_maskfilter = new Test_Itk_MaskFilter();
-        test_itk_maskfilter -> RunTest();
-        delete test_itk_maskfilter;
+//        Test_Itk_MaskFilter *test_itk_maskfilter = new Test_Itk_MaskFilter();
+//        test_itk_maskfilter -> RunTest();
+//        delete test_itk_maskfilter;
+
+        Test_BiDimensionalWidget *test_bidimensionalwidget = new Test_BiDimensionalWidget();
+        test_bidimensionalwidget->RunTest();
+        delete test_bidimensionalwidget;
 
         std::cout << "**************TEST PART END:*****************" << std::endl;
 

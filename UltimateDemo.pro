@@ -75,7 +75,9 @@ SOURCES += main.cpp\
     Modules/CenLine_1/itkSpeedFunctionToPathFilter.txx \
     Modules/CenLineUnit.cpp \
     Modules/CenLine_2/itkBinaryThinningImageFilter3D.txx \
-    Modules/VolSurRendering.cpp
+    exportdatadlg.cpp \
+    Modules/Rendering/SurfaceRendering.cpp \
+    Modules/Rendering/VolumeRendering.cpp
 
 HEADERS  += mainwindow.h \
     Utils/itklibs.h \
@@ -165,10 +167,15 @@ HEADERS  += mainwindow.h \
     UnitTest/Auxiliary/itkLevelSetIterationUpdateCommand.h \
     UnitTest/Auxiliary/itkLevelSetIterationUpdateCommand.hxx \
     UnitTest/test_itk_maskfilter.h \
-    Modules/VolSurRendering.h \
-    Utils/vtkhelper.h
+    Utils/vtkhelper.h \
+    UnitTest/test_bidimensional.h \
+    exportdatadlg.h \
+    Modules/Rendering/SurfaceRendering.h \
+    Modules/Rendering/VolumeRendering.h \
+    Utils/dirhelper.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    exportdatadlg.ui
 
 INCLUDEPATH += CTK-LIBS/LIBS/Widgets/ \
                CTK-LIBS/LIBS/Core/ \
@@ -182,9 +189,50 @@ INCLUDEPATH += CTK-LIBS/LIBS/Widgets/ \
 DISTFILES += \
     SubSys/WTK.exp \
     SubSys/WTK.lib \
-    SubSys/WTK.exe
+    SubSys/WTK.exe \
+    qdarkstyle/rc/branch_closed.png \
+    qdarkstyle/rc/branch_closed-on.png \
+    qdarkstyle/rc/branch_open.png \
+    qdarkstyle/rc/branch_open-on.png \
+    qdarkstyle/rc/checkbox_checked.png \
+    qdarkstyle/rc/checkbox_checked_disabled.png \
+    qdarkstyle/rc/checkbox_checked_focus.png \
+    qdarkstyle/rc/checkbox_indeterminate.png \
+    qdarkstyle/rc/checkbox_indeterminate_disabled.png \
+    qdarkstyle/rc/checkbox_indeterminate_focus.png \
+    qdarkstyle/rc/checkbox_unchecked.png \
+    qdarkstyle/rc/checkbox_unchecked_disabled.png \
+    qdarkstyle/rc/checkbox_unchecked_focus.png \
+    qdarkstyle/rc/close.png \
+    qdarkstyle/rc/close-hover.png \
+    qdarkstyle/rc/close-pressed.png \
+    qdarkstyle/rc/down_arrow.png \
+    qdarkstyle/rc/down_arrow_disabled.png \
+    qdarkstyle/rc/Hmovetoolbar.png \
+    qdarkstyle/rc/Hsepartoolbar.png \
+    qdarkstyle/rc/left_arrow.png \
+    qdarkstyle/rc/left_arrow_disabled.png \
+    qdarkstyle/rc/radio_checked.png \
+    qdarkstyle/rc/radio_checked_disabled.png \
+    qdarkstyle/rc/radio_checked_focus.png \
+    qdarkstyle/rc/radio_unchecked.png \
+    qdarkstyle/rc/radio_unchecked_disabled.png \
+    qdarkstyle/rc/radio_unchecked_focus.png \
+    qdarkstyle/rc/right_arrow.png \
+    qdarkstyle/rc/right_arrow_disabled.png \
+    qdarkstyle/rc/sizegrip.png \
+    qdarkstyle/rc/stylesheet-branch-end.png \
+    qdarkstyle/rc/stylesheet-branch-more.png \
+    qdarkstyle/rc/stylesheet-vline.png \
+    qdarkstyle/rc/transparent.png \
+    qdarkstyle/rc/undock.png \
+    qdarkstyle/rc/up_arrow.png \
+    qdarkstyle/rc/up_arrow_disabled.png \
+    qdarkstyle/rc/Vmovetoolbar.png \
+    qdarkstyle/rc/Vsepartoolbar.png
 
 RESOURCES += \
-    resources.qrc
+    resources.qrc \
+
 
 RC_ICONS = res/icon/demo1.ico

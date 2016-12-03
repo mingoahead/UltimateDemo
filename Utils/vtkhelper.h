@@ -61,7 +61,17 @@
 #include <vtkImageShiftScale.h>
 #include <vtkImageReslice.h>
 
+#include <vtkBiDimensionalWidget.h>
+#include <vtkBiDimensionalRepresentation2D.h>
+
+#include "QVTKWidget.h"
+
 #include "fastdef.h"
+/// index 1: vtkSliderCallBack (type Widget)
+/// index 2: vtkIPWCallback    (type Widget)
+/// index 3: CusInteractorStylePickPoint (type interactorstyle)
+/// index 4: InteractionCallBackHandler  (type interactorstyle)
+/// index 5: FreeRoamingInteractorStyle  (type interactorstyle)
 namespace Util {
 
 class vtkSliderCallBack : public vtkCommand {
@@ -222,6 +232,175 @@ private:
             }
         }
     }
+};
+
+class InteractionCallBackHandler : public vtkCommand {
+public:
+    static InteractionCallBackHandler *New()
+    {
+        return new InteractionCallBackHandler;
+    }
+
+    InteractionCallBackHandler()
+    {
+        m_lookupTable.clear();
+        m_interactor = nullptr;
+    }
+
+    void Connect(vtkRenderer * renderer, vtkInteractorStyle * style)
+    {
+        m_lookupTable[ renderer ] = style;
+    }
+
+    void SetInteractor(vtkRenderWindowInteractor * interactor)
+    {
+        m_interactor = interactor;
+    }
+
+    vtkRenderWindowInteractor * GetInteractor()
+    {
+        return m_interactor;
+    }
+
+    void RemoveAll()
+    {
+        m_lookupTable.clear();
+    }
+
+    void Disconnect(vtkRenderer * renderer)
+    {
+        m_lookupTable.erase(renderer);
+    }
+
+    virtual void Execute(vtkObject *, unsigned long event, void *)
+    {
+        vtkRenderWindowInteractor *interactor = this->GetInteractor();
+
+        if (interactor == nullptr) return ;
+
+        int curPos[2];
+        interactor->GetEventPosition(curPos);
+
+        if (event == vtkCommand::MouseMoveEvent || event == QVTKWidget::DragMoveEvent) {
+            vtkRenderer *renderer = interactor->FindPokedRenderer(curPos[0], curPos[1]);
+
+            vtkInteractorStyle *style = m_lookupTable[renderer];
+
+            if (style) {
+                interactor->SetInteractorStyle(style);
+            }
+            vtkInteractorStyle *style2 = vtkInteractorStyle::SafeDownCast(interactor->GetInteractorStyle());
+            if (style2) {
+                style2->OnMouseMove();
+            }
+        }
+    }
+
+private:
+    vtkRenderWindowInteractor * m_interactor;
+    std::map< vtkRenderer*, vtkInteractorStyle* > m_lookupTable;
+};
+
+class FreeRoamingInteractorStyle :  public vtkInteractorStyleTrackballCamera
+{
+public:
+    static FreeRoamingInteractorStyle * New()
+    {
+        return new FreeRoamingInteractorStyle;
+    }
+
+    vtkTypeMacro(FreeRoamingInteractorStyle, vtkInteractorStyleTrackballCamera);
+
+    virtual void OnKeyPress()
+    {
+        // Get the keypress
+        vtkRenderWindowInteractor *rwi = this->Interactor;
+        std::string key = rwi->GetKeySym();
+
+        // Output the key that was pressed
+        std::cout << "Pressed " << key << std::endl;
+
+        double pos[3];
+        double foc[3];
+        double dir[3];
+        m_camera->GetPosition(pos);
+        m_camera->GetFocalPoint(foc);
+
+        double d2 = 0;
+        for (int i = 0; i < 3; ++i) {
+            dir[i] = foc[i] - pos[i];
+            d2 += dir[i] * dir[i];
+        }
+        d2 = sqrt(d2);
+        for (int i = 0; i < 3; ++i) {
+            dir[i] /= d2;
+        }
+
+        // view up
+        if(key == "Up") {
+            m_camera->Yaw(m_turningSpeed);
+        }
+
+        // view down
+        if (key == "Down") {
+            m_camera->Yaw(-m_turningSpeed);
+        }
+
+        // view left
+        if (key == "Left") {
+            m_camera->Elevation(m_turningSpeed);
+        }
+
+        // view right
+        if (key == "Right") {
+            m_camera->Elevation(-m_turningSpeed);
+        }
+
+        // move foward
+        if(key == "h") {
+            for (int i = 0; i < 3; ++i) {
+                pos[i] += m_movingSpeed * dir[i];
+                foc[i] += m_movingSpeed * dir[i];
+            }
+        }
+
+        // move backward
+        if (key == "j") {
+            for (int i = 0; i < 3; ++i) {
+                pos[i] -= m_movingSpeed * dir[i];
+                foc[i] -= m_movingSpeed * dir[i];
+            }
+        }
+
+        // move left
+        if (key == "g") {
+            //
+        }
+
+        // move right
+        if (key == "k") {
+            //
+        }
+
+        m_camera->SetPosition(pos);
+        m_camera->SetFocalPoint(foc);
+
+        // Forward events
+        vtkInteractorStyleTrackballCamera::OnKeyPress();
+    }
+
+    void SetRoamingCamera(vtkCamera * cam) { m_camera = cam; }
+
+    void SetMovingSpeed(double movingSpeed) { m_movingSpeed = movingSpeed; }
+
+    void SetTurningSpeed(double turningSpeed) { m_turningSpeed = turningSpeed; }
+
+private:
+    vtkCamera * m_camera;
+
+    double m_movingSpeed; // distance
+    double m_turningSpeed; // angle
+
 };
 }
 #endif // VTKHELPER

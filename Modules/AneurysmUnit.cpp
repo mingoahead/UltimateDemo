@@ -3,18 +3,20 @@ vtkStandardNewMacro(Util::CusInteractorStylePickPoint);
 
 AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
 {
-    vsp(m_renderer);
+
     vsp(m_renInteractor);
     m_renInteractor->SetRenderWindow(m_renderWindow);
+    vsp(m_renderer);
+    m_renderer -> SetBackground(.1, .2, .3);
     vsp(m_light);
     vsp(m_ul_renderer);
     vsp(m_ur_renderer);
     vsp(m_bl_renderer);
     vsp(m_br_renderer);
-    vsp(m_left_renderer);
-    vsp(m_right_renderer);
-    vsp(m_Surface);
-    vsp(m_Volume);
+    m_ul_renderer -> SetBackground(0.1, 0.1, 0.2);
+    m_ur_renderer -> SetBackground(0.1, 0.2, 0.1);
+    m_bl_renderer -> SetBackground(0.2, 0.1, 0.2);
+    m_br_renderer -> SetBackground(.2, .2, .2);
     vsp(m_3DReg_segmentationModel);
     vsp(m_LevelSet_segmentationModel);
     vsp(m_RegDetect_segmentationModel);
@@ -48,13 +50,24 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     vsp(m_leftLineModel);
     vsp(m_rightLineModel);
     vsp(m_rawData);
-    vsp(m_tranViewer);
-    vsp(m_corViewer);
-    vsp(m_sagViewer);
+
     vsp(m_tranActor);
     vsp(m_corActor);
     vsp(m_sagActor);
     InitAnnotation();
+    //3 plain views setting part
+    vsp(m_tranViewerRenderer);
+    m_tranViewerRenderer -> GradientBackgroundOn();
+    m_tranViewerRenderer -> SetBackground(0.3, 0.5, 0.5);
+    m_tranViewerRenderer -> AddViewProp(m_tranAnnotation);
+    vsp(m_corViewerRenderer);
+    m_corViewerRenderer -> GradientBackgroundOn();
+    m_corViewerRenderer -> SetBackground(0.4, 0.4, 0.6);
+    m_corViewerRenderer -> AddViewProp(m_corAnnotation);
+    vsp(m_sagViewerRenderer);
+    m_sagViewerRenderer -> GradientBackgroundOn();
+    m_sagViewerRenderer -> SetBackground(0.7, 0.6, 0.7);
+    m_sagViewerRenderer -> AddViewProp(m_sagAnnotation);
     vsp(m_lineInfoPointPicker);
     Instantiate(t_pointPickerStyle, Util::CusInteractorStylePickPoint);
     m_renInteractor->SetInteractorStyle(t_pointPickerStyle);
@@ -66,7 +79,6 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
 
 //    vsp(m_sliceViewStyle);
 
-    m_VolumePropertyWidget = new ctkVTKVolumePropertyWidget;
     InitSliders();
     InitCamerasWidgets();
     m_renderer->ResetCamera();
@@ -75,19 +87,9 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
 AneurysmUnit::~AneurysmUnit()
 {
     delete m_centerLine;
-    delete m_VolumePropertyWidget;
 }
 
 vtkRenderer *AneurysmUnit::GetRenderer() {return m_renderer;}
-
-vtkRenderer *AneurysmUnit::GetLeftRenderer() {return m_left_renderer; }
-
-vtkRenderer *AneurysmUnit::GetRightRenderer()  {return m_right_renderer; }
-
-ctkVTKVolumePropertyWidget *AneurysmUnit::GetVolumePropertyWidget()
-{
-    return m_VolumePropertyWidget;
-}
 
 vtkRenderer *AneurysmUnit::GetBLRenderer() {return m_bl_renderer; }
 
@@ -102,6 +104,12 @@ vtkRenderer *AneurysmUnit::GettranViewerRenderer() {return m_tranViewerRenderer;
 vtkRenderer *AneurysmUnit::GetcorViewerRenderer() {return m_corViewerRenderer;}
 
 vtkRenderer *AneurysmUnit::GetsagViewerRenderer() {return m_sagViewerRenderer;}
+
+std::string AneurysmUnit::GetCurInteractorStyle()
+{
+    return m_renderWindow->GetInteractor()->GetInteractorStyle()->GetClassName();
+}
+
 
 void AneurysmUnit::ReadInputSegmentationModel(std::string fileName, int option)
 {
@@ -336,8 +344,10 @@ void AneurysmUnit::GetCenterLine(int option)
 //        return ;
 //    }
     cur_pointPickerStyle->GetMarkedPoints(s, e);
-//    m_pointPickerInteractorStyle->GetMarkedPoints(s, e);
-    int tmp = option % 3;
+    std::cout << "start point : " << s[0] << ", " << s[1] << ", " << s[2] << std::endl;
+    std::cout << "end point : " << e[0] << ", " << e[1] << ", " << e[2] << std::endl;
+
+    int tmp = option % 3;  // chose centerline method
     if(tmp == 0) {
         m_centerLine->Path_GradientDescent(GetRawFilename(), s, e);
     }
@@ -486,23 +496,6 @@ void AneurysmUnit::Draw3DSlice(double pos[])
     DrawSliceFactory(m_sagViewerRenderer, m_sagActor, sagittalElements, pos);
 }
 
-void AneurysmUnit::DrawVolume_Surface()
-{
-    std::string name1 =
-            "D://3dresearch//Wu-yj//Ultimate//Roam-part//data//testdata//09//untitled.mhd";
-    std::string name2 =
-            "D://3dresearch//Wu-yj//Ultimate//Roam-part//data//testdata//09//122802.mhd";
-    std::string name3 =
-            "D://3dresearch//Wu-yj//Ultimate//Roam-part//data//testdata//09//122802.stl";
-    int sign1 = VolSurRendering::PrepareSurface(name3, m_Surface);
-    int sign2 = VolSurRendering::PrepareVolume(name1, name2, m_Volume, m_VolumePropertyWidget);
-    if(sign1 == EXIT_FAILURE || sign2 == EXIT_FAILURE) {
-        return ;
-    }
-    m_right_renderer->AddActor(m_Surface);
-    m_left_renderer->AddVolume(m_Volume);
-    m_renderWindow->Render();
-}
 
 void AneurysmUnit::SetVisibilitySTLCuttingPlane(bool show)
 {
@@ -536,8 +529,100 @@ void AneurysmUnit::DoSTLCut()
 
     DoStlCutting(m_3DReg_segmentationReader);
 //    DoStlCutting(m_LevelSet_segmentationReader);
-//    DoStlCutting(m_RegDetect_segmentationReader);
+    //    DoStlCutting(m_RegDetect_segmentationReader);
 }
+void AneurysmUnit::RemoveAllRenderers()
+{
+//    std::cout << "start cleaning renderers..." << std::endl;
+
+    // clean previous renderers and then add the current renderer
+
+    m_renderWindow->RemoveRenderer(m_renderer);
+    m_renderWindow->RemoveRenderer(m_ul_renderer);
+    m_renderWindow->RemoveRenderer(m_ur_renderer);
+    m_renderWindow->RemoveRenderer(m_bl_renderer);
+    m_renderWindow->RemoveRenderer(m_br_renderer);
+    m_renderWindow->RemoveRenderer(m_corViewerRenderer);
+    m_renderWindow->RemoveRenderer(m_tranViewerRenderer);
+    m_renderWindow->RemoveRenderer(m_sagViewerRenderer);
+
+//    auto collection = m_renderWindow->GetRenderers();
+//    std::cout << collection->GetNumberOfItems() << std::endl;
+//    auto item = collection->GetNextItem();
+//    while (item != NULL)
+//    {
+//        m_renderWindow->RemoveRenderer(item);
+//        item = collection->GetNextItem();
+//    }
+//    std::cout << collection->GetNumberOfItems() << std::endl;
+
+}
+void AneurysmUnit::RegisterDisplay(int mod)
+{
+    RemoveAllRenderers();
+    switch(mod) {
+    case SINGLE_MOD: {
+        std::cout << "build renderers : " << mod << std::endl;
+        m_renderer -> SetViewport(0, 0, 1, 1);
+        m_renderWindow -> AddRenderer(m_renderer);
+        int m = m_renInteractor->GetInteractorStyle()->IsTypeOf("Util::CusInteractorStylePickPoint");
+        if(0 == m) {
+            m_renInteractor->RemoveObserver((vtkCommand*)m_renInteractor->GetInteractorStyle());
+            Instantiate(t_pointPickerStyle, Util::CusInteractorStylePickPoint);
+            m_renInteractor->SetInteractorStyle(t_pointPickerStyle);
+            t_pointPickerStyle->PreparedRenderer(m_renderer);
+            t_pointPickerStyle->SetInteractor(m_renInteractor);
+        }
+        break;
+    }
+
+    case COMP_MOD: {
+        std::cout << "build renderers : " << mod << std::endl;
+        break;
+    }
+    case COMP4_MOD: {
+        std::cout << "build renderers : " << mod << std::endl;
+        m_ul_renderer -> SetViewport(0, 0, 0.5, 0.5);
+        m_ur_renderer -> SetViewport(.5, 0, 1, 0.5);;
+        m_bl_renderer -> SetViewport(0, 0.5, 0.5, 1);
+        m_br_renderer -> SetViewport(0.5, 0.5, 1, 1);
+        m_renderWindow -> AddRenderer(m_ul_renderer);
+        m_renderWindow -> AddRenderer(m_ur_renderer);
+        m_renderWindow -> AddRenderer(m_bl_renderer);
+        m_renderWindow -> AddRenderer(m_br_renderer);
+        break;
+    }
+
+    case PLANE_MOD: {
+        m_renderer -> SetViewport(0, 0, 0.75, 1);
+//            m_renderer -> SetBackground(.1, .2, .3);
+        //3 plain views setting part
+        m_tranViewerRenderer -> SetViewport(0.75, 0, 1, 0.33);
+        m_corViewerRenderer -> SetViewport(0.75, 0.33, 1, 0.67);
+        m_sagViewerRenderer -> SetViewport(0.75, 0.67, 1, 1);
+        m_renderWindow -> AddRenderer(m_renderer);
+        m_renderWindow -> AddRenderer(m_tranViewerRenderer);
+        m_renderWindow -> AddRenderer(m_corViewerRenderer);
+        m_renderWindow -> AddRenderer(m_sagViewerRenderer);
+
+        int m = m_renInteractor->GetInteractorStyle()->IsTypeOf("vtkInteractorStyleImage");
+        if(0 == m) {
+            m_renInteractor->RemoveObserver((vtkCommand*)m_renInteractor->GetInteractorStyle());
+            Instantiate(t_SliceViewStyle, vtkInteractorStyleImage);
+            m_renInteractor->SetInteractorStyle(t_SliceViewStyle);
+            t_SliceViewStyle->SetInteractor(m_renInteractor);
+        }
+        break;
+    }
+
+    default: {
+        break;
+    }
+
+    }
+}
+
+
 
 void AneurysmUnit::InitSliders()
 {
@@ -684,7 +769,6 @@ void AneurysmUnit::InitAnnotation()
     m_sagAnnotation->SetMaximumFontSize(18);
     m_sagAnnotation->SetText(3, "Sagittal");
     m_sagAnnotation->GetTextProperty()->SetColor(1, 0, 0);
-    RegisterDisplay(1);
 }
 
 void AneurysmUnit::InitCamerasWidgets()
