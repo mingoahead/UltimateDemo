@@ -69,7 +69,7 @@
 #include "fastdef.h"
 /// index 1: vtkSliderCallBack (type Widget)
 /// index 2: vtkIPWCallback    (type Widget)
-/// index 3: CusInteractorStylePickPoint (type interactorstyle)
+/// index 3: CusInteractorPickPointStyle (type interactorstyle)
 /// index 4: InteractionCallBackHandler  (type interactorstyle)
 /// index 5: FreeRoamingInteractorStyle  (type interactorstyle)
 namespace Util {
@@ -121,11 +121,11 @@ public:
     vtkActor *Actor;
 };
 
-class CusInteractorStylePickPoint : public vtkInteractorStyleTrackballCamera
+class CusInteractorPickPointStyle : public vtkInteractorStyleTrackballCamera
 {
 public:
-    static CusInteractorStylePickPoint* New();
-    vtkTypeMacro(CusInteractorStylePickPoint,vtkInteractorStyleTrackballCamera);
+    static CusInteractorPickPointStyle* New();
+    vtkTypeMacro(CusInteractorPickPointStyle,vtkInteractorStyleTrackballCamera);
 
     void PreparedRenderer( vtkRenderer *renderer)
     {
@@ -148,10 +148,12 @@ public:
     }
     void GetMarkedPoints(double p1[3],double p2[3])
     {
+        std::cout << m_pbeg.x << ", " << m_pbeg.y << ", " << m_pbeg.z << std::endl;
         p1[0] = m_pbeg.x;
         p1[1] = m_pbeg.y;
         p1[2] = m_pbeg.z;
 
+        std::cout << m_pend.x << ", " << m_pend.y << ", " << m_pend.z << std::endl;
         p2[0] = m_pend.x;
         p2[1] = m_pend.y;
         p2[2] = m_pend.z;
@@ -184,8 +186,6 @@ private:
     }
     void ProcessPick()
     {
-        int   state = m_enabled == true ? 1 : 0;
-        std::cout << "begin picking point and m_enabled is now " << state<< std::endl;
         if(m_enabled){
             m_PickedPointsCnt %= 2;
             if(m_PickedPointsCnt == 0)
@@ -196,10 +196,12 @@ private:
                                                 this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer());
             double p[3];
             this->Interactor->GetPicker()->GetPickPosition(p);
+            std::cout << p[0] << ", " << p[1] << ", " << p[2] << std::endl;
             ++m_PickedPointsCnt;
             switch(m_PickedPointsCnt) {
             case 1: {
                 m_pbeg = {p[0], p[1], p[2]};
+
                 vtkSmartPointer<vtkSphereSource> spheresource =
                         vtkSmartPointer<vtkSphereSource>::New();
                 spheresource->SetCenter(p);
@@ -227,7 +229,7 @@ private:
                 m_endPointActor->SetMapper(mapper);
                 m_endPointActor->GetProperty()->SetColor(.0, .5, .5);
                 m_renderer->AddActor(m_endPointActor);
-
+                break;
             }
             }
         }

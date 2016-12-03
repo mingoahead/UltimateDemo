@@ -156,7 +156,7 @@ private:
 
     // centerline related
     vtkSmartPointer<vtkPointPicker> m_lineInfoPointPicker;
-//    vtkSmartPointer<CusInteractorStylePickPoint> m_pointPickerInteractorStyle;
+//    vtkSmartPointer<CusInteractorPickPointStyle> m_pointPickerInteractorStyle;
 //    vtkSmartPointer<vtkInteractorStyleImage> m_sliceViewStyle;
 
     vtkSmartPointer<vtkActor> m_leftLineModel;

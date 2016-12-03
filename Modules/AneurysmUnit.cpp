@@ -1,5 +1,5 @@
 #include "AneurysmUnit.h"
-vtkStandardNewMacro(Util::CusInteractorStylePickPoint);
+vtkStandardNewMacro(Util::CusInteractorPickPointStyle);
 
 AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
 {
@@ -69,7 +69,7 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     m_sagViewerRenderer -> SetBackground(0.7, 0.6, 0.7);
     m_sagViewerRenderer -> AddViewProp(m_sagAnnotation);
     vsp(m_lineInfoPointPicker);
-    Instantiate(t_pointPickerStyle, Util::CusInteractorStylePickPoint);
+    Instantiate(t_pointPickerStyle, Util::CusInteractorPickPointStyle);
     m_renInteractor->SetInteractorStyle(t_pointPickerStyle);
     t_pointPickerStyle->PreparedRenderer(m_renderer);
 
@@ -331,15 +331,23 @@ void AneurysmUnit::ShowCenterPoints(vtkSmartPointer<vtkActor> LineModel,
 void AneurysmUnit::GetCenterLine(int option)
 {
     double s[3], e[3];
-    int m = m_renInteractor->GetInteractorStyle()->IsTypeOf("Util::CusInteractorStylePickPoint");
-    if(0 == m) {
-        Instantiate(t_pickPointStyle, Util::CusInteractorStylePickPoint);
+    std::string stmp = m_renInteractor->GetInteractorStyle()->GetClassName();
+
+
+//    std::cout << "already have picker enabled ? " << m << std::endl;
+    std::cout << stmp << std::endl;
+    if(stmp != "CusInteractorPickPointStyle") {
+        std::cout << m_renInteractor->GetInteractorStyle()->GetClassName() << std::endl;
+        Instantiate(t_pickPointStyle, Util::CusInteractorPickPointStyle);
         m_renInteractor->SetInteractorStyle(t_pickPointStyle);
         t_pickPointStyle->PreparedRenderer(m_renderer);
     }
-    Util::CusInteractorStylePickPoint* cur_pointPickerStyle
-            = (Util::CusInteractorStylePickPoint*)m_renInteractor->GetInteractorStyle();
+    std::cout << m_renInteractor->GetInteractorStyle()->GetClassName() << std::endl;
+    Util::CusInteractorPickPointStyle* cur_pointPickerStyle
+            = (Util::CusInteractorPickPointStyle*)m_renInteractor->GetInteractorStyle();
 
+    cur_pointPickerStyle->PreparedRenderer(m_renderer);
+    int m1 = m_renInteractor->GetInteractorStyle()->IsTypeOf("CusInteractorPickPointStyle");
 //    if(!(cur_pointPickerStyle->GetEnabled())) {
 //        return ;
 //    }
@@ -533,8 +541,6 @@ void AneurysmUnit::DoSTLCut()
 }
 void AneurysmUnit::RemoveAllRenderers()
 {
-//    std::cout << "start cleaning renderers..." << std::endl;
-
     // clean previous renderers and then add the current renderer
 
     m_renderWindow->RemoveRenderer(m_renderer);
@@ -562,13 +568,12 @@ void AneurysmUnit::RegisterDisplay(int mod)
     RemoveAllRenderers();
     switch(mod) {
     case SINGLE_MOD: {
-        std::cout << "build renderers : " << mod << std::endl;
         m_renderer -> SetViewport(0, 0, 1, 1);
         m_renderWindow -> AddRenderer(m_renderer);
-        int m = m_renInteractor->GetInteractorStyle()->IsTypeOf("Util::CusInteractorStylePickPoint");
+        int m = m_renInteractor->GetInteractorStyle()->IsTypeOf("Util::CusInteractorPickPointStyle");
         if(0 == m) {
             m_renInteractor->RemoveObserver((vtkCommand*)m_renInteractor->GetInteractorStyle());
-            Instantiate(t_pointPickerStyle, Util::CusInteractorStylePickPoint);
+            Instantiate(t_pointPickerStyle, Util::CusInteractorPickPointStyle);
             m_renInteractor->SetInteractorStyle(t_pointPickerStyle);
             t_pointPickerStyle->PreparedRenderer(m_renderer);
             t_pointPickerStyle->SetInteractor(m_renInteractor);
@@ -577,11 +582,9 @@ void AneurysmUnit::RegisterDisplay(int mod)
     }
 
     case COMP_MOD: {
-        std::cout << "build renderers : " << mod << std::endl;
         break;
     }
     case COMP4_MOD: {
-        std::cout << "build renderers : " << mod << std::endl;
         m_ul_renderer -> SetViewport(0, 0, 0.5, 0.5);
         m_ur_renderer -> SetViewport(.5, 0, 1, 0.5);;
         m_bl_renderer -> SetViewport(0, 0.5, 0.5, 1);
@@ -707,8 +710,8 @@ bool AneurysmUnit::BindSlider(vtkSmartPointer<vtkActor> actor,
 
 void AneurysmUnit::SetPointPickerEnabled(bool enabled)
 {
-    Util::CusInteractorStylePickPoint* cur_pointPickerStyle
-            = (Util::CusInteractorStylePickPoint*)m_renInteractor->GetInteractorStyle();
+    Util::CusInteractorPickPointStyle* cur_pointPickerStyle
+            = (Util::CusInteractorPickPointStyle*)m_renInteractor->GetInteractorStyle();
     cur_pointPickerStyle->SetPickerEnabled(enabled);
 //    m_pointPickerInteractorStyle->SetPickerEnabled(enabled);
 }
