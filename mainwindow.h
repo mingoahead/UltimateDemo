@@ -65,9 +65,9 @@ private:
     void initRenderWindow();
     void initStatus();
     void updateRenderWindow();
+    bool openStl(int option);
 private slots:
     void open();
-    void openStl(int option);
     void exit();
     void viewDockPanel(bool);
     void runConvert();

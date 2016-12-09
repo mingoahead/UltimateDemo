@@ -155,7 +155,7 @@ void MainWindow::open()
 }
 
 
-void MainWindow::openStl(int option)
+bool MainWindow::openStl(int option)
 {
     // to open stl file
     QMap<int, QString> segMap;
@@ -168,7 +168,9 @@ void MainWindow::openStl(int option)
         m_appUnit->ReadInputSegmentationModel(fileName.toStdString(), option);
         m_appUnit->ShowSegmentationModel(option);
         updateRenderWindow();
+        return true;
     }
+    return false;
 }
 
 void MainWindow::exit()
@@ -216,8 +218,10 @@ void MainWindow::on_cb_open3dreg_clicked()
 {
     m_appUnit->RegisterDisplay(1);
     updateRenderWindow();
-    openStl(1);
-    ui->cbb_show_3dreg->setEnabled(true);
+    if(openStl(1)) {
+        ui->cbb_show_3dreg->setEnabled(true);
+    }
+
 }
 
 void MainWindow::on_cbb_show_3dreg_currentIndexChanged(int index)
@@ -240,8 +244,9 @@ void MainWindow::on_cb_openlevelset_clicked()
 {
     m_appUnit->RegisterDisplay(1);
     updateRenderWindow();
-    openStl(2);
-    ui->cbb_show_ls->setEnabled(true);
+    if(openStl(2)) {
+        ui->cbb_show_ls->setEnabled(true);
+    }
 
 }
 
@@ -265,8 +270,9 @@ void MainWindow::on_cb_openregdetect_clicked()
 {
     m_appUnit->RegisterDisplay(1);
     updateRenderWindow();
-    openStl(3);
-    ui->cbb_show_sd->setEnabled(true);
+    if(openStl(3)) {
+        ui->cbb_show_sd->setEnabled(true);
+    }
 }
 
 void MainWindow::on_cbb_show_sd_currentIndexChanged(int index)

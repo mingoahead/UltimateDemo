@@ -172,7 +172,8 @@ HEADERS  += mainwindow.h \
     exportdatadlg.h \
     Modules/Rendering/SurfaceRendering.h \
     Modules/Rendering/VolumeRendering.h \
-    Utils/dirhelper.h
+    Utils/dirhelper.h \
+    UnitTest/test_visualalgorithms.h
 
 FORMS    += mainwindow.ui \
     exportdatadlg.ui

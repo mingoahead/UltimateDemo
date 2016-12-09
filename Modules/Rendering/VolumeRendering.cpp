@@ -52,16 +52,16 @@ void VolumeRendering::LoadImageData()
     if(m_maskdataReader->GetFileName().empty())     return ;
     if(m_rawdataReader->GetFileName().empty())  return ;
 
-    ImageType::Pointer maskImage = m_maskdataReader->GetOutput();
-    ImageType::Pointer rawImage = m_rawdataReader->GetOutput();
-    std::cout << maskImage->GetSpacing() << std::endl;
-    std::cout << rawImage->GetSpacing() << std::endl;
+//    ImageType::Pointer maskImage = m_maskdataReader->GetOutput();
+//    ImageType::Pointer rawImage = m_rawdataReader->GetOutput();
+//    std::cout << maskImage->GetSpacing() << std::endl;
+//    std::cout << rawImage->GetSpacing() << std::endl;
     typedef itk::MaskImageFilter<ImageType, ImageType> MaskFilterType;
     MaskFilterType::Pointer maskfilter = MaskFilterType::New();
     maskfilter->SetInput(m_rawdataReader->GetOutput());
     maskfilter->SetMaskImage(m_maskdataReader->GetOutput());
     maskfilter->Update();
-    std::cout << "complete clip image ..." << std::endl;
+//    std::cout << "complete clip image ..." << std::endl;
     typedef itk::ImageToVTKImageFilter <ImageType> ConnectorType;
     ConnectorType::Pointer connector1 = ConnectorType::New();
     connector1->SetInput(maskfilter->GetOutput());
@@ -91,7 +91,7 @@ void VolumeRendering::LoadImageData()
     m_volumeproperty->SetSpecularPower(20);
     m_volumeproperty->SetInterpolationTypeToLinear();
 
-    std::cout << "complete rescale image ..." << std::endl;
+//    std::cout << "complete rescale image ..." << std::endl;
     m_volumemapper->SetRequestedRenderMode(vtkSmartVolumeMapper::GPURenderMode);
     m_volumemapper->SetMaxMemoryInBytes(1847483648);
     m_volumemapper->SetInputConnection(scale->GetOutputPort());
@@ -103,13 +103,9 @@ void VolumeRendering::LoadImageData()
     m_renderer->AddVolume(m_volumedata);
 //    m_renderer->Render();
 
-//    Instantiate(renderWindowInteractor, vtkRenderWindowInteractor);
-//    renderWindowInteractor->SetRenderWindow(m_renderWindow);
-//    Instantiate(style, vtkInteractorStyleTrackballCamera);
-//    renderWindowInteractor->SetInteractorStyle(style);
-    m_renderWindow->Render();
-//    renderWindowInteractor->Initialize();
-//    renderWindowInteractor->Start();
+    m_renderer->ResetCamera();
+//    m_renderWindow->Render();
+
 }
 
 vtkRenderer *VolumeRendering::GetRenderer()

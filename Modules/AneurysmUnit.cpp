@@ -25,9 +25,9 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     vsp(m_RegDetect_segmentationReader);
 
 //    init three model color
-    m_3DReg_segmentationModel -> GetProperty() -> SetColor(1.0, .0, .0);
-    m_LevelSet_segmentationModel -> GetProperty() -> SetColor(.0, 1.0, .0);
-    m_RegDetect_segmentationModel -> GetProperty() -> SetColor(.0, .0, 1.0);
+    m_3DReg_segmentationModel -> GetProperty() -> SetColor(.4, .4, .5);
+    m_LevelSet_segmentationModel -> GetProperty() -> SetColor(.3, .2, .7);
+    m_RegDetect_segmentationModel -> GetProperty() -> SetColor(1.0, .49, .25);
 
     vsp(m_cuttingPlane);
     vsp(m_cuttingPlaneWidget);
@@ -223,6 +223,7 @@ void AneurysmUnit::ShowFrameMode(int option)
         break;
     }
     m_renderer -> ResetCamera();
+//    m_renderer->Render();
 }
 
 void AneurysmUnit::ShowLineMode(int option)
@@ -247,6 +248,7 @@ void AneurysmUnit::ShowLineMode(int option)
         break;
     }
     m_renderer -> ResetCamera();
+//    m_renderer->Render();
 }
 
 void AneurysmUnit::ShowPointMode(int option)
@@ -271,6 +273,7 @@ void AneurysmUnit::ShowPointMode(int option)
         break;
     }
     m_renderer -> ResetCamera();
+//    m_renderer->Render();
 }
 
 void AneurysmUnit::HideSegmentationModel(int option)
@@ -582,6 +585,12 @@ void AneurysmUnit::RegisterDisplay(int mod)
     }
 
     case COMP_MOD: {
+        int m = m_renInteractor->GetInteractorStyle()->IsTypeOf("vtkInteractorStyleTrackballCamera");
+        if(0 == m) {
+            m_renInteractor->RemoveObserver((vtkCommand*)m_renInteractor->GetInteractorStyle());
+            Instantiate(style, vtkInteractorStyleTrackballCamera);
+            m_renInteractor->SetInteractorStyle(style);
+        }
         break;
     }
     case COMP4_MOD: {

@@ -18,6 +18,7 @@
 #include "test_itk_thinning3d.h"
 #include "test_itk_levelset.h"
 #include "test_itk_maskfilter.h"
+#include "test_visualalgorithms.h"
 class TestUnit
 {
 public:
@@ -56,9 +57,12 @@ public:
 //        test_itk_maskfilter -> RunTest();
 //        delete test_itk_maskfilter;
 
-        Test_BiDimensionalWidget *test_bidimensionalwidget = new Test_BiDimensionalWidget();
-        test_bidimensionalwidget->RunTest();
-        delete test_bidimensionalwidget;
+//        Test_BiDimensionalWidget *test_bidimensionalwidget = new Test_BiDimensionalWidget();
+//        test_bidimensionalwidget->RunTest();
+//        delete test_bidimensionalwidget;
+        Test_VisualAlgorithms *test_visual = new Test_VisualAlgorithms();
+        test_visual->RunTest();
+        delete test_visual;
 
         std::cout << "**************TEST PART END:*****************" << std::endl;
 
