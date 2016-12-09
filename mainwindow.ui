@@ -79,7 +79,7 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="page">
       <property name="geometry">
@@ -196,7 +196,7 @@ background-color: rgb(255, 170, 255);</string>
           <x>0</x>
           <y>10</y>
           <width>271</width>
-          <height>171</height>
+          <height>221</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -322,12 +322,25 @@ background-color: rgb(255, 170, 255);</string>
           </item>
          </layout>
         </widget>
+        <widget class="QCheckBox" name="cb_collectionShow">
+         <property name="geometry">
+          <rect>
+           <x>150</x>
+           <y>190</y>
+           <width>111</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Collection Show</string>
+         </property>
+        </widget>
        </widget>
        <widget class="QGroupBox" name="groupBox_2">
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>210</y>
+          <y>240</y>
           <width>261</width>
           <height>71</height>
          </rect>
@@ -386,7 +399,7 @@ background-color: rgb(255, 170, 255);</string>
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>300</y>
+          <y>330</y>
           <width>261</width>
           <height>171</height>
          </rect>
@@ -819,7 +832,7 @@ border-radius: 4px;
          <rect>
           <x>0</x>
           <y>20</y>
-          <width>271</width>
+          <width>276</width>
           <height>36</height>
          </rect>
         </property>
@@ -890,8 +903,8 @@ font: 22pt &quot;Agency FB&quot;;</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>271</width>
-        <height>661</height>
+        <width>100</width>
+        <height>30</height>
        </rect>
       </property>
       <attribute name="label">
@@ -1079,8 +1092,8 @@ font: 22pt &quot;Agency FB&quot;;</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>271</width>
-        <height>661</height>
+        <width>100</width>
+        <height>30</height>
        </rect>
       </property>
       <attribute name="label">

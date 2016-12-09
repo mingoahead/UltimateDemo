@@ -36,5 +36,23 @@ static double sagittalElements[16] = {
     0, -1, 0, 0,
     0, 0 , 0, 1
 };
+static double expand2[2][3] = {
+    {-200.0, .0, .0},
+    {200.0, .0, .0}
+};
+static double expand3[3][3] = {
+    {-250.0, .0, .0},
+    {.0, .0, .0},
+    {250.0, .0, .0}
+};
+static double fold2[2][3] = {
+    {200.0, .0, .0},
+    {-200.0, .0, .0}
+};
+static double fold3[3][3] = {
+     {250.0, .0, .0},
+     {.0, .0, .0},
+    {-250.0, .0, .0}
+};
 #endif // FASTDEF
 

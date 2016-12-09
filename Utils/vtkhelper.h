@@ -1,6 +1,8 @@
 #ifndef VTKHELPER
 #define VTKHELPER
 
+#include <vtkObjectFactory.h>
+#include <vtkRenderingCoreModule.h>
 #include <vtkActor.h>
 #include <vtkActorCollection.h>
 #include <vtkActor2D.h>
@@ -22,7 +24,6 @@
 #include <vtkImageViewer.h>
 #include <vtkRenderer.h>
 #include <vtkCollection.h>
-#include <vtkRendererCollection.h>
 #include <vtkLegendBoxActor.h>
 #include <vtkCornerAnnotation.h>
 #include <vtkTextProperty.h>
@@ -63,6 +64,7 @@
 
 #include <vtkBiDimensionalWidget.h>
 #include <vtkBiDimensionalRepresentation2D.h>
+#include <vtkOpenGLActor.h>
 
 #include "QVTKWidget.h"
 
@@ -404,6 +406,13 @@ private:
     double m_turningSpeed; // angle
 
 };
+
+class SegmentActor : public vtkOpenGLActor {
+public:
+    static SegmentActor* New();
+    vtkTypeMacro(SegmentActor,vtkOpenGLActor);
+};
+
 }
 #endif // VTKHELPER
 

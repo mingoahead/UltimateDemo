@@ -79,6 +79,7 @@ private slots:
     void on_cbb_show_ls_currentIndexChanged(int index);
     void on_cb_openregdetect_clicked();
     void on_cbb_show_sd_currentIndexChanged(int index);
+    void on_cb_collectionShow_toggled(bool checked);
 
 
     void on_pb_test1view_clicked();

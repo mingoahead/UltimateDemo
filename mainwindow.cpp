@@ -290,6 +290,19 @@ void MainWindow::on_cbb_show_sd_currentIndexChanged(int index)
     }
     updateRenderWindow();
 }
+
+void MainWindow::on_cb_collectionShow_toggled(bool checked)
+{
+    if(checked) {
+        m_appUnit->SetVisibilityCollectiOn();
+//        m_appUnit->HideSegmentationModel(1);
+//        m_appUnit->HideSegmentationModel(2);
+//        m_appUnit->HideSegmentationModel(3);
+    }else {
+        m_appUnit->SetVisibilityCollectiOff();
+    }
+    updateRenderWindow();
+}
 void MainWindow::on_pb_test1view_clicked()
 {
     ui->toolBox->setCurrentIndex(1);
