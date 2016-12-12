@@ -1,17 +1,7 @@
 #ifndef TESTUNIT
 #define TESTUNIT
-
-#include "testdistancewidget.h"
-#include "testcutter.h"
 #include "testimageslice.h"
-#include "testextractpolylines.h"
-#include "testimageplanewidget.h"
 #include "test_3views.h"
-#include "test_scalarbaractor.h"
-#include "test_cameraactor.h"
-#include "test_camerawidget.h"
-#include "test_ballonwidget.h"
-#include "test_bidimensional.h"
 #include "test_vtkimagedata.h"
 #include "test_imageslicing.h"
 #include "test_itk_labelstatistics.h"
@@ -19,25 +9,18 @@
 #include "test_itk_levelset.h"
 #include "test_itk_maskfilter.h"
 #include "test_visualalgorithms.h"
+#include "test_vtkwidget.h"
 class TestUnit
 {
 public:
     static void RunTest()
     {
-//        Test_distanceWidget::RunTest();
-//        Test_Cutter::RunTest();
 //        Test_ImageSlice::RunTest();
-//        Test_ExtractPolyLine::RunTest();
-//        Test_ImagePlaneWidget::RunTest();
 
 //       Test_3Views *test3views = new Test_3Views();
 //        test3views -> SetInputDicomSeriesDirectory("D:\\3dresearch\\TestData\\dicom");
 //        test3views -> RunTest();
 //        delete test3views;
-//        Test_ScalarBarActor::RunTest();
-//        Test_CameraActor::RunTest();
-//        Test_CameraWidget::RunTest();
-//        Test_BalloonWidget::RunTest();
         std::cout << "**************TEST PART BEGIN:*****************" << std::endl;
 //        Test_vtkImageData::RunTest();
 
@@ -60,10 +43,14 @@ public:
 //        Test_BiDimensionalWidget *test_bidimensionalwidget = new Test_BiDimensionalWidget();
 //        test_bidimensionalwidget->RunTest();
 //        delete test_bidimensionalwidget;
+
         Test_VisualAlgorithms *test_visual = new Test_VisualAlgorithms();
         test_visual->RunTest();
         delete test_visual;
 
+//        Test_vtkWidget *test_widget = new Test_vtkWidget();
+//        test_widget->RunTest();
+//        delete test_widget;
         std::cout << "**************TEST PART END:*****************" << std::endl;
 
     }
