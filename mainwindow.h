@@ -15,7 +15,8 @@
 #include <vtkEventQtSlotConnect.h>
 #include <vtkCommand.h>
 #include <vtkRenderWindowInteractor.h>
-
+#include <vtkAxesActor.h>
+#include <vtkOrientationMarkerWidget.h>
 
 #include "exportdatadlg.h"
 #include "testunit.h"
@@ -54,6 +55,8 @@ private:
     QAction *m_testAct;
 
     QVTKWidget *m_vtkWidget;
+    vtkSmartPointer<vtkAxesActor> m_axes;
+    vtkSmartPointer<vtkOrientationMarkerWidget> m_orientWidget;
     AneurysmUnit *m_appUnit;
     QVTKWidget *m_smallvtkWidget;
     NavigationUnit *m_navgUnit;

@@ -10,6 +10,7 @@
 #include "test_itk_maskfilter.h"
 #include "test_visualalgorithms.h"
 #include "test_vtkwidget.h"
+#include "test_vtkimageproc.h"
 class TestUnit
 {
 public:

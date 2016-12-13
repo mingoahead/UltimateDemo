@@ -125,6 +125,14 @@ void MainWindow::initModules()
 void MainWindow::initRenderWindow()
 {
     m_vtkWidget -> GetRenderWindow() -> AddRenderer(m_appUnit -> GetRenderer());
+    vsp(m_axes);
+    vsp(m_orientWidget);
+    m_orientWidget->SetOutlineColor( 0.9300, 0.5700, 0.1300 );
+    m_orientWidget->SetOrientationMarker( m_axes );
+    m_orientWidget->SetInteractor( m_vtkWidget->GetRenderWindow()->GetInteractor() );
+    m_orientWidget->SetViewport( .0, .8, .2, 1 );
+    m_orientWidget->SetEnabled( 1 );
+    m_orientWidget->InteractiveOn();
     updateRenderWindow();
 }
 

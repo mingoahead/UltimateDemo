@@ -165,7 +165,8 @@ HEADERS  += mainwindow.h \
     Modules/Rendering/VolumeRendering.h \
     Utils/dirhelper.h \
     UnitTest/test_visualalgorithms.h \
-    UnitTest/test_vtkwidget.h
+    UnitTest/test_vtkwidget.h \
+    UnitTest/test_vtkimageproc.h
 
 FORMS    += mainwindow.ui \
     exportdatadlg.ui
