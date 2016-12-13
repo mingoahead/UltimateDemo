@@ -10,6 +10,12 @@
 #include <vtkSTLReader.h>
 #include <vtkRenderer.h>
 #include <vtkCamera.h>
+#include <QVTKInteractor.h>
+#include <vtkInteractorStyle.h>
+#include <vtkEventQtSlotConnect.h>
+#include <vtkCommand.h>
+#include <vtkRenderWindowInteractor.h>
+
 
 #include "exportdatadlg.h"
 #include "testunit.h"
@@ -50,8 +56,9 @@ private:
     QVTKWidget *m_vtkWidget;
     AneurysmUnit *m_appUnit;
     QVTKWidget *m_smallvtkWidget;
-    NavigationUnit*m_navgUnit;
+    NavigationUnit *m_navgUnit;
 
+    vtkSmartPointer<vtkEventQtSlotConnect> m_Connections;
 //    VolSurRendering *m_volsurUnit;
     SurfaceRendering *m_surRenderUnit;
     VolumeRendering *m_volRenderUnit;
@@ -112,6 +119,8 @@ private slots:
     void on_m_hsRelaxationFactor_valueChanged(int value);
     void on_cb_sur_freeroaming_toggled(bool checked);
     void on_m_hsspeed_sliderReleased();
+    //vtk event qt slot
+    void updateCoords(vtkObject* obj);
 
 
 };

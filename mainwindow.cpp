@@ -135,13 +135,21 @@ void MainWindow::initStatus()
 //    statusBar()->addWidget(m_msgLabel);
     statusBar()->addPermanentWidget(m_msgLabel);
     statusBar()->setStyleSheet(QString("QStatusBar::item{border: 0px}"));
+    vsp(m_Connections);
+    m_Connections->Connect(m_vtkWidget->GetRenderWindow()->GetInteractor(),
+                           vtkCommand::MouseMoveEvent,
+                           this,
+                           SLOT(updateCoords(vtkObject*)));
+
+
 
 }
 
 void MainWindow::updateRenderWindow()
 {
     m_vtkWidget->GetRenderWindow()->Render();
-    m_msgLabel->setText(QString::fromStdString(m_appUnit->GetCurInteractorStyle()));
+//    m_msgLabel->setText(QString::fromStdString(m_appUnit->GetCurInteractorStyle()));
+
 }
 
 void MainWindow::open()
@@ -489,6 +497,17 @@ void MainWindow::on_m_hsspeed_sliderReleased()
 {
     int value = ui->m_hsspeed->value();
 
+}
+
+void MainWindow::updateCoords(vtkObject *obj)
+{
+    vtkRenderWindowInteractor* iren = vtkRenderWindowInteractor::SafeDownCast(obj);
+    int event_pos[2];
+    iren->GetEventPosition(event_pos);
+    QString str;
+//    str.sprintf("x = %d, y = %d", event_pos[0], event_pos[1]);
+    str.sprintf(iren->GetInteractorStyle()->GetClassName());
+    m_msgLabel->setText(str);
 }
 
 
