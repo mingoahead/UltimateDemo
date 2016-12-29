@@ -25,6 +25,7 @@ void ExportDataDlg::on_imageSeriesFolderToolButton_released()
                                                       QFileDialog::ShowDirsOnly
                                                       | QFileDialog::DontResolveSymlinks);
     ui->imageSeriesFolderLineEdit->setText(dirName);
+    std::cout << "input dirs : " << dirName.toStdString() << std::endl;
 }
 
 void ExportDataDlg::on_buttonBox_accepted()
@@ -34,17 +35,19 @@ void ExportDataDlg::on_buttonBox_accepted()
     }
 
     try {        
-        ItkUtils::DicomSeries2Raw<unsigned short, unsigned short>(ui->imageSeriesFolderLineEdit->text().toStdString(), ui->outputFilePathlineEdit->text().toStdString());
+        ItkUtils::DicomSeries2Raw<short, short>(ui->imageSeriesFolderLineEdit->text().toStdString(), ui->outputFilePathlineEdit->text().toStdString());
     } catch (std::exception &ex) {
+
         std::cerr << ex.what() << std::endl;
-        throw;
+        return ;
     }
 }
 
 void ExportDataDlg::on_outputFilePathToolButton_released()
 {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
-                               "/home/jana/untitled.raw",
+                               "/home/3dresearch/TestData/clinical/untitled.raw",
                                tr("raw (*.mha *.raw)"));
     ui->outputFilePathlineEdit->setText(fileName);
+    std::cout << "output path : " << fileName.toStdString() << std::endl;
 }

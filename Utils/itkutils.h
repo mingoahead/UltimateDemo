@@ -63,6 +63,7 @@ public:
 
         nameGenerator->SetDirectory(srcFolder);
 
+        std::cout << "read dicom ...: " << srcFolder << std::endl;
         try {
             typedef std::vector< std::string >    SeriesIdContainer;
 
@@ -71,11 +72,14 @@ public:
             std::vector< std::string > fileNames = nameGenerator->GetFileNames( seriesIdentifier );
             reader->SetFileNames( fileNames );
             reader->Update();
+            std::cout << "successfully load dicom" << std::endl;
         } catch (itk::ExceptionObject &ex) {
             std::cout << ex.GetDescription() << std::endl;
-            throw;
+            return;
+//            throw;
         }
-
+        std::cout << "read dicom complete" << std::endl;
+        std::cout << "write mhd ..." << destPath << std::endl;
         try {
             typedef itk::ImageFileWriter< OutputImageType > WriterType;
 
@@ -86,8 +90,10 @@ public:
             writer->Update();
         } catch (itk::ExceptionObject &ex) {
             std::cerr << ex.GetDescription() << std::endl;
-            throw;
+//            throw;
+            return ;
         }
+        std::cout << "write mhd complete" << std::endl;
     }
 
     template<typename InputElementType, typename OutputElementType>

@@ -20,6 +20,8 @@
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkPiecewiseFunction.h>
 #include <vtkColorTransferFunction.h>
+#include <vtkVolumeRayCastCompositeFunction.h>
+#include <vtkVolumeRayCastMapper.h>
 #include <vtkImageShiftScale.h>
 #include <vtkVolumeProperty.h>
 #include <vtkSmartVolumeMapper.h>
@@ -58,10 +60,12 @@ private:
     vtkSmartPointer<vtkRenderer> m_renderer;
     vtkSmartPointer<vtkVolume> m_volumedata;
     vtkSmartPointer<vtkPiecewiseFunction> m_opacityTransferFunction;
+    vtkSmartPointer<vtkPiecewiseFunction> m_gradientTransferFunction;
     vtkSmartPointer<vtkColorTransferFunction> m_colorTransferFunction;
+    vtkSmartPointer<vtkVolumeRayCastCompositeFunction> m_compositeRaycastFunction;
     vtkSmartPointer<vtkVolumeProperty> m_volumeproperty;
     vtkSmartPointer<vtkSmartVolumeMapper> m_volumemapper;
-
+//    vtkSmartPointer<vtkVolumeRayCastMapper>  m_volumemapper;
     ReaderType::Pointer m_rawdataReader;
     ReaderType::Pointer m_maskdataReader;
 

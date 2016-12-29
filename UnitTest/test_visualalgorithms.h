@@ -123,6 +123,23 @@
 #include <vtkPolyDataNormals.h>
 #include <vtkPointData.h>
 
+///
+#include <vtkCellArray.h>
+#include <vtkProperty.h>
+#include <vtkDataSetMapper.h>
+#include <vtkActor.h>
+#include <vtkPoints.h>
+#include <vtkPolyData.h>
+#include <vtkPolygon.h>
+#include <vtkSmartPointer.h>
+#include <vtkMath.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkCleanPolyData.h>
+#include <vtkDelaunay3D.h>
+#include <vtkXMLPolyDataReader.h>
+#include <vtkSTLReader.h>
 #include "fastdef.h"
 class Test_VisualAlgorithms {
 public:
@@ -137,7 +154,8 @@ public:
 //        return testCameraActor();
 //        return testScalarBarActor();
 //        return testextractPolyline();
-        return testlight();
+//        return testlight();
+        return testDelaunay3D();
     }
 private:
     int testclipper()
@@ -677,6 +695,107 @@ private:
           return EXIT_SUCCESS;
     }
 
+    int testDelaunay3D()
+    {
+        //Read the file
+//          vtkSmartPointer<vtkXMLPolyDataReader> reader =
+//            vtkSmartPointer<vtkXMLPolyDataReader>::New();
+        vtkSmartPointer<vtkSTLReader> reader =
+                vtkSmartPointer<vtkSTLReader>::New();
+
+          reader->SetFileName("D://3dresearch//TestData//stl//122902.stl");
+
+          vtkSmartPointer<vtkDataSetMapper> originalMapper =
+            vtkSmartPointer<vtkDataSetMapper>::New();
+          originalMapper->SetInputConnection(reader->GetOutputPort());
+
+          vtkSmartPointer<vtkActor> originalActor =
+            vtkSmartPointer<vtkActor>::New();
+          originalActor->SetMapper(originalMapper);
+          originalActor->GetProperty()->SetColor(1,1,1);
+
+          // Clean the polydata. This will remove duplicate points that may be
+          // present in the input data.
+          vtkSmartPointer<vtkCleanPolyData> cleaner =
+            vtkSmartPointer<vtkCleanPolyData>::New();
+          cleaner->SetInputConnection (reader->GetOutputPort());
+
+          // Generate a tetrahedral mesh from the input points. By
+          // default, the generated volume is the convex hull of the points.
+          vtkSmartPointer<vtkDelaunay3D> delaunay3D =
+            vtkSmartPointer<vtkDelaunay3D>::New();
+          delaunay3D->SetInputConnection (cleaner->GetOutputPort());
+
+          vtkSmartPointer<vtkDataSetMapper> delaunayMapper =
+            vtkSmartPointer<vtkDataSetMapper>::New();
+          delaunayMapper->SetInputConnection(delaunay3D->GetOutputPort());
+
+          vtkSmartPointer<vtkActor> delaunayActor =
+            vtkSmartPointer<vtkActor>::New();
+          delaunayActor->SetMapper(delaunayMapper);
+          delaunayActor->GetProperty()->SetColor(1,1,1);
+
+          // Generate a mesh from the input points. If Alpha is non-zero, then
+          // tetrahedra, triangles, edges and vertices that lie within the
+          // alpha radius are output.
+          vtkSmartPointer<vtkDelaunay3D> delaunay3DAlpha =
+            vtkSmartPointer<vtkDelaunay3D>::New();
+          delaunay3DAlpha->SetInputConnection (reader->GetOutputPort());
+          delaunay3DAlpha->SetAlpha(0.1);
+
+          vtkSmartPointer<vtkDataSetMapper> delaunayAlphaMapper =
+            vtkSmartPointer<vtkDataSetMapper>::New();
+          delaunayAlphaMapper->SetInputConnection(delaunay3DAlpha->GetOutputPort());
+
+          vtkSmartPointer<vtkActor> delaunayAlphaActor =
+            vtkSmartPointer<vtkActor>::New();
+          delaunayAlphaActor->SetMapper(delaunayAlphaMapper);
+          delaunayAlphaActor->GetProperty()->SetColor(1,1,1);
+
+          // Visualize
+
+          // Define viewport ranges
+          // (xmin, ymin, xmax, ymax)
+          double leftViewport[4] = {0.0, 0.0, 0.33, 1.0};
+          double centerViewport[4] = {0.33, 0.0, 0.66, 1.0};
+          double rightViewport[4] = {0.66, 0.0, 1.0, 1.0};
+
+          // Create a renderer, render window, and interactor
+          vtkSmartPointer<vtkRenderer> originalRenderer =
+            vtkSmartPointer<vtkRenderer>::New();
+          vtkSmartPointer<vtkRenderer> delaunayRenderer =
+            vtkSmartPointer<vtkRenderer>::New();
+          vtkSmartPointer<vtkRenderer> delaunayAlphaRenderer =
+            vtkSmartPointer<vtkRenderer>::New();
+
+          vtkSmartPointer<vtkRenderWindow> renderWindow =
+            vtkSmartPointer<vtkRenderWindow>::New();
+          renderWindow->SetSize(900,300);
+
+          renderWindow->AddRenderer(originalRenderer);
+          originalRenderer->SetViewport(leftViewport);
+          renderWindow->AddRenderer(delaunayRenderer);
+          delaunayRenderer->SetViewport(centerViewport);
+          renderWindow->AddRenderer(delaunayAlphaRenderer);
+          delaunayAlphaRenderer->SetViewport(rightViewport);
+
+          vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor =
+            vtkSmartPointer<vtkRenderWindowInteractor>::New();
+          renderWindowInteractor->SetRenderWindow(renderWindow);
+
+          originalRenderer->AddActor(originalActor);
+          delaunayRenderer->AddActor(delaunayActor);
+          delaunayAlphaRenderer->AddActor(delaunayAlphaActor);
+
+          originalRenderer->SetBackground(.1, .2, .3);
+          delaunayRenderer->SetBackground(.3, .2, .4);
+          delaunayAlphaRenderer->SetBackground(.2, .4, .5);
+
+          // Render and interact
+          renderWindow->Render();
+          renderWindowInteractor->Start();
+          return EXIT_SUCCESS;
+    }
     int testextractPolyline()
     {
         vtkSmartPointer<vtkSphereSource> modelSource =

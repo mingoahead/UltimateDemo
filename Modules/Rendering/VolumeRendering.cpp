@@ -1,5 +1,5 @@
 #include "VolumeRendering.h"
-
+#include "itkExceptionObject.h"
 VolumeRendering::VolumeRendering(vtkRenderWindow *renWin)
     :m_renderWindow(renWin)
 {
@@ -11,7 +11,9 @@ VolumeRendering::VolumeRendering(vtkRenderWindow *renWin)
     vsp(m_volumedata);
     vsp(m_volumeproperty);
     vsp(m_opacityTransferFunction);
+    vsp(m_gradientTransferFunction);
     vsp(m_colorTransferFunction);
+    vsp(m_compositeRaycastFunction);
     vsp(m_volumemapper);
     m_ctkwidget = new ctkVTKVolumePropertyWidget;
 
@@ -56,54 +58,59 @@ void VolumeRendering::LoadImageData()
 //    ImageType::Pointer rawImage = m_rawdataReader->GetOutput();
 //    std::cout << maskImage->GetSpacing() << std::endl;
 //    std::cout << rawImage->GetSpacing() << std::endl;
-    typedef itk::MaskImageFilter<ImageType, ImageType> MaskFilterType;
-    MaskFilterType::Pointer maskfilter = MaskFilterType::New();
-    maskfilter->SetInput(m_rawdataReader->GetOutput());
-    maskfilter->SetMaskImage(m_maskdataReader->GetOutput());
-    maskfilter->Update();
-//    std::cout << "complete clip image ..." << std::endl;
-    typedef itk::ImageToVTKImageFilter <ImageType> ConnectorType;
-    ConnectorType::Pointer connector1 = ConnectorType::New();
-    connector1->SetInput(maskfilter->GetOutput());
-    connector1->Update();
+    try{
+        typedef itk::MaskImageFilter<ImageType, ImageType> MaskFilterType;
+        MaskFilterType::Pointer maskfilter = MaskFilterType::New();
+        maskfilter->SetInput(m_rawdataReader->GetOutput());
+        maskfilter->SetMaskImage(m_maskdataReader->GetOutput());
+        maskfilter->Update();
+        typedef itk::ImageToVTKImageFilter <ImageType> ConnectorType;
+        ConnectorType::Pointer connector1 = ConnectorType::New();
+        connector1->SetInput(maskfilter->GetOutput());
+        connector1->Update();
+        vtkSmartPointer<vtkImageShiftScale> scale
+                = vtkSmartPointer<vtkImageShiftScale>::New();
+        scale -> SetInputData(connector1->GetOutput());
+        scale -> SetOutputScalarTypeToUnsignedChar();
+        scale -> Update();
+        m_opacityTransferFunction->AddPoint(50.0, 0.0);
+        m_opacityTransferFunction->AddPoint(120.0, 0.5);
+        m_opacityTransferFunction->AddSegment(150.0, 0.6, 180.0, .7);
+        m_opacityTransferFunction->AddPoint(220.0, 0.0);
+        m_gradientTransferFunction->AddPoint(50.0, 2.0);
+        m_gradientTransferFunction->AddPoint(120.0, 0.5);
+        m_gradientTransferFunction->AddSegment(150.0,0.73, 180.0, 0.9);
+        m_gradientTransferFunction->AddPoint(220.0, 2.0);
+        m_colorTransferFunction->AddRGBPoint(40.0, 0.1, 0.1, 0.7);
+        m_colorTransferFunction->AddRGBPoint(70.0, 0.1, 0.1, 0/7);
+        m_colorTransferFunction->AddRGBPoint(160.0,1.0,0.35,0.0);
+        m_colorTransferFunction->AddRGBPoint(190.0, 0.99, 0.99, 0.99);
 
-    vtkSmartPointer<vtkImageShiftScale> scale
-            = vtkSmartPointer<vtkImageShiftScale>::New();
-    scale -> SetInputData(connector1->GetOutput());
-    scale -> SetOutputScalarTypeToUnsignedChar();
-    scale -> Update();
+        m_volumeproperty->SetColor(m_colorTransferFunction);
+        m_volumeproperty->SetScalarOpacity(m_opacityTransferFunction);
+        m_volumeproperty->SetGradientOpacity(m_gradientTransferFunction);
+        m_volumeproperty->ShadeOn();
+        m_volumeproperty->SetAmbient(0.25);
+        m_volumeproperty->SetDiffuse(0.9);
+        m_volumeproperty->SetSpecular(0.2);
+        m_volumeproperty->SetSpecularPower(20);
+        m_volumeproperty->SetInterpolationTypeToLinear();
 
-    m_opacityTransferFunction->AddPoint(50.0, 0.0);
-    m_opacityTransferFunction->AddPoint(120.0, 0.5);
-    m_opacityTransferFunction->AddPoint(220.0, 0.0);
+        m_volumemapper->SetRequestedRenderMode(vtkSmartVolumeMapper::GPURenderMode);
+        m_volumemapper->SetMaxMemoryInBytes(1847483648);
+        m_volumemapper->SetInputConnection(scale->GetOutputPort());
+//        m_volumemapper->SetVolumeRayCastFunction(m_compositeRaycastFunction);
+        m_volumedata->SetMapper(m_volumemapper);
+        m_volumedata->SetProperty(m_volumeproperty);
+        m_volumedata->Update();
+        m_renderer->AddVolume(m_volumedata);
 
-    m_colorTransferFunction->AddRGBPoint(40.0, 0.1, 0.1, 0.7);
-    m_colorTransferFunction->AddRGBPoint(70.0, 0.1, 0.1, 0/7);
-    m_colorTransferFunction->AddRGBPoint(160.0,1.0,0.35,0.0);
-    m_colorTransferFunction->AddRGBPoint(190.0, 0.99, 0.99, 0.99);
+        m_renderer->ResetCamera();
+    }catch(itk::ExceptionObject &err) {
+        std::cerr << err.what() << std::endl;
+        return ;
+    }
 
-    m_volumeproperty->SetColor(m_colorTransferFunction);
-    m_volumeproperty->SetScalarOpacity(m_opacityTransferFunction);
-    m_volumeproperty->ShadeOn();
-    m_volumeproperty->SetAmbient(0.25);
-    m_volumeproperty->SetDiffuse(0.9);
-    m_volumeproperty->SetSpecular(0.2);
-    m_volumeproperty->SetSpecularPower(20);
-    m_volumeproperty->SetInterpolationTypeToLinear();
-
-//    std::cout << "complete rescale image ..." << std::endl;
-    m_volumemapper->SetRequestedRenderMode(vtkSmartVolumeMapper::GPURenderMode);
-    m_volumemapper->SetMaxMemoryInBytes(1847483648);
-    m_volumemapper->SetInputConnection(scale->GetOutputPort());
-//    m_volumemapper->SetInputData(scale->GetOutput());
-//    m_volumemapper->UpdateWholeExtent();
-    m_volumedata->SetMapper(m_volumemapper);
-    m_volumedata->SetProperty(m_volumeproperty);
-    m_volumedata->Update();
-    m_renderer->AddVolume(m_volumedata);
-//    m_renderer->Render();
-
-    m_renderer->ResetCamera();
 //    m_renderWindow->Render();
 
 }
