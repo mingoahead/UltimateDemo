@@ -133,19 +133,11 @@ HEADERS  += mainwindow.h \
     Utils/fastdef.h \
     Utils/initials.h \
     UnitTest/testunit.h \
-    UnitTest/testdistancewidget.h \
-    UnitTest/testcutter.h \
     UnitTest/testimageslice.h \
-    UnitTest/testextractpolylines.h \
-    UnitTest/testimageplanewidget.h \
     UnitTest/test_3views.h \
     Modules/AneurysmUnit.h \
     Modules/DataAdaptor.h \
-    UnitTest/test_scalarbaractor.h \
     Modules/NavigationUnit.h \
-    UnitTest/test_cameraactor.h \
-    UnitTest/test_camerawidget.h \
-    UnitTest/test_ballonwidget.h \
     Modules/CenLine_1/itkArrivalFunctionToPathFilter.h \
     Modules/CenLine_1/itkImageToPathFilter.h \
     Modules/CenLine_1/itkIterateNeighborhoodOptimizer.h \
@@ -168,12 +160,16 @@ HEADERS  += mainwindow.h \
     UnitTest/Auxiliary/itkLevelSetIterationUpdateCommand.hxx \
     UnitTest/test_itk_maskfilter.h \
     Utils/vtkhelper.h \
-    UnitTest/test_bidimensional.h \
     exportdatadlg.h \
     Modules/Rendering/SurfaceRendering.h \
     Modules/Rendering/VolumeRendering.h \
     Utils/dirhelper.h \
-    UnitTest/test_visualalgorithms.h
+    UnitTest/test_visualalgorithms.h \
+    UnitTest/test_vtkwidget.h \
+    UnitTest/test_vtkimageproc.h \
+    UnitTest/test_itk_dfb.h \
+    UnitTest/test_centerline.h \
+    UnitTest/test_itk_gdcm.h
 
 FORMS    += mainwindow.ui \
     exportdatadlg.ui
@@ -183,7 +179,11 @@ INCLUDEPATH += CTK-LIBS/LIBS/Widgets/ \
                CTK-LIBS/LIBS/Visualization/VTK/Widgets/ \
                CTK-LIBS/LIBS/Visualization/VTK/Core/ \
                Modules/ \
+               Modules/CenLine_1/ \
+               Modules/CenLine_2/ \
+               Modules/CenLine_3/ \
                UnitTest/ \
+               UnitTest/Auxiliary/ \
                Utils/ \
 
 

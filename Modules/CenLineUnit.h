@@ -6,7 +6,6 @@
 #include <itkImageFileWriter.h>
 #include <itkDanielssonDistanceMapImageFilter.h>
 #include <itkSignedMaurerDistanceMapImageFilter.h>
-#include <itkSignedMaurerDistanceMapImageFilter.h>
 #include <itkSmoothingRecursiveGaussianImageFilter.h>
 #include <itkUnaryFunctorImageFilter.h>
 #include <itkPowImageFilter.h>

@@ -155,6 +155,7 @@ int CenLineUnit::Path_GradientDescent(std::string filename, double ps[], double 
     typedef itk::GradientDescentOptimizer OptimizerType;
     OptimizerType::Pointer optimizer = OptimizerType::New();
     optimizer->SetNumberOfIterations( 5000 );
+    optimizer->SetNumberOfIterations( 300 ); //origin 1000
 //    typedef itk::RegularStepGradientDescentOptimizer OptimizerType;
 //    OptimizerType::Pointer optimizer = OptimizerType::New();
 //    optimizer->SetNumberOfIterations(50000);

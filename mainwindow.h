@@ -10,6 +10,13 @@
 #include <vtkSTLReader.h>
 #include <vtkRenderer.h>
 #include <vtkCamera.h>
+#include <QVTKInteractor.h>
+#include <vtkInteractorStyle.h>
+#include <vtkEventQtSlotConnect.h>
+#include <vtkCommand.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkAxesActor.h>
+#include <vtkOrientationMarkerWidget.h>
 
 #include "exportdatadlg.h"
 #include "testunit.h"
@@ -48,10 +55,13 @@ private:
     QAction *m_testAct;
 
     QVTKWidget *m_vtkWidget;
+    vtkSmartPointer<vtkAxesActor> m_axes;
+    vtkSmartPointer<vtkOrientationMarkerWidget> m_orientWidget;
     AneurysmUnit *m_appUnit;
     QVTKWidget *m_smallvtkWidget;
-    NavigationUnit*m_navgUnit;
+    NavigationUnit *m_navgUnit;
 
+    vtkSmartPointer<vtkEventQtSlotConnect> m_Connections;
 //    VolSurRendering *m_volsurUnit;
     SurfaceRendering *m_surRenderUnit;
     VolumeRendering *m_volRenderUnit;
@@ -79,6 +89,7 @@ private slots:
     void on_cbb_show_ls_currentIndexChanged(int index);
     void on_cb_openregdetect_clicked();
     void on_cbb_show_sd_currentIndexChanged(int index);
+    void on_cb_collectionShow_toggled(bool checked);
 
 
     void on_pb_test1view_clicked();
@@ -111,6 +122,8 @@ private slots:
     void on_m_hsRelaxationFactor_valueChanged(int value);
     void on_cb_sur_freeroaming_toggled(bool checked);
     void on_m_hsspeed_sliderReleased();
+    //vtk event qt slot
+    void updateCoords(vtkObject* obj);
 
     void on_cb_showVirtualCuttingWidget_toggled(bool checked);
     void on_cb_showResliceVirtualCuttingPlane_toggled(bool checked);

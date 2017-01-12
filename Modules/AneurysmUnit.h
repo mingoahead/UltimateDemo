@@ -53,6 +53,7 @@
 #include <vtkDistanceWidget.h>
 #include <vtkDistanceRepresentation.h>
 #include <vtkPointPicker.h>
+#include <vtkTransform.h>
 
 #include <vtkBalloonRepresentation.h>
 #include <vtkBalloonWidget.h>
@@ -103,6 +104,9 @@ public:
     void ShowLineMode(int option);
     void ShowPointMode(int option);
     void HideSegmentationModel(int option);
+
+    void SetVisibilityCollectiOn();
+    void SetVisibilityCollectiOff();
     void ShowCenterPoints(vtkSmartPointer<vtkActor> LineModel, 
                           std::vector<Point3f> &CenterPoints);
     void GetCenterLine(int option);
@@ -147,9 +151,6 @@ private:
     vtkSmartPointer<vtkLight> m_light;
     vtkSmartPointer<vtkRenderWindowInteractor> m_renInteractor;
     vtkSmartPointer<vtkInteractorStyleTrackballCamera> m_roamingStyle;
-//    vtkSmartPointer<vtkInteractorStyleImage> m_tranSliceStyle;
-//    vtkSmartPointer<vtkInteractorStyleImage> m_corSliceStyle;
-//    vtkSmartPointer<vtkInteractorStyleImage> m_sagSliceStyle;
     vtkSmartPointer<vtkInteractorStyleImage> m_xyzSliceStyle;
     vtkSmartPointer<Util::CusInteractorPickPointStyle> m_pointpickerStyle;
     vtkSmartPointer<vtkInteractorStyleImage> m_resliceStyle;
@@ -160,9 +161,10 @@ private:
     vtkSmartPointer<vtkRenderer> m_bl_renderer;
     vtkSmartPointer<vtkRenderer> m_br_renderer;
 
-    vtkSmartPointer<vtkActor> m_3DReg_segmentationModel;
-    vtkSmartPointer<vtkActor> m_LevelSet_segmentationModel;
-    vtkSmartPointer<vtkActor> m_RegDetect_segmentationModel;
+//    vtkSmartPointer<vtkActor> m_3DReg_segmentationModel;
+    vtkSmartPointer<Util::SegmentActor> m_3DReg_segmentationModel;
+    vtkSmartPointer<Util::SegmentActor> m_LevelSet_segmentationModel;
+    vtkSmartPointer<Util::SegmentActor> m_RegDetect_segmentationModel;
     vtkSmartPointer<vtkSTLReader> m_3DReg_segmentationReader;
     vtkSmartPointer<vtkSTLReader> m_LevelSet_segmentationReader;
     vtkSmartPointer<vtkSTLReader> m_RegDetect_segmentationReader;
@@ -229,6 +231,7 @@ private:
 
 
 private:
+    int GetCurrentSegmentModels(vtkActorCollection* collection);
     void InitAnnotation();
     void InitMovingSphere();
     void InitCamerasWidgets();

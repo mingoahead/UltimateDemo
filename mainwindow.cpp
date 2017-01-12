@@ -125,6 +125,14 @@ void MainWindow::initModules()
 void MainWindow::initRenderWindow()
 {
     m_vtkWidget -> GetRenderWindow() -> AddRenderer(m_appUnit -> GetRenderer());
+    vsp(m_axes);
+    vsp(m_orientWidget);
+    m_orientWidget->SetOutlineColor( 0.9300, 0.5700, 0.1300 );
+    m_orientWidget->SetOrientationMarker( m_axes );
+    m_orientWidget->SetInteractor( m_vtkWidget->GetRenderWindow()->GetInteractor() );
+    m_orientWidget->SetViewport( .0, .8, .2, 1 );
+    m_orientWidget->SetEnabled( 1 );
+    m_orientWidget->InteractiveOn();
     updateRenderWindow();
 }
 
@@ -135,18 +143,26 @@ void MainWindow::initStatus()
 //    statusBar()->addWidget(m_msgLabel);
     statusBar()->addPermanentWidget(m_msgLabel);
     statusBar()->setStyleSheet(QString("QStatusBar::item{border: 0px}"));
+    vsp(m_Connections);
+    m_Connections->Connect(m_vtkWidget->GetRenderWindow()->GetInteractor(),
+                           vtkCommand::MouseMoveEvent,
+                           this,
+                           SLOT(updateCoords(vtkObject*)));
+
+
 
 }
 
 void MainWindow::updateRenderWindow()
 {
     m_vtkWidget->GetRenderWindow()->Render();
-    m_msgLabel->setText(QString::fromStdString(m_appUnit->GetCurInteractorStyle()));
+//    m_msgLabel->setText(QString::fromStdString(m_appUnit->GetCurInteractorStyle()));
+
 }
 
 void MainWindow::open()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Segment Model for ")
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Origin Medical Data for ")
                                                     , tr("/home"), tr("mhd or mha file (*.mhd)"));
     if(!fileName.isNull()) {
         m_appUnit->LoadRawData(fileName.toStdString());
@@ -287,6 +303,19 @@ void MainWindow::on_cbb_show_sd_currentIndexChanged(int index)
         m_appUnit->ShowPointMode(3);
     }else if(index == 3) {
         m_appUnit->HideSegmentationModel(3);
+    }
+    updateRenderWindow();
+}
+
+void MainWindow::on_cb_collectionShow_toggled(bool checked)
+{
+    if(checked) {
+        m_appUnit->SetVisibilityCollectiOn();
+//        m_appUnit->HideSegmentationModel(1);
+//        m_appUnit->HideSegmentationModel(2);
+//        m_appUnit->HideSegmentationModel(3);
+    }else {
+        m_appUnit->SetVisibilityCollectiOff();
     }
     updateRenderWindow();
 }
@@ -481,7 +510,6 @@ void MainWindow::on_m_hsspeed_sliderReleased()
     int value = ui->m_hsspeed->value();
 
 }
-
 void MainWindow::on_cb_showVirtualCuttingWidget_toggled(bool checked)
 {
 
@@ -492,9 +520,17 @@ void MainWindow::on_cb_showResliceVirtualCuttingPlane_toggled(bool checked)
 
 }
 
-void MainWindow::on_cb_distanceMeasure_toggled(bool checked)
-{
+void MainWindow::on_cb_distanceMeasure_toggled(bool checked) { }
 
+void MainWindow::updateCoords(vtkObject *obj)
+{
+    vtkRenderWindowInteractor* iren = vtkRenderWindowInteractor::SafeDownCast(obj);
+    int event_pos[2];
+    iren->GetEventPosition(event_pos);
+    QString str;
+//    str.sprintf("x = %d, y = %d", event_pos[0], event_pos[1]);
+    str.sprintf(iren->GetInteractorStyle()->GetClassName());
+    m_msgLabel->setText(str);
 }
 
 

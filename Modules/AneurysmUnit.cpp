@@ -1,5 +1,6 @@
 #include "AneurysmUnit.h"
 vtkStandardNewMacro(Util::CusInteractorPickPointStyle);
+vtkStandardNewMacro(Util::SegmentActor);
 
 AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
 {
@@ -7,9 +8,6 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     vsp(m_renInteractor);
     m_renInteractor->SetRenderWindow(m_renderWindow);
     vsp(m_roamingStyle);
-//    vsp(m_corSliceStyle);
-//    vsp(m_sagSliceStyle);
-//    vsp(m_tranSliceStyle);
     vsp(m_xyzSliceStyle);
     vsp(m_pointpickerStyle);
     vsp(m_resliceStyle);
@@ -54,6 +52,7 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     m_centerLine = new CenLineUnit;
     m_currentRoamingRouteId = 1;
     m_currentRoamingStep = 15;
+
     Instantiate(tmp_camera, vtkCamera);
     tmp_camera->SetPosition(0, 0, 20);
     tmp_camera->SetFocalPoint(0, 0, 0);
@@ -300,6 +299,85 @@ void AneurysmUnit::HideSegmentationModel(int option)
     default:
         break;
     }
+}
+
+int AneurysmUnit::GetCurrentSegmentModels(vtkActorCollection *collection)
+{
+    collection->RemoveAllItems();
+    vtkActorCollection* actorCollection = m_renderer->GetActors();
+    actorCollection->InitTraversal();
+    int cnt = 0;
+    for(vtkIdType i = 0; i < actorCollection->GetNumberOfItems(); i++) {
+        vtkActor* actor = actorCollection->GetNextActor();
+        if(actor->IsA("SegmentActor")) {
+//            double pos[3];
+//            double org[3];
+//            actor->GetPosition(pos);
+//            std::cout << pos[0] << ", " << pos[1] << ", " << pos[2] << std::endl;
+//            std::cout << org[0] << ", " << org[1] << ", " << org[2] << std::endl;
+//            std::cout << "pos : " << actor->GetPosition() << std::endl;
+            collection->AddItem(actor);
+            cnt++;
+        }
+    }
+    return cnt;
+
+}
+void AneurysmUnit::SetVisibilityCollectiOn()
+{
+    Instantiate(collection, vtkActorCollection);
+    int cnt = GetCurrentSegmentModels(collection);
+    std::cout << "segment model number : " << cnt << std::endl;
+    if(cnt < 2) return ;
+    else if(cnt == 2) {
+        collection->InitTraversal();
+        for(vtkIdType i = 0; i < collection->GetNumberOfItems(); i++) {
+            Instantiate(transform, vtkTransform);
+            transform->PostMultiply();
+            transform->Translate(expand2[i]);
+            vtkActor *actor = collection->GetNextActor();
+            if(actor != nullptr) {
+                actor->SetUserTransform(transform);
+                std::cout << "actor  " << i << " : translated!" << std::endl;
+            }
+        }
+    }
+    else if(cnt == 3) {
+        collection->InitTraversal();
+        for(vtkIdType i = 0; i < collection->GetNumberOfItems(); i++) {
+            Instantiate(transform, vtkTransform);
+            transform->PostMultiply();
+            transform->Translate(expand3[i]);
+            vtkActor *actor = collection->GetNextActor();
+            if(actor != nullptr) {
+                actor->SetUserTransform(transform);
+                std::cout << "actor  " << i << " : translated!" << std::endl;
+            }
+        }
+    }
+    m_renderer->Render();
+}
+
+
+void AneurysmUnit::SetVisibilityCollectiOff()
+{
+    Instantiate(collection, vtkActorCollection);
+    int cnt = GetCurrentSegmentModels(collection);
+    std::cout << "segment model number : " << cnt << std::endl;
+    if(cnt < 2) return ;
+    collection->InitTraversal();
+    for(vtkIdType i = 0; i < collection->GetNumberOfItems(); i++) {
+        Instantiate(transform, vtkTransform);
+        transform->PostMultiply();
+        transform->Translate(0, 0, 0);
+        vtkActor *actor = collection->GetNextActor();
+        if(actor != nullptr) {
+            actor->SetUserTransform(transform);
+            std::cout << "actor  " << i << " : translated!" << std::endl;
+        }
+    }
+
+    m_renderer->Render();
 }
 
 void AneurysmUnit::ShowCenterPoints(vtkSmartPointer<vtkActor> LineModel,
@@ -637,12 +715,6 @@ void AneurysmUnit::RegisterDisplay(int mod)
     }
 
     case COMP_MOD: {
-//        int m = m_renInteractor->GetInteractorStyle()->IsTypeOf("vtkInteractorStyleTrackballCamera");
-//        if(0 == m) {
-//            m_renInteractor->RemoveObserver((vtkCommand*)m_renInteractor->GetInteractorStyle());
-//            Instantiate(style, vtkInteractorStyleTrackballCamera);
-//            m_renInteractor->SetInteractorStyle(style);
-//        }
         m_renInteractor->SetInteractorStyle(m_roamingStyle);
         break;
     }
@@ -674,13 +746,6 @@ void AneurysmUnit::RegisterDisplay(int mod)
         m_interactionHandler->Connect(m_sagViewerRenderer, m_xyzSliceStyle);
         m_interactionHandler->Connect(m_corViewerRenderer, m_xyzSliceStyle);
         m_renInteractor->AddObserver(vtkCommand::MouseMoveEvent, m_interactionHandler);
-//        int m = m_renInteractor->GetInteractorStyle()->IsTypeOf("vtkInteractorStyleImage");
-//        if(0 == m) {
-//            m_renInteractor->RemoveObserver((vtkCommand*)m_renInteractor->GetInteractorStyle());
-//            Instantiate(t_SliceViewStyle, vtkInteractorStyleImage);
-//            m_renInteractor->SetInteractorStyle(t_SliceViewStyle);
-//            t_SliceViewStyle->SetInteractor(m_renInteractor);
-//        }
         break;
     }
 
@@ -780,6 +845,8 @@ void AneurysmUnit::SetPointPickerEnabled(bool enabled)
             = (Util::CusInteractorPickPointStyle*)m_renInteractor->GetInteractorStyle();
     cur_pointPickerStyle->SetPickerEnabled(enabled);
     //    m_pointPickerInteractorStyle->SetPickerEnabled(enabled);
+    std::cout << "point picker style is enabled ? "
+              << cur_pointPickerStyle->GetPickerEnabled() << std::endl;
 }
 
 std::string AneurysmUnit::GetRawFilename() {return m_rawinfo.filename ;}
