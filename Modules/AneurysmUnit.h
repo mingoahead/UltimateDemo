@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <sstream>
 
 #include <vtkActor.h>
 #include <vtkActorCollection.h>
@@ -18,6 +19,7 @@
 #include <vtkRendererCollection.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkInteractorStyleTrackballCamera.h>
+#include <vtkInteractorStyleSwitch.h>
 #include <vtkObjectFactory.h>
 #include <vtkSTLReader.h>
 #include <vtkCommand.h>
@@ -47,7 +49,10 @@
 #include <vtkClipPolyData.h>
 #include <vtkCameraRepresentation.h>
 #include <vtkCameraWidget.h>
-
+#include <vtkImagePlaneWidget.h>
+#include <vtkDistanceWidget.h>
+#include <vtkDistanceRepresentation.h>
+#include <vtkPointPicker.h>
 
 #include <vtkBalloonRepresentation.h>
 #include <vtkBalloonWidget.h>
@@ -115,12 +120,17 @@ public:
     void DrawSliceFactory(vtkSmartPointer<vtkRenderer> renderer
                               , vtkSmartPointer<vtkImageActor>imgActor
                               , double transformMat[16], double pos[3]);
+    void DrawInfoSphereFactory(vtkSmartPointer<vtkRenderer> renderer
+                               , vtkSmartPointer<vtkActor> sphereactor
+                               ,double pos[3]);
     void Draw3DSlice(double pos[3]);
-
     void SetVisibilitySTLCuttingPlane(bool show = true);
     void SetVisibilityVirtualCuttingWidget(bool show = true);
     void DoStlCutting(vtkSmartPointer<vtkSTLReader> stlreader);
     void DoSTLCut();
+
+    void SetVisibilityDistanceWidgetOn(bool on);
+    void SetVisibilityImagePlaneWidget(bool on);
 
     void RegisterDisplay(int mod);
     void RemoveAllRenderers();
@@ -131,10 +141,19 @@ public:
                     vtkSmartPointer<vtkSliderWidget> sliderWidget);
     void SetPointPickerEnabled(bool enabled = true);
     std::string GetRawFilename();
+    std::string GetRawInfo();
 private:
     vtkRenderWindow * m_renderWindow;
     vtkSmartPointer<vtkLight> m_light;
     vtkSmartPointer<vtkRenderWindowInteractor> m_renInteractor;
+    vtkSmartPointer<vtkInteractorStyleTrackballCamera> m_roamingStyle;
+//    vtkSmartPointer<vtkInteractorStyleImage> m_tranSliceStyle;
+//    vtkSmartPointer<vtkInteractorStyleImage> m_corSliceStyle;
+//    vtkSmartPointer<vtkInteractorStyleImage> m_sagSliceStyle;
+    vtkSmartPointer<vtkInteractorStyleImage> m_xyzSliceStyle;
+    vtkSmartPointer<Util::CusInteractorPickPointStyle> m_pointpickerStyle;
+    vtkSmartPointer<vtkInteractorStyleImage> m_resliceStyle;
+
     vtkSmartPointer<vtkRenderer> m_renderer;
     vtkSmartPointer<vtkRenderer> m_ul_renderer;
     vtkSmartPointer<vtkRenderer> m_ur_renderer;
@@ -161,7 +180,7 @@ private:
 
     vtkSmartPointer<vtkActor> m_leftLineModel;
     vtkSmartPointer<vtkActor> m_rightLineModel;
-    std::pair<std::string, std::string> m_filename;
+//    std::pair<std::string, std::string> m_filename;
     CenLineUnit *m_centerLine;
 
     int m_currentRoamingRouteId;
@@ -172,17 +191,27 @@ private:
 
 
     vtkSmartPointer<vtkImageData> m_rawData;
+    RawDataInfo m_rawinfo;
+
+    vtkSmartPointer<Util::InteractionCallBackHandler> m_interactionHandler;
     vtkSmartPointer<vtkRenderer> m_tranViewerRenderer;
     vtkSmartPointer<vtkRenderer> m_sagViewerRenderer;
     vtkSmartPointer<vtkRenderer> m_corViewerRenderer;
     vtkSmartPointer<vtkImageActor> m_tranActor;
     vtkSmartPointer<vtkImageActor> m_sagActor;
     vtkSmartPointer<vtkImageActor> m_corActor;
+    vtkSmartPointer<vtkActor> m_transphere;
+    vtkSmartPointer<vtkActor> m_sagsphere;
+    vtkSmartPointer<vtkActor> m_corsphere;
 
     vtkSmartPointer<vtkCornerAnnotation> m_tranAnnotation;
     vtkSmartPointer<vtkCornerAnnotation> m_sagAnnotation;
     vtkSmartPointer<vtkCornerAnnotation> m_corAnnotation;
     enum DisMode { SINGLE_MOD = 1,  COMP_MOD = 2, PLANE_MOD = 3, COMP4_MOD = 4} ;
+
+    vtkSmartPointer<vtkImagePlaneWidget> m_resliceImagePlaneWidget;
+    vtkSmartPointer<vtkDistanceWidget> m_distanceWidget;
+    vtkSmartPointer<vtkPointPicker> m_diameterMeasuringPointPicker;
 
     //slider related
     vtkSmartPointer<vtkSliderRepresentation2D> m_slider1Rep;
@@ -201,6 +230,7 @@ private:
 
 private:
     void InitAnnotation();
+    void InitMovingSphere();
     void InitCamerasWidgets();
 
 

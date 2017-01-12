@@ -637,12 +637,6 @@ void AneurysmUnit::RegisterDisplay(int mod)
     }
 
     case COMP_MOD: {
-//        int m = m_renInteractor->GetInteractorStyle()->IsTypeOf("vtkInteractorStyleTrackballCamera");
-//        if(0 == m) {
-//            m_renInteractor->RemoveObserver((vtkCommand*)m_renInteractor->GetInteractorStyle());
-//            Instantiate(style, vtkInteractorStyleTrackballCamera);
-//            m_renInteractor->SetInteractorStyle(style);
-//        }
         m_renInteractor->SetInteractorStyle(m_roamingStyle);
         break;
     }
@@ -674,13 +668,6 @@ void AneurysmUnit::RegisterDisplay(int mod)
         m_interactionHandler->Connect(m_sagViewerRenderer, m_xyzSliceStyle);
         m_interactionHandler->Connect(m_corViewerRenderer, m_xyzSliceStyle);
         m_renInteractor->AddObserver(vtkCommand::MouseMoveEvent, m_interactionHandler);
-//        int m = m_renInteractor->GetInteractorStyle()->IsTypeOf("vtkInteractorStyleImage");
-//        if(0 == m) {
-//            m_renInteractor->RemoveObserver((vtkCommand*)m_renInteractor->GetInteractorStyle());
-//            Instantiate(t_SliceViewStyle, vtkInteractorStyleImage);
-//            m_renInteractor->SetInteractorStyle(t_SliceViewStyle);
-//            t_SliceViewStyle->SetInteractor(m_renInteractor);
-//        }
         break;
     }
 

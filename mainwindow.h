@@ -112,6 +112,10 @@ private slots:
     void on_cb_sur_freeroaming_toggled(bool checked);
     void on_m_hsspeed_sliderReleased();
 
+    void on_cb_showVirtualCuttingWidget_toggled(bool checked);
+    void on_cb_showResliceVirtualCuttingPlane_toggled(bool checked);
+    void on_cb_distanceMeasure_toggled(bool checked);
+
 
 };
 

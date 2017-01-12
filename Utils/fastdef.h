@@ -18,6 +18,14 @@ inline void vsp(vtkSmartPointer<T> &var)
 struct Point3f {
     double x, y, z;
 };
+
+struct RawDataInfo {
+    std::string filename;
+    std::string infoText;
+    double *origin;
+    double *spacing;
+    int *extent;
+};
 static double tranElements[16] = {
         1, 0, 0, 0,
         0, 1, 0, 0,

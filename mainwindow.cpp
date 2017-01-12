@@ -320,6 +320,10 @@ void MainWindow::on_pb_test3view_clicked()
     m_appUnit -> RegisterDisplay(3);
     double curpos[3] = {4.99979, -134.5, 1157.95};
     m_appUnit->Draw3DSlice(curpos);
+    std::string st = m_appUnit->GetRawInfo();
+    if(st.empty())  return ;
+    QString str = QString::fromUtf8(st.c_str());
+    ui->tb_rawdatainfo->append(str);
     updateRenderWindow();
 
 
@@ -475,6 +479,21 @@ void MainWindow::on_cb_sur_freeroaming_toggled(bool checked)
 void MainWindow::on_m_hsspeed_sliderReleased()
 {
     int value = ui->m_hsspeed->value();
+
+}
+
+void MainWindow::on_cb_showVirtualCuttingWidget_toggled(bool checked)
+{
+
+}
+
+void MainWindow::on_cb_showResliceVirtualCuttingPlane_toggled(bool checked)
+{
+
+}
+
+void MainWindow::on_cb_distanceMeasure_toggled(bool checked)
+{
 
 }
 

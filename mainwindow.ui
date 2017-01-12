@@ -79,15 +79,15 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="page">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>271</width>
-        <height>661</height>
+        <width>100</width>
+        <height>30</height>
        </rect>
       </property>
       <attribute name="label">
@@ -174,8 +174,8 @@ background-color: rgb(255, 170, 255);</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>271</width>
-        <height>661</height>
+        <width>100</width>
+        <height>30</height>
        </rect>
       </property>
       <attribute name="label">
@@ -451,8 +451,8 @@ background-color: rgb(255, 170, 255);</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>271</width>
-        <height>661</height>
+        <width>100</width>
+        <height>30</height>
        </rect>
       </property>
       <attribute name="label">
@@ -819,7 +819,7 @@ border-radius: 4px;
          <rect>
           <x>0</x>
           <y>20</y>
-          <width>271</width>
+          <width>276</width>
           <height>36</height>
          </rect>
         </property>
@@ -1073,14 +1073,24 @@ font: 22pt &quot;Agency FB&quot;;</string>
         </sizepolicy>
        </property>
       </widget>
+      <widget class="QTextEdit" name="tb_rawdatainfo">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>520</y>
+         <width>271</width>
+         <height>111</height>
+        </rect>
+       </property>
+      </widget>
      </widget>
      <widget class="QWidget" name="page_5">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>271</width>
-        <height>661</height>
+        <width>100</width>
+        <height>30</height>
        </rect>
       </property>
       <attribute name="label">
@@ -1101,6 +1111,49 @@ font: 22pt &quot;Agency FB&quot;;</string>
           <property name="title">
            <string>Measurement Part</string>
           </property>
+          <widget class="QTextEdit" name="tb_infoBrowser">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>110</y>
+             <width>221</width>
+             <height>71</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QWidget" name="layoutWidget">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>30</y>
+             <width>221</width>
+             <height>62</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <widget class="QCheckBox" name="cb_showVirtualCuttingWidget">
+              <property name="text">
+               <string>show virtual cutter</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cb_showResliceVirtualCuttingPlane">
+              <property name="text">
+               <string>show reslice plane</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cb_distanceMeasure">
+              <property name="text">
+               <string>show distance measure</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </item>
        </layout>

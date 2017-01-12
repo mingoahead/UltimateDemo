@@ -132,9 +132,13 @@ int CenLineUnit::Path_GradientDescent(std::string filename, double ps[], double 
     square4->SetInput(square3->GetOutput());
     SquareType::Pointer square5 = SquareType::New();
     square5->SetInput(square4->GetOutput());
-    square5->Update();
-
+//    square5->Update();
+//    SquareType::Pointer square6 = SquareType::New();
+//    square6->SetInput(square5->GetOutput());
+//    SquareType::Pointer square7 = SquareType::New();
+//    square7->SetInput(square6->GetOutput());
     InterImageType::Pointer speed = square5->GetOutput();
+    square5->Update();
 
 
     // create interpolater
@@ -150,7 +154,7 @@ int CenLineUnit::Path_GradientDescent(std::string filename, double ps[], double 
 //     create optimizer
     typedef itk::GradientDescentOptimizer OptimizerType;
     OptimizerType::Pointer optimizer = OptimizerType::New();
-    optimizer->SetNumberOfIterations( 1000 );
+    optimizer->SetNumberOfIterations( 5000 );
 //    typedef itk::RegularStepGradientDescentOptimizer OptimizerType;
 //    OptimizerType::Pointer optimizer = OptimizerType::New();
 //    optimizer->SetNumberOfIterations(50000);
