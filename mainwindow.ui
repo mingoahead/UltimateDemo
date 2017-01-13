@@ -79,15 +79,13 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="page">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>100</width>
-        <height>30</height>
         <width>98</width>
         <height>28</height>
        </rect>
@@ -176,8 +174,8 @@ background-color: rgb(255, 170, 255);</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>100</width>
-        <height>30</height>
+        <width>98</width>
+        <height>28</height>
        </rect>
       </property>
       <attribute name="label">
@@ -466,8 +464,8 @@ background-color: rgb(255, 170, 255);</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>100</width>
-        <height>30</height>
+        <width>98</width>
+        <height>28</height>
        </rect>
       </property>
       <attribute name="label">
@@ -905,8 +903,8 @@ font: 22pt &quot;Agency FB&quot;;</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>98</width>
-        <height>28</height>
+        <width>271</width>
+        <height>661</height>
        </rect>
       </property>
       <attribute name="label">
@@ -1104,10 +1102,8 @@ font: 22pt &quot;Agency FB&quot;;</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>100</width>
-        <height>30</height>
-        <width>98</width>
-        <height>28</height>
+        <width>271</width>
+        <height>661</height>
        </rect>
       </property>
       <attribute name="label">
@@ -1152,13 +1148,6 @@ font: 22pt &quot;Agency FB&quot;;</string>
              <widget class="QCheckBox" name="cb_showVirtualCuttingWidget">
               <property name="text">
                <string>show virtual cutter</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cb_showResliceVirtualCuttingPlane">
-              <property name="text">
-               <string>show reslice plane</string>
               </property>
              </widget>
             </item>

@@ -126,7 +126,6 @@ private slots:
     void updateCoords(vtkObject* obj);
 
     void on_cb_showVirtualCuttingWidget_toggled(bool checked);
-    void on_cb_showResliceVirtualCuttingPlane_toggled(bool checked);
     void on_cb_distanceMeasure_toggled(bool checked);
 
 

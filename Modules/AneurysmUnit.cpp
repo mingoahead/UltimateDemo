@@ -14,14 +14,11 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     vsp(m_renderer);
     m_renderer -> SetBackground(.1, .2, .3);
     vsp(m_light);
-    vsp(m_ul_renderer);
-    vsp(m_ur_renderer);
-    vsp(m_bl_renderer);
-    vsp(m_br_renderer);
-    m_ul_renderer -> SetBackground(0.1, 0.1, 0.2);
-    m_ur_renderer -> SetBackground(0.1, 0.2, 0.1);
-    m_bl_renderer -> SetBackground(0.2, 0.1, 0.2);
-    m_br_renderer -> SetBackground(.2, .2, .2);
+    vsp(m_resliceViewer);
+    m_resliceViewerRenderer = m_resliceViewer->GetRenderer();
+    m_resliceViewerRenderer -> SetBackground(0.098, 0.098, 0.2);
+    vsp(m_measureInfoRenderer);
+
     vsp(m_3DReg_segmentationModel);
     vsp(m_LevelSet_segmentationModel);
     vsp(m_RegDetect_segmentationModel);
@@ -41,7 +38,6 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     m_distanceWidget->CreateDefaultRepresentation();
     static_cast<vtkDistanceRepresentation *>(m_distanceWidget->GetRepresentation())->SetLabelFormat("%-#6.3g mm");
     m_resliceImagePlaneWidget->SetPicker(m_diameterMeasuringPointPicker);
-
 
     vsp(m_cuttingPlane);
     vsp(m_cuttingPlaneWidget);
@@ -111,13 +107,13 @@ AneurysmUnit::~AneurysmUnit()
 
 vtkRenderer *AneurysmUnit::GetRenderer() {return m_renderer;}
 
-vtkRenderer *AneurysmUnit::GetBLRenderer() {return m_bl_renderer; }
+//vtkRenderer *AneurysmUnit::GetBLRenderer() {return m_bl_renderer; }
 
-vtkRenderer *AneurysmUnit::GetBRRenderer() {return m_br_renderer;}
+//vtkRenderer *AneurysmUnit::GetBRRenderer() {return m_br_renderer;}
 
-vtkRenderer *AneurysmUnit::GetULRenderer() {return m_ul_renderer;}
+//vtkRenderer *AneurysmUnit::GetULRenderer() {return m_ul_renderer;}
 
-vtkRenderer *AneurysmUnit::GetURRenderer() {return m_br_renderer;}
+//vtkRenderer *AneurysmUnit::GetURRenderer() {return m_br_renderer;}
 
 vtkRenderer *AneurysmUnit::GettranViewerRenderer() {return m_tranViewerRenderer;}
 
@@ -512,10 +508,12 @@ bool AneurysmUnit::LoadRawData(std::string fileName)
     vtkSmartPointer<vtkMetaImageReader> reader =
                 vtkSmartPointer<vtkMetaImageReader>::New();
     reader->SetFileName(fileName.c_str());
+    reader->SetDataScalarTypeToShort();
+    reader->SetDataByteOrderToLittleEndian();
     reader->Update();
-    std::cout << m_rawData->GetActualMemorySize() << std::endl;
+//    std::cout << m_rawData->GetActualMemorySize() << std::endl;
     m_rawData = reader->GetOutput();
-    std::cout << m_rawData->GetActualMemorySize() << std::endl;
+//    std::cout << m_rawData->GetActualMemorySize() << std::endl;
     int extent[6];
     m_rawData->GetExtent(extent);
     m_rawinfo.extent = extent;
@@ -535,6 +533,25 @@ bool AneurysmUnit::LoadRawData(std::string fileName)
                             << m_rawinfo.extent[4] << ", " << m_rawinfo.extent[5] << ")" << std::endl;
     m_rawinfo.infoText = infostr.str();
 //    std::cout << m_rawinfo.infoText << std::endl;
+    Instantiate(rawOutline, vtkOutlineFilter);
+    rawOutline->SetInputConnection(reader->GetOutputPort());
+    Instantiate(picker, vtkCellPicker);
+    picker->SetTolerance(0.005);
+    m_resliceImagePlaneWidget->SetInteractor(m_renderWindow->GetInteractor());
+    m_resliceImagePlaneWidget->SetKeyPressActivationValue('x');
+    m_resliceImagePlaneWidget->SetPicker(picker);
+    m_resliceImagePlaneWidget->RestrictPlaneToVolumeOn();
+    m_resliceImagePlaneWidget->GetPlaneProperty()->SetColor(0.0, 0.0, 1.0);
+    m_resliceImagePlaneWidget->TextureInterpolateOff();
+    m_resliceImagePlaneWidget->SetInputData((vtkDataSet*)m_rawData);
+    m_resliceImagePlaneWidget->SetWindowLevel(2000, 800);
+    m_resliceImagePlaneWidget->SetPlaneOrientationToXAxes();
+    m_resliceImagePlaneWidget->SetSliceIndex(255);
+    m_resliceImagePlaneWidget->GetTexturePlaneProperty()->SetOpacity(0.7);
+    m_resliceImagePlaneWidget->Off();
+    m_resliceViewer->SetInputData(m_resliceImagePlaneWidget->GetResliceOutput());
+
+    m_renderer->ResetCamera();
     return RawDataExist() ? true : false;
 }
 
@@ -583,17 +600,6 @@ void AneurysmUnit::DrawSliceFactory(vtkSmartPointer<vtkRenderer> renderer, vtkSm
 //    double *rangex = static_cast<double*>(imgActor->GetXRange());
 //    std::cout << "xrange : " << rangex[0] << ", " << rangex[1] << std::endl;
     imgActor->SetScale(7.0, 7.0, 1.0);
-
-//    vtkSmartPointer<vtkInteractorStyleImage> style =
-//            vtkSmartPointer<vtkInteractorStyleImage>::New();
-//    m_renInteractor->SetInteractorStyle(style);
-
-
-//    viewer->GetRenderer()->AddActor(imgActor);
-
-//    viewer->GetRenderWindow()->GetInteractor()->SetInteractorStyle(style);
-//    viewer->Render();
-    //    viewer->GetRenderWindow()->GetInteractor()->Start();
 }
 
 void AneurysmUnit::DrawInfoSphereFactory(vtkSmartPointer<vtkRenderer> renderer, vtkSmartPointer<vtkActor> sphereactor, double pos[])
@@ -665,17 +671,21 @@ void AneurysmUnit::SetVisibilityDistanceWidgetOn(bool on)
 
 void AneurysmUnit::SetVisibilityImagePlaneWidget(bool on)
 {
-    on ? m_resliceImagePlaneWidget->On() : m_resliceImagePlaneWidget->Off();
+    if(on) {
+        m_resliceImagePlaneWidget->On();
+        m_resliceViewer->SetInputData(m_resliceImagePlaneWidget->GetResliceOutput());
+        m_resliceViewerRenderer->ResetCamera();
+    }else {
+        m_resliceImagePlaneWidget->Off();
+    }
+
 }
 void AneurysmUnit::RemoveAllRenderers()
 {
     // clean previous renderers and then add the current renderer
 
     m_renderWindow->RemoveRenderer(m_renderer);
-    m_renderWindow->RemoveRenderer(m_ul_renderer);
-    m_renderWindow->RemoveRenderer(m_ur_renderer);
-    m_renderWindow->RemoveRenderer(m_bl_renderer);
-    m_renderWindow->RemoveRenderer(m_br_renderer);
+    m_renderWindow->RemoveRenderer(m_resliceViewerRenderer);
     m_renderWindow->RemoveRenderer(m_corViewerRenderer);
     m_renderWindow->RemoveRenderer(m_tranViewerRenderer);
     m_renderWindow->RemoveRenderer(m_sagViewerRenderer);
@@ -720,11 +730,20 @@ void AneurysmUnit::RegisterDisplay(int mod)
     }
     case COMP4_MOD: {
         m_renderer -> SetViewport(0, 0, 0.5, 1);
-        m_ur_renderer -> SetViewport(0.5, 0, 1, 0.5);
-        m_br_renderer -> SetViewport(0.5, 0.5, 1, 1);
+//        m_ur_renderer -> SetViewport(0.5, 0, 1, 0.5);
+//        m_br_renderer -> SetViewport(0.5, 0.5, 1, 1);
+        m_resliceViewerRenderer -> SetViewport(0.5, 0, 1, 0.5);
+        m_resliceViewerRenderer -> SetViewport(0.5, 0.5, 1, 1);
         m_renderWindow -> AddRenderer(m_renderer);
-        m_renderWindow -> AddRenderer(m_ur_renderer);
-        m_renderWindow -> AddRenderer(m_br_renderer);
+        m_renderWindow -> AddRenderer(m_resliceViewerRenderer);
+        m_renderWindow -> AddRenderer(m_measureInfoRenderer);
+        m_interactionHandler->Connect(m_renderer, m_roamingStyle);
+        m_interactionHandler->Connect(m_resliceViewerRenderer, m_resliceStyle);
+        m_interactionHandler->Connect(m_measureInfoRenderer, m_resliceStyle);
+        m_interactionHandler->SetInteractor(m_renInteractor);
+        m_renInteractor->AddObserver(vtkCommand::MouseMoveEvent, m_interactionHandler);
+//        m_renderWindow -> AddRenderer(m_ur_renderer);
+//        m_renderWindow -> AddRenderer(m_br_renderer);
         break;
     }
 
@@ -755,9 +774,6 @@ void AneurysmUnit::RegisterDisplay(int mod)
 
     }
 }
-
-
-
 void AneurysmUnit::InitSliders()
 {
     vsp(m_slider1Rep);

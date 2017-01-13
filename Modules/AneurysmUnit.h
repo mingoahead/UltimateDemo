@@ -61,6 +61,8 @@
 #include <vtkPointPicker.h>
 #include <vtkSphereSource.h>
 
+#include <vtkOutlineFilter.h>
+#include <vtkCellPicker.h>
 #include <vtkImageActor.h>
 #include <vtkLookupTable.h>
 #include <vtkInteractorStyleImage.h>
@@ -89,10 +91,10 @@ public:
     AneurysmUnit(vtkRenderWindow *renWin);
     ~AneurysmUnit();
     vtkRenderer * GetRenderer();
-    vtkRenderer * GetBLRenderer();
-    vtkRenderer * GetBRRenderer();
-    vtkRenderer * GetULRenderer();
-    vtkRenderer * GetURRenderer();
+//    vtkRenderer * GetBLRenderer();
+//    vtkRenderer * GetBRRenderer();
+//    vtkRenderer * GetULRenderer();
+//    vtkRenderer * GetURRenderer();
     vtkRenderer * GettranViewerRenderer();
     vtkRenderer * GetcorViewerRenderer();
     vtkRenderer * GetsagViewerRenderer();
@@ -156,10 +158,14 @@ private:
     vtkSmartPointer<vtkInteractorStyleImage> m_resliceStyle;
 
     vtkSmartPointer<vtkRenderer> m_renderer;
-    vtkSmartPointer<vtkRenderer> m_ul_renderer;
-    vtkSmartPointer<vtkRenderer> m_ur_renderer;
-    vtkSmartPointer<vtkRenderer> m_bl_renderer;
-    vtkSmartPointer<vtkRenderer> m_br_renderer;
+    vtkSmartPointer<vtkImageViewer2> m_resliceViewer;
+    vtkSmartPointer<vtkRenderer> m_resliceViewerRenderer;
+    vtkSmartPointer<vtkRenderer> m_measureInfoRenderer;
+//    vtkSmartPointer<vtkRenderer> m_ul_renderer;
+//    vtkSmartPointer<vtkRenderer> m_ur_renderer;
+//    vtkSmartPointer<vtkRenderer> m_bl_renderer;
+//    vtkSmartPointer<vtkRenderer> m_br_renderer;
+
 
 //    vtkSmartPointer<vtkActor> m_3DReg_segmentationModel;
     vtkSmartPointer<Util::SegmentActor> m_3DReg_segmentationModel;
@@ -190,7 +196,6 @@ private:
     int m_currentRoamingStep;
     void GetCurrentRoamingPoint(double p[3]);
     void UpdateRoamingCamera();
-
 
     vtkSmartPointer<vtkImageData> m_rawData;
     RawDataInfo m_rawinfo;

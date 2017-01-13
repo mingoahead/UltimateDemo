@@ -360,6 +360,10 @@ void MainWindow::on_pb_test3view_clicked()
 
 void MainWindow::on_pb_test4view_clicked()
 {
+    if(!(m_appUnit->RawDataExist())) {
+        QMessageBox::warning(NULL, "warning", "First, need to load raw data! ", QMessageBox::Yes);
+        return ;
+    }
     ui->toolBox->setCurrentIndex(4);
     m_appUnit -> RegisterDisplay(4);
     updateRenderWindow();
@@ -512,12 +516,7 @@ void MainWindow::on_m_hsspeed_sliderReleased()
 }
 void MainWindow::on_cb_showVirtualCuttingWidget_toggled(bool checked)
 {
-
-}
-
-void MainWindow::on_cb_showResliceVirtualCuttingPlane_toggled(bool checked)
-{
-
+    m_appUnit->SetVisibilityImagePlaneWidget(checked);
 }
 
 void MainWindow::on_cb_distanceMeasure_toggled(bool checked) { }
