@@ -56,9 +56,9 @@ public:
 //        test_proc->RunTest();
 //        delete test_proc;
 
-//        Test_vtkWidget *test_widget = new Test_vtkWidget();
-//        test_widget->RunTest();
-//        delete test_widget;
+        Test_vtkWidget *test_widget = new Test_vtkWidget();
+        test_widget->RunTest();
+        delete test_widget;
 
 //        Test_DFB *test_dfb = new Test_DFB();
 //        test_dfb->RunTest();
@@ -67,9 +67,9 @@ public:
 //        Test_CenterLine *test_cenline = new Test_CenterLine();
 //        test_cenline->RunTest();
 //        delete test_cenline;
-        Test_Itk_gdcm *test_gdcm = new Test_Itk_gdcm();
-        test_gdcm->RunTest();
-        delete test_gdcm;
+//        Test_Itk_gdcm *test_gdcm = new Test_Itk_gdcm();
+//        test_gdcm->RunTest();
+//        delete test_gdcm;
         std::cout << "**************TEST PART END:*****************" << std::endl;
 
     }

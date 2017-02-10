@@ -54,9 +54,13 @@
 #include <vtkDistanceRepresentation.h>
 #include <vtkPointPicker.h>
 #include <vtkTransform.h>
+#include <vtkAlgorithmOutput.h>
 
 #include <vtkBalloonRepresentation.h>
 #include <vtkBalloonWidget.h>
+#include <vtkContextView.h>
+#include <vtkContextScene.h>
+#include <vtkImageTracerWidget.h>
 
 #include <vtkPointPicker.h>
 #include <vtkSphereSource.h>
@@ -91,10 +95,6 @@ public:
     AneurysmUnit(vtkRenderWindow *renWin);
     ~AneurysmUnit();
     vtkRenderer * GetRenderer();
-//    vtkRenderer * GetBLRenderer();
-//    vtkRenderer * GetBRRenderer();
-//    vtkRenderer * GetULRenderer();
-//    vtkRenderer * GetURRenderer();
     vtkRenderer * GettranViewerRenderer();
     vtkRenderer * GetcorViewerRenderer();
     vtkRenderer * GetsagViewerRenderer();
@@ -123,16 +123,11 @@ public:
 
     bool LoadRawData(std::string fileName);
     bool RawDataExist();
-    void DrawSliceFactory(vtkSmartPointer<vtkRenderer> renderer
-                              , vtkSmartPointer<vtkImageActor>imgActor
-                              , double transformMat[16], double pos[3]);
-    void DrawInfoSphereFactory(vtkSmartPointer<vtkRenderer> renderer
-                               , vtkSmartPointer<vtkActor> sphereactor
-                               ,double pos[3]);
-    void Draw3DSlice(double pos[3]);
-    void SetVisibilitySTLCuttingPlane(bool show = true);
+    void Update3DSlice(double pos[3]);
+
     void SetVisibilityVirtualCuttingWidget(bool show = true);
-    void DoStlCutting(vtkSmartPointer<vtkSTLReader> stlreader);
+    void InitCuttingDisplay();
+    void UpdateCuttingSource();
     void DoSTLCut();
 
     void SetVisibilityDistanceWidgetOn(bool on);
@@ -140,11 +135,6 @@ public:
 
     void RegisterDisplay(int mod);
     void RemoveAllRenderers();
-
-    void InitSliders();
-    bool BindSlider(vtkSmartPointer<vtkActor> actor,
-                    vtkSmartPointer<Util::vtkSliderCallBack> sliderCallBack,
-                    vtkSmartPointer<vtkSliderWidget> sliderWidget);
     void SetPointPickerEnabled(bool enabled = true);
     std::string GetRawFilename();
     std::string GetRawInfo();
@@ -160,14 +150,13 @@ private:
     vtkSmartPointer<vtkRenderer> m_renderer;
     vtkSmartPointer<vtkImageViewer2> m_resliceViewer;
     vtkSmartPointer<vtkRenderer> m_resliceViewerRenderer;
-    vtkSmartPointer<vtkRenderer> m_measureInfoRenderer;
-//    vtkSmartPointer<vtkRenderer> m_ul_renderer;
-//    vtkSmartPointer<vtkRenderer> m_ur_renderer;
-//    vtkSmartPointer<vtkRenderer> m_bl_renderer;
-//    vtkSmartPointer<vtkRenderer> m_br_renderer;
+    vtkSmartPointer<vtkImageViewer2> m_binresliceViewer;
+    vtkSmartPointer<vtkRenderer> m_binresliceViewerRenderer;
+    vtkSmartPointer<vtkContextView> m_measureResView;
+    vtkSmartPointer<vtkRenderer> m_measureResRenderer;
+    vtkSmartPointer<vtkImageTracerWidget> m_resliceTracerWidget;
+    vtkSmartPointer<Util::vtkImageTracerCallback> m_tracCallback;
 
-
-//    vtkSmartPointer<vtkActor> m_3DReg_segmentationModel;
     vtkSmartPointer<Util::SegmentActor> m_3DReg_segmentationModel;
     vtkSmartPointer<Util::SegmentActor> m_LevelSet_segmentationModel;
     vtkSmartPointer<Util::SegmentActor> m_RegDetect_segmentationModel;
@@ -180,15 +169,11 @@ private:
     vtkSmartPointer<vtkImplicitPlaneRepresentation> m_implicitPlaneRepresentation;
     vtkSmartPointer<vtkPlane> m_cuttingVtkPlane;
     vtkSmartPointer<vtkActor> m_cuttingPlane2;
-
     // centerline related
     vtkSmartPointer<vtkPointPicker> m_lineInfoPointPicker;
-//    vtkSmartPointer<CusInteractorPickPointStyle> m_pointPickerInteractorStyle;
-//    vtkSmartPointer<vtkInteractorStyleImage> m_sliceViewStyle;
 
     vtkSmartPointer<vtkActor> m_leftLineModel;
     vtkSmartPointer<vtkActor> m_rightLineModel;
-//    std::pair<std::string, std::string> m_filename;
     CenLineUnit *m_centerLine;
 
     int m_currentRoamingRouteId;
@@ -234,11 +219,28 @@ private:
     vtkSmartPointer<vtkCameraRepresentation> m_cameraRep;
     vtkSmartPointer<vtkCameraWidget>         m_cameraWidget;
 
-
 private:
-    int GetCurrentSegmentModels(vtkActorCollection* collection);
+    void InitSingleMode();
+    void InitSegModelFactory(Util::SegmentActor * actor, std::string name,double color[]);
+    void InitSegModels();
+    bool GetOnlySegModelSource(Util::SegmentActor * actor);
+    void InitMeasureMode();
+    int GetNumOfCurrentSegmentModels(vtkActorCollection* collection);
+    bool BindSlider(vtkActor* actor, Util::vtkSliderCallBack* callback,
+                    vtkSliderWidget* widget);
+    void InitSliders();
+    void InitSliderFactory(vtkSliderRepresentation2D * rep, vtkSliderWidget * widget,
+                           const char * text,double pos[]);
+    void InitAnnotationFactory(vtkCornerAnnotation* annotation, const char * text, double color[]);
     void InitAnnotation();
-    void InitMovingSphere();
+    void InitInfoSphereFactory(vtkActor* sphere);
+    void InitInfoSphere();
+    void DrawSliceFactory(vtkSmartPointer<vtkRenderer> renderer
+                              , vtkSmartPointer<vtkImageActor>imgActor
+                              , double transformMat[16], double pos[3]);
+    void DrawInfoSphereFactory(vtkSmartPointer<vtkRenderer> renderer
+                               , vtkSmartPointer<vtkActor> sphereactor
+                               ,double pos[3]);
     void InitCamerasWidgets();
 
 

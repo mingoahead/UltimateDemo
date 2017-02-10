@@ -109,7 +109,6 @@ private slots:
     void on_cbb_curPath_currentIndexChanged(int index);
 
     void on_cb_cuttingwidget_toggled(bool checked);
-    void on_cb_cuttingContour_toggled(bool checked);
     void on_pb_cut_clicked();
 
     void on_pb_openSurface_clicked();

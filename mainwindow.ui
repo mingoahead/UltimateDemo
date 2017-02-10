@@ -86,8 +86,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>98</width>
-        <height>28</height>
+        <width>271</width>
+        <height>661</height>
        </rect>
       </property>
       <attribute name="label">
@@ -174,8 +174,8 @@ background-color: rgb(255, 170, 255);</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>98</width>
-        <height>28</height>
+        <width>271</width>
+        <height>661</height>
        </rect>
       </property>
       <attribute name="label">
@@ -395,68 +395,6 @@ background-color: rgb(255, 170, 255);</string>
          </property>
         </widget>
        </widget>
-       <widget class="QGroupBox" name="groupBox_6">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>330</y>
-          <width>261</width>
-          <height>171</height>
-         </rect>
-        </property>
-        <property name="title">
-         <string>measure on stl</string>
-        </property>
-        <widget class="QCheckBox" name="cb_cuttingwidget">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>20</y>
-           <width>81</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>cutter</string>
-         </property>
-        </widget>
-        <widget class="QTextEdit" name="textEdit">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>90</y>
-           <width>221</width>
-           <height>81</height>
-          </rect>
-         </property>
-        </widget>
-        <widget class="QWidget" name="layoutWidget">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>50</y>
-           <width>221</width>
-           <height>25</height>
-          </rect>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item>
-           <widget class="QPushButton" name="pb_cut">
-            <property name="text">
-             <string>Cut</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cb_cuttingContour">
-            <property name="text">
-             <string>cutting cotour</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </widget>
       </widget>
      </widget>
      <widget class="QWidget" name="page_2">
@@ -464,8 +402,8 @@ background-color: rgb(255, 170, 255);</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>98</width>
-        <height>28</height>
+        <width>271</width>
+        <height>661</height>
        </rect>
       </property>
       <attribute name="label">
@@ -1159,6 +1097,55 @@ font: 22pt &quot;Agency FB&quot;;</string>
              </widget>
             </item>
            </layout>
+          </widget>
+          <widget class="QGroupBox" name="groupBox_6">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>200</y>
+             <width>261</width>
+             <height>171</height>
+            </rect>
+           </property>
+           <property name="title">
+            <string>measure on stl</string>
+           </property>
+           <widget class="QTextEdit" name="textEdit">
+            <property name="geometry">
+             <rect>
+              <x>20</x>
+              <y>70</y>
+              <width>221</width>
+              <height>81</height>
+             </rect>
+            </property>
+           </widget>
+           <widget class="QWidget" name="layoutWidget">
+            <property name="geometry">
+             <rect>
+              <x>20</x>
+              <y>20</y>
+              <width>221</width>
+              <height>25</height>
+             </rect>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QCheckBox" name="cb_cuttingwidget">
+               <property name="text">
+                <string>cutter</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pb_cut">
+               <property name="text">
+                <string>Cut</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </widget>
          </widget>
         </item>

@@ -348,7 +348,7 @@ void MainWindow::on_pb_test3view_clicked()
     ui->toolBox->setCurrentIndex(3);
     m_appUnit -> RegisterDisplay(3);
     double curpos[3] = {4.99979, -134.5, 1157.95};
-    m_appUnit->Draw3DSlice(curpos);
+    m_appUnit->Update3DSlice(curpos);
     std::string st = m_appUnit->GetRawInfo();
     if(st.empty())  return ;
     QString str = QString::fromUtf8(st.c_str());
@@ -426,11 +426,6 @@ void MainWindow::on_cbb_curPath_currentIndexChanged(int index)
 void MainWindow::on_cb_cuttingwidget_toggled(bool checked)
 {
     m_appUnit->SetVisibilityVirtualCuttingWidget(checked);
-}
-
-void MainWindow::on_cb_cuttingContour_toggled(bool checked)
-{
-    m_appUnit->SetVisibilitySTLCuttingPlane(checked);
 }
 
 void MainWindow::on_pb_cut_clicked()

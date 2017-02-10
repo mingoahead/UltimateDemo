@@ -50,7 +50,45 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkCameraRepresentation.h>
 #include <vtkCameraWidget.h>
+///contourwidget
+#include <vtkVersion.h>
+#include "vtkSmartPointer.h"
+#include "vtkActor.h"
+#include "vtkCamera.h"
+#include "vtkCellArray.h"
+#include "vtkImageDataGeometryFilter.h"
+#include "vtkPoints.h"
+#include "vtkPolyData.h"
+#include "vtkPolyDataCollection.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkProperty.h"
+#include "vtkRenderWindow.h"
+#include "vtkRenderWindowInteractor.h"
+#include "vtkRenderer.h"
+#include "vtkSphereSource.h"
+#include "vtkTriangleFilter.h"
+#include "vtkXMLPolyDataReader.h"
+#include "vtkContourWidget.h"
+#include "vtkOrientedGlyphContourRepresentation.h"
+#include "vtkPolygonalSurfacePointPlacer.h"
+#include "vtkPolygonalSurfaceContourLineInterpolator.h"
 
+///image tracerwidget
+#include <vtkSmartPointer.h>
+#include <vtkCallbackCommand.h>
+#include <vtkImageActor.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkActor.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkPolyData.h>
+#include <vtkSphereSource.h>
+#include <vtkImageTracerWidget.h>
+#include <vtkImageMapper3D.h>
+#include <vtkImageCanvasSource2D.h>
+#include <vtkInteractorStyleImage.h>
+#include <vtkProperty.h>
 
 class vtkBiDimensionalCallback : public vtkCommand
 {
@@ -85,6 +123,31 @@ class vtkBiDimensionalCallback : public vtkCommand
     vtkBiDimensionalCallback(){}
 
 };
+class vtkImageTracerCallback : public vtkCommand
+{
+  public:
+    static vtkImageTracerCallback *New()
+    {
+      return new vtkImageTracerCallback;
+    }
+
+    virtual void Execute(vtkObject *caller, unsigned long, void*)
+    {
+        vtkImageTracerWidget* tracerWidget =
+            static_cast<vtkImageTracerWidget*>(caller);
+
+          vtkSmartPointer<vtkPolyData> path =
+            vtkSmartPointer<vtkPolyData>::New();
+
+          tracerWidget->GetPath(path);
+          std::cout << "There are " << path->GetNumberOfPoints()
+                    << " points in the path." << std::endl;
+
+    }
+    vtkImageTracerCallback(){}
+
+};
+
 class Test_vtkWidget {
 public:
     int RunTest()
@@ -93,7 +156,9 @@ public:
 //        return testBidimenWidget();
 //        return testDistanceWidget();
 //        return testimageplaneWidget();
-        return testCameraWidget();
+//        return testCameraWidget();
+//        return testContourWidget();
+        return testImageTracerWidget();
     }
 private:
     int testBallonWidget()
@@ -356,6 +421,133 @@ private:
           renderWindowInteractor->Start();
 
           return EXIT_SUCCESS;
+    }
+    int testImageTracerWidget()
+    {
+        vtkSmartPointer<vtkImageCanvasSource2D> imageSource =
+           vtkSmartPointer<vtkImageCanvasSource2D>::New();
+         imageSource->SetScalarTypeToUnsignedChar();
+         imageSource->SetNumberOfScalarComponents(3);
+         imageSource->SetExtent(0, 20, 0, 50, 0, 0);
+         imageSource->SetDrawColor(0,0,0);
+         imageSource->FillBox(0,20,0,50);
+         imageSource->SetDrawColor(255,0,0);
+         imageSource->FillBox(0,10,0,30);
+         imageSource->Update();
+
+         vtkSmartPointer<vtkImageActor> actor =
+           vtkSmartPointer<vtkImageActor>::New();
+         actor->GetMapper()->SetInputConnection(imageSource->GetOutputPort());
+
+         vtkSmartPointer<vtkRenderer> renderer =
+           vtkSmartPointer<vtkRenderer>::New();
+         renderer->AddActor(actor);
+         renderer->ResetCamera();
+         vtkSmartPointer<vtkRenderWindow> renderWindow =
+           vtkSmartPointer<vtkRenderWindow>::New();
+         renderWindow->AddRenderer(renderer);
+         vtkSmartPointer<vtkRenderWindowInteractor> interactor =
+           vtkSmartPointer<vtkRenderWindowInteractor>::New();
+         interactor->SetRenderWindow(renderWindow);
+
+         vtkSmartPointer<vtkInteractorStyleImage> style =
+           vtkSmartPointer<vtkInteractorStyleImage>::New();
+         interactor->SetInteractorStyle(style);
+
+         vtkSmartPointer<vtkImageTracerWidget> tracer =
+           vtkSmartPointer<vtkImageTracerWidget>::New();
+         tracer->GetLineProperty()->SetLineWidth(5);
+         tracer->SetInteractor(interactor);
+         tracer->SetViewProp(actor);
+         renderWindow->Render();
+
+         // The observer must be added BEFORE the On() call.
+         vtkSmartPointer<vtkImageTracerCallback> callback =
+                 vtkSmartPointer<vtkImageTracerCallback>::New();
+         tracer->AddObserver(vtkCommand::EndInteractionEvent, callback);
+
+         tracer->On();
+         interactor->Start();
+
+         return EXIT_SUCCESS;
+    }
+    int testContourWidget()
+    {
+        vtkSmartPointer<vtkPolyData> polyData;
+        vtkSmartPointer<vtkSphereSource> sphereSource =
+              vtkSmartPointer<vtkSphereSource>::New();
+            sphereSource->SetThetaResolution(40);
+            sphereSource->SetPhiResolution(20);
+            sphereSource->Update();
+            polyData = sphereSource->GetOutput();
+            vtkSmartPointer<vtkTriangleFilter> triangleFilter =
+               vtkSmartPointer<vtkTriangleFilter>::New();
+           #if VTK_MAJOR_VERSION <= 5
+             triangleFilter->SetInput( polyData );
+           #else
+             triangleFilter->SetInputData( polyData );
+           #endif
+             triangleFilter->Update();
+
+             vtkSmartPointer<vtkPolyData> pd = triangleFilter->GetOutput();
+
+             //Create a mapper and actor
+             vtkSmartPointer<vtkPolyDataMapper> mapper =
+               vtkSmartPointer<vtkPolyDataMapper>::New();
+             mapper->SetInputConnection(triangleFilter->GetOutputPort());
+
+             vtkSmartPointer<vtkActor> actor =
+               vtkSmartPointer<vtkActor>::New();
+             actor->SetMapper(mapper);
+             actor->GetProperty()->SetInterpolationToFlat();
+
+             // Create the render window, renderer and interactor.
+
+             vtkSmartPointer<vtkRenderer> renderer =
+               vtkSmartPointer<vtkRenderer>::New();
+             vtkSmartPointer<vtkRenderWindow> renderWindow =
+               vtkSmartPointer<vtkRenderWindow>::New();
+             renderWindow->AddRenderer(renderer);
+             vtkSmartPointer<vtkRenderWindowInteractor> interactor =
+               vtkSmartPointer<vtkRenderWindowInteractor>::New();
+             interactor->SetRenderWindow(renderWindow);
+
+             // Add the actors to the renderer, set the background and size
+
+             renderer->AddActor(actor);
+             renderer->SetBackground (.3, .4, .5);
+
+             // Here comes the contour widget stuff...
+
+             vtkSmartPointer<vtkContourWidget> contourWidget =
+               vtkSmartPointer<vtkContourWidget>::New();
+             contourWidget->SetInteractor(interactor);
+             vtkSmartPointer<vtkOrientedGlyphContourRepresentation> rep =
+               vtkOrientedGlyphContourRepresentation::SafeDownCast(
+                 contourWidget->GetRepresentation());
+             rep->GetLinesProperty()->SetColor(1, 0.2, 0);
+             rep->GetLinesProperty()->SetLineWidth(3.0);
+
+             vtkSmartPointer<vtkPolygonalSurfacePointPlacer> pointPlacer =
+               vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
+             pointPlacer->AddProp(actor);
+             pointPlacer->GetPolys()->AddItem( pd );
+             rep->SetPointPlacer(pointPlacer);
+
+             vtkSmartPointer<vtkPolygonalSurfaceContourLineInterpolator> interpolator =
+               vtkSmartPointer<vtkPolygonalSurfaceContourLineInterpolator>::New();
+             interpolator->GetPolys()->AddItem( pd );
+             rep->SetLineInterpolator(interpolator);
+
+             renderWindow->Render();
+             interactor->Initialize();
+
+             contourWidget->EnabledOn();
+
+             interactor->Start();
+
+             return EXIT_SUCCESS;
+
     }
 };
 #endif // TEST_VTKWIDGET

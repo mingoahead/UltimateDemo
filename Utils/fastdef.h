@@ -1,7 +1,7 @@
 #ifndef FASTDEF
 #define FASTDEF
 
-
+# include <iostream>
 # include "vtkSmartPointer.h"
 # include "initials.h"
 
@@ -17,6 +17,11 @@ inline void vsp(vtkSmartPointer<T> &var)
 
 struct Point3f {
     double x, y, z;
+    friend ostream& operator <<(ostream& o, const Point3f& c)
+    {
+        o << "( " << c.x << ", " << c.y << ", " << c.z << " )";
+        return o;
+    }
 };
 
 struct RawDataInfo {

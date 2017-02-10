@@ -62,6 +62,15 @@
 #include <vtkImageShiftScale.h>
 #include <vtkImageReslice.h>
 
+#include <vtkCallbackCommand.h>
+#include <vtkImageActor.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkPolyData.h>
+#include <vtkSphereSource.h>
+#include <vtkImageTracerWidget.h>
+#include <vtkImageMapper3D.h>
+#include <vtkImageCanvasSource2D.h>
+#include <vtkInteractorStyleImage.h>
 #include <vtkBiDimensionalWidget.h>
 #include <vtkBiDimensionalRepresentation2D.h>
 #include <vtkOpenGLActor.h>
@@ -134,7 +143,6 @@ public:
         m_renderer = renderer;
         m_beginPointActor = vtkSmartPointer<vtkActor>::New();
         m_endPointActor = vtkSmartPointer<vtkActor>::New();
-
         SetVisiblityOn();
     }
 
@@ -192,10 +200,13 @@ private:
             m_PickedPointsCnt %= 2;
             if(m_PickedPointsCnt == 0)
                 SetVisiblityOff();
-            this->Interactor->GetPicker()->Pick(this->Interactor->GetEventPosition()[0],
-                                                this->Interactor->GetEventPosition()[1],
+            int *pos ;
+            pos  = this->Interactor->GetEventPosition();
+            this->Interactor->GetPicker()->Pick(pos[0],
+                                                pos[1],
                                                 0,
                                                 this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer());
+            std::cout << pos[0] << ", " << pos[1] << std::endl;
             double p[3];
             this->Interactor->GetPicker()->GetPickPosition(p);
             std::cout << p[0] << ", " << p[1] << ", " << p[2] << std::endl;
@@ -203,11 +214,11 @@ private:
             switch(m_PickedPointsCnt) {
             case 1: {
                 m_pbeg = {p[0], p[1], p[2]};
-
+                std::cout << "Begin Point : " << m_pbeg << std::endl;
                 vtkSmartPointer<vtkSphereSource> spheresource =
                         vtkSmartPointer<vtkSphereSource>::New();
                 spheresource->SetCenter(p);
-                spheresource->SetRadius(1.0);
+                spheresource->SetRadius(5.0);
                 spheresource->Update();
                 vtkSmartPointer<vtkPolyDataMapper> mapper =
                         vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -220,10 +231,11 @@ private:
             }
             case 2: {
                 m_pend = {p[0], p[1], p[2]};
+                std::cout << "End Point : " << m_pend << std::endl;
                 vtkSmartPointer<vtkSphereSource> spheresource =
                         vtkSmartPointer<vtkSphereSource>::New();
                 spheresource->SetCenter(p);
-                spheresource->SetRadius(1.0);
+                spheresource->SetRadius(5.0);
                 spheresource->Update();
                 vtkSmartPointer<vtkPolyDataMapper> mapper =
                         vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -266,6 +278,10 @@ public:
         return m_interactor;
     }
 
+    vtkInteractorStyle * GetInteractorStyle(vtkRenderer * renderer)
+    {
+        return m_lookupTable[renderer];
+    }
     void RemoveAll()
     {
         m_lookupTable.clear();
@@ -411,8 +427,39 @@ class SegmentActor : public vtkOpenGLActor {
 public:
     static SegmentActor* New();
     vtkTypeMacro(SegmentActor,vtkOpenGLActor);
+    void SetSegmentType(std::string name)  {   this->type = name;  }
+    std::string GetSegmentType()  {  return this->type;  }
+    void SetSegmentPath(std::string path) { this->path = path;  }
+    std::string GetSegmentPath()  {  return this->path;  }
+private:
+    std::string type;
+    std::string path;
 };
 
+class vtkImageTracerCallback : public vtkCommand
+{
+  public:
+    static vtkImageTracerCallback *New()
+    {
+      return new vtkImageTracerCallback;
+    }
+
+    virtual void Execute(vtkObject *caller, unsigned long, void*)
+    {
+        vtkImageTracerWidget* tracerWidget =
+            static_cast<vtkImageTracerWidget*>(caller);
+
+          vtkSmartPointer<vtkPolyData> path =
+            vtkSmartPointer<vtkPolyData>::New();
+
+          tracerWidget->GetPath(path);
+          std::cout << "There are " << path->GetNumberOfPoints()
+                    << " points in the path." << std::endl;
+
+    }
+    vtkImageTracerCallback(){}
+
+};
 }
 #endif // VTKHELPER
 
