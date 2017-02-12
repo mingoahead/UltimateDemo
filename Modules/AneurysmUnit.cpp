@@ -2,9 +2,9 @@
 vtkStandardNewMacro(Util::CusInteractorPickPointStyle);
 vtkStandardNewMacro(Util::SegmentActor);
 
-AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
+AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin, vtkRenderWindow *smallrenWin) : m_renderWindow(renWin)
 {
-
+    m_navigationUnit = new NavigationUnit(smallrenWin);
     vsp(m_renInteractor);
     m_renInteractor->SetRenderWindow(m_renderWindow);
 //    m_renderWindow->SetInteractor(m_renInteractor);
@@ -24,10 +24,11 @@ AneurysmUnit::AneurysmUnit(vtkRenderWindow *renWin) : m_renderWindow(renWin)
     Instantiate(tmp_camera, vtkCamera);
     tmp_camera->SetPosition(0, 0, 20);
     tmp_camera->SetFocalPoint(0, 0, 0);
-    m_light->SetColor(1.0, 1.0, 1.0);
+    m_light->SetPositional(true);
+    m_light->SetColor(1.0, 0.0, 0.0);
     m_light->SetPosition(tmp_camera->GetPosition());
     m_light->SetFocalPoint(tmp_camera->GetFocalPoint());
-    m_light->SetIntensity(.5);
+    m_light->SetIntensity(1.0);
     m_renderer->SetActiveCamera(tmp_camera);
     vsp(m_leftLineModel);
     vsp(m_rightLineModel);
@@ -144,6 +145,11 @@ std::string AneurysmUnit::GetCurInteractorStyle()
     return m_renderWindow->GetInteractor()->GetInteractorStyle()->GetClassName();
 }
 
+void AneurysmUnit::testopenstl(std::string filename)
+{
+    m_navigationUnit->UpdateMainModel(filename);
+}
+
 void AneurysmUnit::ReadInputSegmentationModel(std::string fileName, int option)
 {
     int size = fileName.size();
@@ -213,6 +219,7 @@ void AneurysmUnit::ShowFrameMode(int option)
     default:
         break;
     }
+
     m_renderer -> ResetCamera();
 //    m_renderer->Render();
 }
@@ -300,8 +307,23 @@ int AneurysmUnit::GetNumOfCurrentSegmentModels(vtkActorCollection *collection)
         }
     }
     return cnt;
-
 }
+std::string AneurysmUnit::GetFirstSegmentModel()
+{
+    std::string path;
+    Instantiate(collection, vtkActorCollection);
+    int n = GetNumOfCurrentSegmentModels(collection);
+    if(n == 0) {
+        return path;
+    }
+    Instantiate(actor, Util::SegmentActor)
+    collection->InitTraversal();
+    actor = Util::SegmentActor::SafeDownCast(collection->GetNextActor());
+    path = actor->GetSegmentPath();
+    std::cout << "retrive : " << path << std::endl;
+    return path;
+}
+
 void AneurysmUnit::SetVisibilityCollectiOn()
 {
     Instantiate(collection, vtkActorCollection);
@@ -459,8 +481,13 @@ void AneurysmUnit::SetRoamingStep(int step)
 
 void AneurysmUnit::OnRoam()
 {
-    m_currentRoamingIndex = 0;
-    UpdateRoamingCamera();
+//    m_currentRoamingIndex = 0;
+//    UpdateRoamingCamera();
+    std::string path =  GetFirstSegmentModel();
+    double pos[] = {.0, 10.0, .0};
+//    m_navigationUnit->UpdatePosInfo(pos);
+    m_navigationUnit->UpdateMainModel(path);
+//    m_navigationUnit->UpdateTotalView(path, pos);
 }
 
 void AneurysmUnit::RoamNext()

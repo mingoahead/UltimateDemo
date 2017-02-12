@@ -111,13 +111,14 @@ void MainWindow::createTinyLayout()
 
 void MainWindow::initModules()
 {
-     m_appUnit = new AneurysmUnit(m_vtkWidget -> GetRenderWindow());
+     m_appUnit = new AneurysmUnit(m_vtkWidget -> GetRenderWindow(),
+                                  m_smallvtkWidget -> GetRenderWindow());
      m_volRenderUnit = new VolumeRendering(m_vtkWidget -> GetRenderWindow());
      m_surRenderUnit = new SurfaceRendering(m_vtkWidget -> GetRenderWindow());
      ui->vlayout_rendering->addWidget(m_volRenderUnit->GetPropertyWidget());
 //     ui->vlayout_rendering->addWidget(m_volsurUnit->GetVolumeWidget());
 //     ui->vlayout_rendering->addWidget(m_appUnit->GetVolumePropertyWidget());
-     m_navgUnit = new NavigationUnit(m_smallvtkWidget -> GetRenderWindow());
+//     m_navgUnit = new NavigationUnit(m_smallvtkWidget -> GetRenderWindow());
 
 
 }
@@ -515,6 +516,15 @@ void MainWindow::on_cb_showVirtualCuttingWidget_toggled(bool checked)
 }
 
 void MainWindow::on_cb_distanceMeasure_toggled(bool checked) { }
+
+void MainWindow::on_pb_testopen_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Surface Model for ")
+                                                    , tr("/home"), tr("mhd or mha file (*.mhd *.mha *.stl)"));
+    if(!fileName.isNull()) {
+        m_appUnit->testopenstl(fileName.toStdString());
+    }
+}
 
 void MainWindow::updateCoords(vtkObject *obj)
 {

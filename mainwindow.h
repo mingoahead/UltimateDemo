@@ -59,7 +59,7 @@ private:
     vtkSmartPointer<vtkOrientationMarkerWidget> m_orientWidget;
     AneurysmUnit *m_appUnit;
     QVTKWidget *m_smallvtkWidget;
-    NavigationUnit *m_navgUnit;
+//    NavigationUnit *m_navgUnit;
 
     vtkSmartPointer<vtkEventQtSlotConnect> m_Connections;
 //    VolSurRendering *m_volsurUnit;
@@ -126,6 +126,9 @@ private slots:
 
     void on_cb_showVirtualCuttingWidget_toggled(bool checked);
     void on_cb_distanceMeasure_toggled(bool checked);
+
+
+    void on_pb_testopen_clicked();
 
 
 };

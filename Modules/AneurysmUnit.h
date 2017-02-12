@@ -78,6 +78,7 @@
 
 #include "fastdef.h"
 #include "CenLineUnit.h"
+#include "NavigationUnit.h"
 #include "Utils/vtkhelper.h"
 
 /**
@@ -92,7 +93,7 @@
 class AneurysmUnit
 {
 public:
-    AneurysmUnit(vtkRenderWindow *renWin);
+    AneurysmUnit(vtkRenderWindow *renWin, vtkRenderWindow *smallrenWin);
     ~AneurysmUnit();
     vtkRenderer * GetRenderer();
     vtkRenderer * GettranViewerRenderer();
@@ -100,6 +101,7 @@ public:
     vtkRenderer * GetsagViewerRenderer();
     /// rendering
     std::string GetCurInteractorStyle();
+    void testopenstl(std::string filename);
     void ReadInputSegmentationModel(std::string fileName, int option);
     void ShowSegmentationModel(int option);
     void ShowFrameMode(int option);
@@ -136,6 +138,7 @@ public:
     void RegisterDisplay(int mod);
     void RemoveAllRenderers();
     void SetPointPickerEnabled(bool enabled = true);
+    std::string GetFirstSegmentModel();
     std::string GetRawFilename();
     std::string GetRawInfo();
 private:
@@ -181,6 +184,7 @@ private:
     int m_currentRoamingStep;
     void GetCurrentRoamingPoint(double p[3]);
     void UpdateRoamingCamera();
+    NavigationUnit *m_navigationUnit;
 
     vtkSmartPointer<vtkImageData> m_rawData;
     RawDataInfo m_rawinfo;

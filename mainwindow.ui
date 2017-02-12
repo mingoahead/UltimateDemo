@@ -79,15 +79,15 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="page">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>271</width>
-        <height>661</height>
+        <width>100</width>
+        <height>30</height>
        </rect>
       </property>
       <attribute name="label">
@@ -174,8 +174,8 @@ background-color: rgb(255, 170, 255);</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>271</width>
-        <height>661</height>
+        <width>100</width>
+        <height>30</height>
        </rect>
       </property>
       <attribute name="label">
@@ -187,7 +187,7 @@ background-color: rgb(255, 170, 255);</string>
          <x>0</x>
          <y>0</y>
          <width>271</width>
-         <height>571</height>
+         <height>331</height>
         </rect>
        </property>
        <widget class="QGroupBox" name="groupBox">
@@ -396,14 +396,27 @@ background-color: rgb(255, 170, 255);</string>
         </widget>
        </widget>
       </widget>
+      <widget class="QPushButton" name="pb_testopen">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>390</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>test open</string>
+       </property>
+      </widget>
      </widget>
      <widget class="QWidget" name="page_2">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>271</width>
-        <height>661</height>
+        <width>100</width>
+        <height>30</height>
        </rect>
       </property>
       <attribute name="label">
@@ -1012,9 +1025,9 @@ font: 22pt &quot;Agency FB&quot;;</string>
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>160</y>
+         <y>150</y>
          <width>281</width>
-         <height>351</height>
+         <height>391</height>
         </rect>
        </property>
        <property name="sizePolicy">
@@ -1027,8 +1040,8 @@ font: 22pt &quot;Agency FB&quot;;</string>
       <widget class="QTextEdit" name="tb_rawdatainfo">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>520</y>
+         <x>0</x>
+         <y>550</y>
          <width>271</width>
          <height>111</height>
         </rect>
@@ -1040,8 +1053,8 @@ font: 22pt &quot;Agency FB&quot;;</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>271</width>
-        <height>661</height>
+        <width>100</width>
+        <height>30</height>
        </rect>
       </property>
       <attribute name="label">
